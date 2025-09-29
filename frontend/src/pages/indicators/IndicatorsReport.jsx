@@ -739,6 +739,29 @@ const IndicatorsReport = () => {
     { id: 'viral-load', name: 'Viral Load', icon: <TestTube className="h-4 w-4" /> }
   ];
 
+  // Function to filter indicators by category
+  const getFilteredIndicators = (categoryId) => {
+    if (categoryId === 'all') {
+      return indicators;
+    }
+    
+    // Map category IDs to indicator patterns/names
+    const categoryPatterns = {
+      'enrollment': ['enrolled', 'enrollment', 'newly enrolled', 'new enrollment'],
+      'retention': ['active', 'retention', 'lost to follow', 'returned', 'transfer'],
+      'outcomes': ['dead', 'died', 'outcome', 'viral suppressed', 'suppression'],
+      'treatment': ['initiated', 'started', 'art', 'pre-art', 'tpt', 'tb'],
+      'viral-load': ['viral', 'vl', 'suppressed', 'suppression', 'load']
+    };
+    
+    const patterns = categoryPatterns[categoryId] || [];
+    
+    return indicators.filter(indicator => {
+      const indicatorName = (indicator.Indicator || '').toLowerCase();
+      return patterns.some(pattern => indicatorName.includes(pattern));
+    });
+  };
+
   // Show loading skeleton only on initial load or when no data exists
   if (loading && (isInitialLoad || indicators.length === 0)) {
     return <IndicatorsReportSkeleton />;
@@ -771,47 +794,71 @@ const IndicatorsReport = () => {
         </div>
 
 
-        {/* Minimal Summary Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Active ART</p>
-                <p className="text-2xl font-bold text-gray-900">{summaryStats.activePatients.toLocaleString()}</p>
+        {/* Executive Summary Dashboard */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
+            <CardContent className=" sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-blue-100 text-xs sm:text-sm font-medium">Active ART Patients</p>
+                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.activePatients.toLocaleString()}</p>
+                  <div className="flex items-center mt-2">
+                    <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="text-xs sm:text-sm text-blue-100">Currently on treatment</span>
+                  </div>
+                </div>
+                <Users className="h-8 w-8 sm:h-12 sm:w-12 text-blue-200" />
               </div>
-              <Users className="h-5 w-5 text-blue-600" />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">New Enrolled</p>
-                <p className="text-2xl font-bold text-gray-900">{summaryStats.newEnrolled.toLocaleString()}</p>
+          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-lg">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-green-100 text-xs sm:text-sm font-medium">Newly Enrolled</p>
+                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.newEnrolled.toLocaleString()}</p>
+                  <div className="flex items-center mt-2">
+                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="text-xs sm:text-sm text-green-100">This quarter</span>
+                  </div>
+                </div>
+                <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-green-200" />
               </div>
-              <Heart className="h-5 w-5 text-green-600" />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">Viral Suppressed</p>
-                <p className="text-2xl font-bold text-gray-900">{summaryStats.viralSuppressed.toLocaleString()}</p>
+          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-purple-100 text-xs sm:text-sm font-medium">Viral Suppressed</p>
+                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.viralSuppressed.toLocaleString()}</p>
+                  <div className="flex items-center mt-2">
+                    <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="text-xs sm:text-sm text-purple-100">VL &lt; 1000 copies/ml</span>
+                  </div>
+                </div>
+                <TestTube className="h-8 w-8 sm:h-12 sm:w-12 text-purple-200" />
               </div>
-              <TestTube className="h-5 w-5 text-purple-600" />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <div className="bg-white border border-gray-200 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wide">TPT Complete</p>
-                <p className="text-2xl font-bold text-gray-900">{summaryStats.tptCompleted.toLocaleString()}</p>
+          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 shadow-lg">
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-orange-100 text-xs sm:text-sm font-medium">TPT Completed</p>
+                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.tptCompleted.toLocaleString()}</p>
+                  <div className="flex items-center mt-2">
+                    <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                    <span className="text-xs sm:text-sm text-orange-100">TB prevention</span>
+                  </div>
+                </div>
+                <Activity className="h-8 w-8 sm:h-12 sm:w-12 text-orange-200" />
               </div>
-              <Target className="h-5 w-5 text-orange-600" />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
 
 
@@ -951,38 +998,62 @@ const IndicatorsReport = () => {
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="px-3 sm:px-6 pt-4">
                 <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-gray-100 h-auto">
-                  {categories.map((category) => (
-                    <TabsTrigger 
-                      key={category.id} 
-                      value={category.id} 
-                      className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm p-2 sm:p-3 text-xs sm:text-sm"
-                    >
-                      {category.icon}
-                      <span className="truncate">{category.name}</span>
-                    </TabsTrigger>
-                  ))}
+                  {categories.map((category) => {
+                    const filteredCount = getFilteredIndicators(category.id).length;
+                    return (
+                      <TabsTrigger 
+                        key={category.id} 
+                        value={category.id} 
+                        className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm p-2 sm:p-3 text-xs sm:text-sm"
+                      >
+                        {category.icon}
+                        <span className="truncate">{category.name}</span>
+                        <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
+                          {filteredCount}
+                        </Badge>
+                      </TabsTrigger>
+                    );
+                  })}
                 </TabsList>
               </div>
 
               {/* All Indicators Tab */}
               <TabsContent value="all" className="p-3 sm:p-6 space-y-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900">All Indicators</h3>
+                  <Badge variant="outline" className="text-sm">
+                    {getFilteredIndicators('all').length} indicators
+                  </Badge>
+                </div>
                 <IndicatorsTable 
-                  indicators={indicators} 
+                  indicators={getFilteredIndicators('all')} 
                   loading={loading} 
                   onIndicatorClick={handleIndicatorClick}
                 />
               </TabsContent>
 
               {/* Category Tabs */}
-              {categories.slice(1).map((category) => (
-                <TabsContent key={category.id} value={category.id} className="p-3 sm:p-6 space-y-4">
-                  <IndicatorsTable 
-                    indicators={indicators} 
-                    loading={loading} 
-                    onIndicatorClick={handleIndicatorClick}
-                  />
-                </TabsContent>
-              ))}
+              {categories.slice(1).map((category) => {
+                const filteredIndicators = getFilteredIndicators(category.id);
+                return (
+                  <TabsContent key={category.id} value={category.id} className="p-3 sm:p-6 space-y-4">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        {category.icon}
+                        <h3 className="text-lg font-semibold text-gray-900">{category.name} Indicators</h3>
+                      </div>
+                      <Badge variant="outline" className="text-sm">
+                        {filteredIndicators.length} indicators
+                      </Badge>
+                    </div>
+                    <IndicatorsTable 
+                      indicators={filteredIndicators} 
+                      loading={loading} 
+                      onIndicatorClick={handleIndicatorClick}
+                    />
+                  </TabsContent>
+                );
+              })}
             </Tabs>
           </div>
         </div>
