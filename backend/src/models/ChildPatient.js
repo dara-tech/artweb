@@ -6,230 +6,210 @@ const ChildPatient = sequelize.define('ChildPatient', {
     type: DataTypes.STRING(10),
     primaryKey: true,
     allowNull: false,
+    field: 'ClinicID',
     references: {
-      model: 'tblpatient',
+      model: 'patients',
       key: 'clinicId'
     }
   },
   dateFirstVisit: {
     type: DataTypes.DATEONLY,
-    allowNull: false
-  },
-  typeOfReturn: {
-    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    field: 'DaFirstVisit'
   },
   lClinicId: {
     type: DataTypes.STRING(10),
-    allowNull: true
+    allowNull: true,
+    field: 'LClinicID'
   },
   siteNameOld: {
     type: DataTypes.STRING(10),
-    allowNull: true
+    allowNull: true,
+    field: 'SiteNameold'
   },
   dateOfBirth: {
     type: DataTypes.DATEONLY,
-    allowNull: false
+    allowNull: false,
+    field: 'DaBirth'
   },
   sex: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'Sex',
     validate: {
       isIn: [[0, 1]] // 0 = Female, 1 = Male
     }
   },
-  education: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  read: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  write: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
   referred: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'Referred'
   },
   otherReferred: {
-    type: DataTypes.STRING(100),
-    allowNull: true
+    type: DataTypes.STRING(30),
+    allowNull: true,
+    field: 'Oreferred'
   },
-  dateHIV: {
+  eClinicId: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    field: 'EClinicID'
+  },
+  dateTest: {
     type: DataTypes.DATEONLY,
+    allowNull: true,
+    field: 'DaTest'
+  },
+  typeTest: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: '1900-01-01'
+    defaultValue: -1,
+    field: 'TypeTest'
   },
   vcctCode: {
-    type: DataTypes.STRING(10),
-    allowNull: true
+    type: DataTypes.STRING(6),
+    allowNull: true,
+    field: 'Vcctcode'
   },
   vcctId: {
-    type: DataTypes.STRING(20),
-    allowNull: true
-  },
-  pClinicId: {
-    type: DataTypes.STRING(10),
-    allowNull: true
+    type: DataTypes.STRING(6),
+    allowNull: true,
+    field: 'VcctID'
   },
   offIn: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'OffIn'
   },
   siteName: {
-    type: DataTypes.STRING(10),
-    allowNull: true
+    type: DataTypes.STRING(4),
+    allowNull: true,
+    field: 'SiteName'
   },
   dateART: {
     type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
+    allowNull: true,
+    field: 'DaART'
   },
   artNumber: {
-    type: DataTypes.STRING(20),
-    allowNull: true
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    field: 'Artnum'
+  },
+  feeding: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'Feeding'
   },
   tbPast: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
-  },
-  tpt: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  tptDrug: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  dateStartTPT: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
-  },
-  dateEndTPT: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
+    defaultValue: -1,
+    field: 'TbPast'
   },
   typeTB: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'TypeTB'
   },
   resultTB: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'ResultTB'
   },
   dateOnset: {
     type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
+    allowNull: true,
+    field: 'Daonset'
   },
   tbTreat: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'Tbtreat'
   },
   dateTreat: {
     type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
+    allowNull: true,
+    field: 'Datreat'
   },
   resultTreat: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'ResultTreat'
   },
   dateResultTreat: {
     type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
+    allowNull: true,
+    field: 'DaResultTreat'
   },
-  arvTreatHis: {
+  inh: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'Inh'
   },
-  diabetes: {
-    type: DataTypes.BOOLEAN,
+  tptDrug: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: false
+    defaultValue: -1,
+    field: 'TPTdrug'
   },
-  hyper: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
+  dateStartTPT: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    field: 'DaStartTPT'
   },
-  abnormal: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
+  dateEndTPT: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    field: 'DaEndTPT'
   },
-  renal: {
-    type: DataTypes.BOOLEAN,
+  otherPast: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: false
+    defaultValue: -1,
+    field: 'OtherPast'
   },
-  anemia: {
-    type: DataTypes.BOOLEAN,
+  cotrim: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: false
+    defaultValue: -1,
+    field: 'Cotrim'
   },
-  liver: {
-    type: DataTypes.BOOLEAN,
+  fluco: {
+    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: false
-  },
-  hepBC: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  medOther: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
+    defaultValue: -1,
+    field: 'Fluco'
   },
   allergy: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'Allergy'
+  },
+  clinicIdOld: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    field: 'ClinicIDold'
   },
   nationality: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: 0
+    defaultValue: 0,
+    field: 'Nationality'
   },
-  targetGroup: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0
-  },
-  refugStatus: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  refugART: {
-    type: DataTypes.STRING(20),
-    allowNull: true
-  },
-  refugSite: {
+  site_code: {
     type: DataTypes.STRING(10),
-    allowNull: true
+    allowNull: true,
+    field: 'site_code'
   }
 }, {
   tableName: 'tblcimain',

@@ -1,15 +1,9 @@
 import React, { useState } from 'react'
-import {
-  Box,
-  Card,
-  CardContent,
-  TextField,
-  Button,
-  Typography,
-  Alert,
-  CircularProgress,
-  Container,
-} from '@mui/material'
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useAuth } from '../contexts/AuthContext'
 
 function Login() {
@@ -34,90 +28,88 @@ function Login() {
     setLoading(true)
     setError('')
 
-    const result = await login(credentials)
-    
-    if (!result.success) {
-      setError(result.error)
+    try {
+      console.log('Starting login...')
+      const result = await login(credentials)
+      console.log('Login result:', result)
+      
+      if (!result.success) {
+        console.log('Login failed:', result.error)
+        setError(result.error)
+        setLoading(false)
+      } else {
+        console.log('Login successful, redirecting...')
+        // The redirect will happen automatically when user state changes
+        // No need to manually redirect here
+      }
+    } catch (error) {
+      console.log('Login error:', error)
+      setError('Login failed. Please try again.')
+      setLoading(false)
     }
-    
-    setLoading(false)
   }
 
   return (
-    <Container component="main" maxWidth="sm">
-      <Box
-        sx={{
-          marginTop: 8,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-        }}
-      >
-        <Card sx={{ width: '100%', maxWidth: 400 }}>
-          <CardContent sx={{ p: 4 }}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                mb: 3,
-              }}
-            >
-              <Typography component="h1" variant="h4" gutterBottom>
-                PreART System
-              </Typography>
-              <Typography variant="body2" color="text.secondary" align="center">
-                Medical Management System
-              </Typography>
-            </Box>
-
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900">PreART System</h1>
+          <p className="mt-2 text-gray-600">Medical Management System</p>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Sign In</CardTitle>
+            <CardDescription>
+              Enter your credentials to access the system
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
             {error && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {error}
+              <Alert className="mb-4" variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                name="username"
-                autoComplete="username"
-                autoFocus
-                value={credentials.username}
-                onChange={handleChange}
-                disabled={loading}
-              />
-              <TextField
-                margin="normal"
-                required
-                fullWidth
-                name="password"
-                label="Password"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                value={credentials.password}
-                onChange={handleChange}
-                disabled={loading}
-              />
-              <Button
-                type="submit"
-                fullWidth
-                variant="contained"
-                sx={{ mt: 3, mb: 2 }}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  value={credentials.username}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  value={credentials.password}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+              </div>
+
+              <Button 
+                type="submit" 
+                className="w-full" 
                 disabled={loading}
               >
-                {loading ? <CircularProgress size={24} /> : 'Sign In'}
+                {loading ? 'Signing in...' : 'Sign In'}
               </Button>
-            </Box>
+            </form>
           </CardContent>
         </Card>
-      </Box>
-    </Container>
+      </div>
+    </div>
   )
 }
 

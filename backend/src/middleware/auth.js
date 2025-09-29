@@ -16,7 +16,8 @@ const authenticateToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     
     // Get user from database to ensure they still exist and are active
-    const user = await User.findByPk(decoded.userId, {
+    const user = await User.findOne({
+      where: { id: decoded.userId },
       attributes: ['id', 'username', 'fullName', 'status']
     });
 

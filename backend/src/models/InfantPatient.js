@@ -6,230 +6,231 @@ const InfantPatient = sequelize.define('InfantPatient', {
     type: DataTypes.STRING(10),
     primaryKey: true,
     allowNull: false,
+    field: 'ClinicID',
     references: {
-      model: 'tblpatient',
+      model: 'patients',
       key: 'clinicId'
     }
   },
   dateFirstVisit: {
     type: DataTypes.DATEONLY,
-    allowNull: false
-  },
-  typeOfReturn: {
-    type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
-  },
-  lClinicId: {
-    type: DataTypes.STRING(10),
-    allowNull: true
-  },
-  siteNameOld: {
-    type: DataTypes.STRING(10),
-    allowNull: true
+    field: 'DafirstVisit'
   },
   dateOfBirth: {
     type: DataTypes.DATEONLY,
-    allowNull: false
+    allowNull: false,
+    field: 'DaBirth'
   },
   sex: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'Sex',
     validate: {
       isIn: [[0, 1]] // 0 = Female, 1 = Male
     }
   },
-  education: {
+  addGuardian: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'AddGuardian'
   },
-  read: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  write: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  referred: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  otherReferred: {
-    type: DataTypes.STRING(100),
-    allowNull: true
-  },
-  dateHIV: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
-  },
-  vcctCode: {
+  group: {
     type: DataTypes.STRING(10),
-    allowNull: true
+    allowNull: true,
+    field: 'Grou'
   },
-  vcctId: {
+  house: {
     type: DataTypes.STRING(20),
-    allowNull: true
+    allowNull: true,
+    field: 'House'
   },
-  pClinicId: {
+  street: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    field: 'Street'
+  },
+  village: {
+    type: DataTypes.STRING(20),
+    allowNull: true,
+    field: 'Village'
+  },
+  commune: {
+    type: DataTypes.STRING(25),
+    allowNull: true,
+    field: 'Commune'
+  },
+  district: {
+    type: DataTypes.STRING(25),
+    allowNull: true,
+    field: 'District'
+  },
+  province: {
+    type: DataTypes.STRING(25),
+    allowNull: true,
+    field: 'Province'
+  },
+  nameContact: {
+    type: DataTypes.STRING(25),
+    allowNull: true,
+    field: 'NameContact'
+  },
+  addressContact: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    field: 'AddContact'
+  },
+  phone: {
+    type: DataTypes.STRING(12),
+    allowNull: true,
+    field: 'Phone'
+  },
+  fAge: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: 'Fage'
+  },
+  fHIV: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'FHIV'
+  },
+  fStatus: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'Fstatus'
+  },
+  mAge: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: 'Mage'
+  },
+  mClinicId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    field: 'MClinicID'
+  },
+  mArt: {
     type: DataTypes.STRING(10),
-    allowNull: true
+    allowNull: true,
+    field: 'MArt'
+  },
+  hospitalName: {
+    type: DataTypes.STRING(30),
+    allowNull: true,
+    field: 'HospitalName'
+  },
+  mStatus: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'Mstatus'
+  },
+  catPlaceDelivery: {
+    type: DataTypes.STRING(25),
+    allowNull: true,
+    field: 'CatPlaceDelivery'
+  },
+  placeDelivery: {
+    type: DataTypes.STRING(50),
+    allowNull: true,
+    field: 'PlaceDelivery'
+  },
+  pmtct: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    field: 'PMTCT'
+  },
+  dateDelivery: {
+    type: DataTypes.DATEONLY,
+    allowNull: true,
+    field: 'DaDelivery'
+  },
+  deliveryStatus: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'DeliveryStatus'
+  },
+  lenBaby: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+    field: 'LenBaby'
+  },
+  wBaby: {
+    type: DataTypes.FLOAT,
+    allowNull: true,
+    field: 'WBaby'
+  },
+  knownHIV: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'KnownHIV'
+  },
+  received: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'Received'
+  },
+  syrup: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'Syrup'
+  },
+  cotrim: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'Cotrim'
   },
   offIn: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    defaultValue: -1
+    defaultValue: -1,
+    field: 'Offin'
   },
   siteName: {
+    type: DataTypes.STRING(40),
+    allowNull: true,
+    field: 'SiteName'
+  },
+  hivTest: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'HIVtest'
+  },
+  mHIV: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    defaultValue: -1,
+    field: 'MHIV'
+  },
+  mLastVl: {
     type: DataTypes.STRING(10),
-    allowNull: true
+    allowNull: true,
+    field: 'MLastvl'
   },
-  dateART: {
+  dateMLastVl: {
     type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
+    allowNull: true,
+    field: 'DaMLastvl'
   },
-  artNumber: {
-    type: DataTypes.STRING(20),
-    allowNull: true
-  },
-  tbPast: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  tpt: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  tptDrug: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  dateStartTPT: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
-  },
-  dateEndTPT: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
-  },
-  typeTB: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  resultTB: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  dateOnset: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
-  },
-  tbTreat: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  dateTreat: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
-  },
-  resultTreat: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  dateResultTreat: {
-    type: DataTypes.DATEONLY,
-    allowNull: false,
-    defaultValue: '1900-01-01'
-  },
-  arvTreatHis: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  diabetes: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  hyper: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  abnormal: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  renal: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  anemia: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  liver: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  hepBC: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  medOther: {
-    type: DataTypes.BOOLEAN,
-    allowNull: false,
-    defaultValue: false
-  },
-  allergy: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  nationality: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0
-  },
-  targetGroup: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: 0
-  },
-  refugStatus: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-    defaultValue: -1
-  },
-  refugART: {
-    type: DataTypes.STRING(20),
-    allowNull: true
-  },
-  refugSite: {
+  eoClinicId: {
     type: DataTypes.STRING(10),
-    allowNull: true
+    allowNull: true,
+    field: 'EOClinicID'
+  },
+  site_code: {
+    type: DataTypes.STRING(10),
+    allowNull: true,
+    field: 'site_code'
   }
 }, {
   tableName: 'tbleimain',

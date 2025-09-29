@@ -18,6 +18,13 @@ const TargetGroup = require('./TargetGroup');
 const Allergy = require('./Allergy');
 const Reason = require('./Reason');
 const Log = require('./Log');
+const AdultArvTreatment = require('./AdultArvTreatment');
+const AdultAllergy = require('./AdultAllergy');
+const AdultMedicalTreatment = require('./AdultMedicalTreatment');
+const AdultVisit = require('./AdultVisit');
+const AdultArvDrug = require('./AdultArvDrug');
+const ChildVisit = require('./ChildVisit');
+const InfantVisit = require('./InfantVisit');
 
 // Define associations
 const defineAssociations = () => {
@@ -41,16 +48,20 @@ const defineAssociations = () => {
   AdultPatient.belongsTo(Patient, { foreignKey: 'clinicId', as: 'patient' });
   AdultPatient.belongsTo(Nationality, { foreignKey: 'nationality', as: 'nationalityInfo' });
   AdultPatient.belongsTo(TargetGroup, { foreignKey: 'targetGroup', as: 'targetGroupInfo' });
+  AdultPatient.hasMany(AdultArvTreatment, { foreignKey: 'clinicId', as: 'arvTreatments' });
+  AdultPatient.hasMany(AdultAllergy, { foreignKey: 'clinicId', as: 'allergies' });
+
+  // Adult Treatment associations
+  AdultArvTreatment.belongsTo(AdultPatient, { foreignKey: 'clinicId', as: 'patient' });
+  AdultAllergy.belongsTo(AdultPatient, { foreignKey: 'clinicId', as: 'patient' });
 
   // Child Patient associations
   ChildPatient.belongsTo(Patient, { foreignKey: 'clinicId', as: 'patient' });
-  ChildPatient.belongsTo(Nationality, { foreignKey: 'nationality', as: 'nationalityInfo' });
-  ChildPatient.belongsTo(TargetGroup, { foreignKey: 'targetGroup', as: 'targetGroupInfo' });
+  // Note: nationality field exists in tblcimain, but targetGroup does not
 
   // Infant Patient associations
   InfantPatient.belongsTo(Patient, { foreignKey: 'clinicId', as: 'patient' });
-  InfantPatient.belongsTo(Nationality, { foreignKey: 'nationality', as: 'nationalityInfo' });
-  InfantPatient.belongsTo(TargetGroup, { foreignKey: 'targetGroup', as: 'targetGroupInfo' });
+  // Note: Neither nationality nor targetGroup fields exist in tbleimain
 };
 
 // Initialize associations
@@ -74,5 +85,12 @@ module.exports = {
   TargetGroup,
   Allergy,
   Reason,
-  Log
+  Log,
+  AdultArvTreatment,
+  AdultAllergy,
+  AdultMedicalTreatment,
+  AdultVisit,
+  AdultArvDrug,
+  ChildVisit,
+  InfantVisit
 };

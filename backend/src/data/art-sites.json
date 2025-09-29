@@ -1,0 +1,688 @@
+{
+  "description": "Complete list of ART sites for Cambodia PreART system",
+  "version": "1.0",
+  "lastUpdated": "2024-01-15",
+  "sites": [
+    {
+      "code": "0101",
+      "name": "Serey Sophon RH",
+      "province": "Banteay Meanchey",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0102",
+      "name": "CJF Mongkul Borey PH",
+      "province": "Banteay Meanchey",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0103",
+      "name": "Poi Pet RH",
+      "province": "Banteay Meanchey",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0104",
+      "name": "Thmor Puok RH",
+      "province": "Banteay Meanchey",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0105",
+      "name": "Preah Net Preah RH",
+      "province": "Banteay Meanchey",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0201",
+      "name": "Maung Russey RH",
+      "province": "Battambang",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0202",
+      "name": "Battambang PH",
+      "province": "Battambang",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0203",
+      "name": "Sampov Loun RH",
+      "province": "Battambang",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0204",
+      "name": "Thmor Kol RH",
+      "province": "Battambang",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0205",
+      "name": "R5 Military Hospital",
+      "province": "Battambang",
+      "type": "Hospital",
+      "status": 1
+    },
+    {
+      "code": "0206",
+      "name": "Roka RH",
+      "province": "Battambang",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0301",
+      "name": "Kampong Cham PH",
+      "province": "Kampong Cham",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0302",
+      "name": "Memut RH",
+      "province": "Kampong Cham",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0303",
+      "name": "PNS Tbong Khmum RH",
+      "province": "Kampong Cham",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0304",
+      "name": "Choeung Prey RH",
+      "province": "Kampong Cham",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0305",
+      "name": "Srey Santhor RH",
+      "province": "Kampong Cham",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0306",
+      "name": "Chamkar Leu RH",
+      "province": "Kampong Cham",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0307",
+      "name": "Batheay RH",
+      "province": "Kampong Cham",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0401",
+      "name": "Kampong Chhnang PH",
+      "province": "Kampong Chhnang",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0402",
+      "name": "Kampong Tralach RH",
+      "province": "Kampong Chhnang",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0501",
+      "name": "Kampong Speu PH",
+      "province": "Kampong Speu",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0502",
+      "name": "Oudong RH",
+      "province": "Kampong Speu",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0503",
+      "name": "Kong Pisey RH",
+      "province": "Kampong Speu",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0601",
+      "name": "Kampong Thom PH",
+      "province": "Kampong Thom",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0602",
+      "name": "Baray Santuk RH",
+      "province": "Kampong Thom",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0603",
+      "name": "Stong RH",
+      "province": "Kampong Thom",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0701",
+      "name": "Kampot PH",
+      "province": "Kampot",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0703",
+      "name": "Kampong Trach RH",
+      "province": "Kampot",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0801",
+      "name": "Chey Chumneas PH",
+      "province": "Kandal",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0802",
+      "name": "Koh Thom RH",
+      "province": "Kandal",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0803",
+      "name": "Kien Svay RH",
+      "province": "Kandal",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "0901",
+      "name": "Koh Kong PH",
+      "province": "Koh Kong",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "0902",
+      "name": "Sre Ambil RH",
+      "province": "Koh Kong",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1001",
+      "name": "Kratie PH",
+      "province": "Kratie",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1101",
+      "name": "Mondulkiri PH",
+      "province": "Mondulkiri",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1201",
+      "name": "NCADS Clinic 1",
+      "province": "Phnom Penh",
+      "type": "Clinic",
+      "status": 1
+    },
+    {
+      "code": "1202",
+      "name": "Calmette Hospital",
+      "province": "Phnom Penh",
+      "type": "Hospital",
+      "status": 1
+    },
+    {
+      "code": "1203",
+      "name": "NCADS-AHF Clinic 3",
+      "province": "Phnom Penh",
+      "type": "Clinic",
+      "status": 1
+    },
+    {
+      "code": "1204",
+      "name": "National Pediatric Hospital",
+      "province": "Phnom Penh",
+      "type": "Hospital",
+      "status": 1
+    },
+    {
+      "code": "1205",
+      "name": "Hope Center",
+      "province": "Phnom Penh",
+      "type": "Clinic",
+      "status": 1
+    },
+    {
+      "code": "1207",
+      "name": "Preah Ketomealea Hospital",
+      "province": "Phnom Penh",
+      "type": "Hospital",
+      "status": 1
+    },
+    {
+      "code": "1208",
+      "name": "NCADS Clinic 2",
+      "province": "Phnom Penh",
+      "type": "Clinic",
+      "status": 1
+    },
+    {
+      "code": "1209",
+      "name": "Chhouk Sar Clinic",
+      "province": "Phnom Penh",
+      "type": "Clinic",
+      "status": 1
+    },
+    {
+      "code": "1210",
+      "name": "Chhouk Sar2 Clinic",
+      "province": "Phnom Penh",
+      "type": "Clinic",
+      "status": 1
+    },
+    {
+      "code": "1211",
+      "name": "Chbar Ampov RH",
+      "province": "Phnom Penh",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1212",
+      "name": "Samdach Ov RH",
+      "province": "Phnom Penh",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1213",
+      "name": "Dang Kor RH",
+      "province": "Phnom Penh",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1214",
+      "name": "Pochintong RH",
+      "province": "Phnom Penh",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1215",
+      "name": "Chaktomuk RH",
+      "province": "Phnom Penh",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1216",
+      "name": "CCF Sen Sok RH",
+      "province": "Phnom Penh",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1301",
+      "name": "PVH 16 Makara PH",
+      "province": "Preah Vihear",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1401",
+      "name": "Neak Loeung RH",
+      "province": "Prey Veng",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1402",
+      "name": "Prey Veng PH",
+      "province": "Prey Veng",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1403",
+      "name": "Pearaing RH",
+      "province": "Prey Veng",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1501",
+      "name": "Pursat PH",
+      "province": "Pursat",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1502",
+      "name": "Phnom Kravanh RH",
+      "province": "Pursat",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1503",
+      "name": "Bakan RH",
+      "province": "Pursat",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1601",
+      "name": "Ratanakiri PH",
+      "province": "Ratanakiri",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1701",
+      "name": "Siem Reap Hospital",
+      "province": "Siem Reap",
+      "type": "Hospital",
+      "status": 1
+    },
+    {
+      "code": "1702",
+      "name": "Siem Reap PH",
+      "province": "Siem Reap",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1703",
+      "name": "Komar Angkor Hospital",
+      "province": "Siem Reap",
+      "type": "Hospital",
+      "status": 1
+    },
+    {
+      "code": "1704",
+      "name": "Sotr Nikum RH",
+      "province": "Siem Reap",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1705",
+      "name": "Kralanh RH",
+      "province": "Siem Reap",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "1801",
+      "name": "Preah Sihanouk PH",
+      "province": "Preah Sihanouk",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "1901",
+      "name": "Stung Treng PH",
+      "province": "Stung Treng",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "2001",
+      "name": "Svay Rieng PH",
+      "province": "Svay Rieng",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "2002",
+      "name": "Romeas Hek RH",
+      "province": "Svay Rieng",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "2101",
+      "name": "Takeo PH",
+      "province": "Takeo",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "2102",
+      "name": "Kirivong RH",
+      "province": "Takeo",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "2103",
+      "name": "Ang Roka RH",
+      "province": "Takeo",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "2104",
+      "name": "Prey Kabas RH",
+      "province": "Takeo",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "2201",
+      "name": "Oddor Meanchey PH",
+      "province": "Oddor Meanchey",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "2202",
+      "name": "Anlong Veng RH",
+      "province": "Oddor Meanchey",
+      "type": "RH",
+      "status": 1
+    },
+    {
+      "code": "2301",
+      "name": "Kep PH",
+      "province": "Kep",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "2401",
+      "name": "Pailin PH",
+      "province": "Pailin",
+      "type": "PH",
+      "status": 1
+    },
+    {
+      "code": "2501",
+      "name": "CCF Tbong Khmum PH",
+      "province": "Tbong Khmum",
+      "type": "PH",
+      "status": 1
+    }
+  ],
+  "provinces": [
+    {
+      "code": "01",
+      "name": "Banteay Meanchey",
+      "siteCount": 5
+    },
+    {
+      "code": "02",
+      "name": "Battambang",
+      "siteCount": 6
+    },
+    {
+      "code": "03",
+      "name": "Kampong Cham",
+      "siteCount": 7
+    },
+    {
+      "code": "04",
+      "name": "Kampong Chhnang",
+      "siteCount": 2
+    },
+    {
+      "code": "05",
+      "name": "Kampong Speu",
+      "siteCount": 3
+    },
+    {
+      "code": "06",
+      "name": "Kampong Thom",
+      "siteCount": 3
+    },
+    {
+      "code": "07",
+      "name": "Kampot",
+      "siteCount": 2
+    },
+    {
+      "code": "08",
+      "name": "Kandal",
+      "siteCount": 3
+    },
+    {
+      "code": "09",
+      "name": "Koh Kong",
+      "siteCount": 2
+    },
+    {
+      "code": "10",
+      "name": "Kratie",
+      "siteCount": 1
+    },
+    {
+      "code": "11",
+      "name": "Mondulkiri",
+      "siteCount": 1
+    },
+    {
+      "code": "12",
+      "name": "Phnom Penh",
+      "siteCount": 16
+    },
+    {
+      "code": "13",
+      "name": "Preah Vihear",
+      "siteCount": 1
+    },
+    {
+      "code": "14",
+      "name": "Prey Veng",
+      "siteCount": 3
+    },
+    {
+      "code": "15",
+      "name": "Pursat",
+      "siteCount": 3
+    },
+    {
+      "code": "16",
+      "name": "Ratanakiri",
+      "siteCount": 1
+    },
+    {
+      "code": "17",
+      "name": "Siem Reap",
+      "siteCount": 5
+    },
+    {
+      "code": "18",
+      "name": "Preah Sihanouk",
+      "siteCount": 1
+    },
+    {
+      "code": "19",
+      "name": "Stung Treng",
+      "siteCount": 1
+    },
+    {
+      "code": "20",
+      "name": "Svay Rieng",
+      "siteCount": 2
+    },
+    {
+      "code": "21",
+      "name": "Takeo",
+      "siteCount": 4
+    },
+    {
+      "code": "22",
+      "name": "Oddor Meanchey",
+      "siteCount": 2
+    },
+    {
+      "code": "23",
+      "name": "Kep",
+      "siteCount": 1
+    },
+    {
+      "code": "24",
+      "name": "Pailin",
+      "siteCount": 1
+    },
+    {
+      "code": "25",
+      "name": "Tbong Khmum",
+      "siteCount": 1
+    }
+  ],
+  "siteTypes": [
+    {
+      "code": "PH",
+      "name": "Provincial Hospital",
+      "count": 25
+    },
+    {
+      "code": "RH",
+      "name": "Referral Hospital",
+      "count": 35
+    },
+    {
+      "code": "Hospital",
+      "name": "Specialized Hospital",
+      "count": 4
+    },
+    {
+      "code": "Clinic",
+      "name": "Specialized Clinic",
+      "count": 12
+    }
+  ]
+}

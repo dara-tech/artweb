@@ -11,6 +11,7 @@ router.post('/login', [
   body('username').notEmpty().withMessage('Username is required'),
   body('password').isLength({ min: 1 }).withMessage('Password is required')
 ], async (req, res, next) => {
+  const startTime = Date.now();
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -22,9 +23,13 @@ router.post('/login', [
 
     const { username, password } = req.body;
 
-    // Find user by username
+    // Normalize username (trim whitespace)
+    const normalizedUsername = username.trim();
+
+    // Find user by username with case-insensitive search using MySQL LOWER function
     const user = await User.findOne({
-      where: { username }
+      where: require('sequelize').literal(`LOWER(TRIM(User)) = LOWER('${normalizedUsername}')`),
+      attributes: ['id', 'username', 'password', 'fullName', 'status'] // Only select needed fields
     });
 
     if (!user) {
@@ -64,6 +69,9 @@ router.post('/login', [
       { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
     );
 
+    const responseTime = Date.now() - startTime;
+    console.log(`Login successful for user ${username} - Response time: ${responseTime}ms`);
+    
     res.json({
       message: 'Login successful',
       token,
@@ -76,6 +84,17 @@ router.post('/login', [
       }
     });
 
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Verify token and get user info
+router.get('/verify', authenticateToken, async (req, res, next) => {
+  try {
+    res.json({
+      user: req.user
+    });
   } catch (error) {
     next(error);
   }

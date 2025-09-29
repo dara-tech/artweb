@@ -1,22 +1,50 @@
 import axios from 'axios'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
+// Determine API URL based on current hostname
+const getApiUrl = () => {
+  const hostname = window.location.hostname
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3001'
+  } else {
+    // For network access, use the same hostname but port 3001
+    return `http://${hostname}:3001`
+  }
+}
+
+let API_BASE_URL = import.meta.env.VITE_API_URL || getApiUrl()
+
+// Ensure API_BASE_URL doesn't end with /api to avoid double /api
+if (API_BASE_URL.endsWith('/api')) {
+  API_BASE_URL = API_BASE_URL.replace('/api', '')
+}
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
   },
 })
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and cache-busting
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    
+    // Add cache-busting parameter for GET requests to indicators
+    if (config.method === 'get' && config.url?.includes('/indicators-optimized/')) {
+      config.params = {
+        ...config.params,
+        _t: Date.now() // Add timestamp to prevent caching
+      }
+    }
+    
     return config
   },
   (error) => {
@@ -30,44 +58,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      window.location.href = '/'
     }
     return Promise.reject(error)
   }
 )
-
-// Auth API
-export const authAPI = {
-  login: (credentials) => api.post('/auth/login', credentials),
-  getProfile: () => api.get('/auth/profile'),
-  changePassword: (passwords) => api.post('/auth/change-password', passwords),
-  logout: () => api.post('/auth/logout'),
-}
-
-// Patient API
-export const patientAPI = {
-  getPatients: (params) => api.get('/patients', { params }),
-  getPatient: (id) => api.get(`/patients/${id}`),
-  createPatient: (data) => api.post('/patients/adult', data),
-  updatePatient: (id, data) => api.put(`/patients/${id}`, data),
-  deletePatient: (id) => api.delete(`/patients/${id}`),
-}
-
-// User API
-export const userAPI = {
-  getUsers: () => api.get('/users'),
-  getUser: (id) => api.get(`/users/${id}`),
-  createUser: (data) => api.post('/users', data),
-  updateUser: (id, data) => api.put(`/users/${id}`, data),
-  deleteUser: (id) => api.delete(`/users/${id}`),
-}
-
-// Reports API
-export const reportsAPI = {
-  getStatistics: (params) => api.get('/reports/statistics', { params }),
-  getPatients: (params) => api.get('/reports/patients', { params }),
-  getVisits: (params) => api.get('/reports/visits', { params }),
-  getTests: (params) => api.get('/reports/tests', { params }),
-}
 
 export default api

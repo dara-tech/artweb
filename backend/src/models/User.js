@@ -7,7 +7,8 @@ const User = sequelize.define('User', {
     type: DataTypes.INTEGER,
     field: 'Uid',
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
+    allowNull: false
   },
   username: {
     type: DataTypes.STRING(40),
@@ -19,11 +20,11 @@ const User = sequelize.define('User', {
     }
   },
   password: {
-    type: DataTypes.CHAR(40),
+    type: DataTypes.STRING(255),
     field: 'Pass',
     allowNull: false,
     validate: {
-      len: [6, 40]
+      len: [6, 255]
     }
   },
   fullName: {
@@ -49,12 +50,12 @@ const User = sequelize.define('User', {
   hooks: {
     beforeCreate: async (user) => {
       if (user.password) {
-        user.password = await bcrypt.hash(user.password, 12);
+        user.password = await bcrypt.hash(user.password, 10); // Reduced from 12 to 10 for better performance
       }
     },
     beforeUpdate: async (user) => {
       if (user.changed('password')) {
-        user.password = await bcrypt.hash(user.password, 12);
+        user.password = await bcrypt.hash(user.password, 10); // Reduced from 12 to 10 for better performance
       }
     }
   }
@@ -62,8 +63,11 @@ const User = sequelize.define('User', {
 
 // Instance methods
 User.prototype.validatePassword = async function(password) {
-  // For now, use simple string comparison since existing passwords are plain text
-  // TODO: Implement proper password hashing for new users
+  // Check if password is hashed (starts with $2a$ or $2b$)
+  if (this.password.startsWith('$2a$') || this.password.startsWith('$2b$')) {
+    return await bcrypt.compare(password, this.password);
+  }
+  // For legacy plain text passwords
   return password === this.password;
 };
 
