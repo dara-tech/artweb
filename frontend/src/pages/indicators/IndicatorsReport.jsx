@@ -745,119 +745,73 @@ const IndicatorsReport = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
-        {/* Enterprise Header */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-8">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6">
-            <div className="flex-1">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-4">
-                <div className="p-2 sm:p-3 bg-blue-100 rounded-lg">
-                  <Globe className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-                </div>
-                <div>
-                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900">
-                    {selectedSite ? `${selectedSite.name} ART Indicators Report` : 'National ART Indicators Report'}
-                  </h1>
-                  <p className="text-sm sm:text-lg text-gray-600 mt-1">
-                    {selectedSite ? `Site Code: ${selectedSite.code} - ` : ''}Comprehensive HIV/AIDS Treatment Performance Dashboard
-                  </p>
-                  {selectedSite && selectedSite.code === '0201' && (
-                    <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      <Building2 className="h-3 w-3 mr-1" />
-                      Single Site View - Maung Russey RH
-                    </div>
-                  )}
-                </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto p-6 space-y-6">
+        {/* Minimal Header */}
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-slate-600" />
               </div>
-              <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>Last Updated: {new Date().toLocaleString()}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>National Coverage</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Target className="h-3 w-3 sm:h-4 sm:w-4" />
-                  <span>Real-time Monitoring</span>
-                </div>
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900">
+                  {selectedSite ? selectedSite.name : 'National ART Indicators'}
+                </h1>
+                <p className="text-xs text-gray-500">
+                  {selectedSite ? `Site ${selectedSite.code}` : 'All Sites'} • {new Date().toLocaleDateString()}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2 text-xs text-gray-500">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Live Data</span>
+              <span>Live</span>
             </div>
           </div>
         </div>
 
 
-        {/* Executive Summary Dashboard */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
-            <CardContent className=" sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-blue-100 text-xs sm:text-sm font-medium">Active ART Patients</p>
-                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.activePatients.toLocaleString()}</p>
-                  <div className="flex items-center mt-2">
-                    <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-blue-100">Currently on treatment</span>
-                  </div>
-                </div>
-                <Users className="h-8 w-8 sm:h-12 sm:w-12 text-blue-200" />
+        {/* Minimal Summary Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">Active ART</p>
+                <p className="text-2xl font-bold text-gray-900">{summaryStats.activePatients.toLocaleString()}</p>
               </div>
-            </CardContent>
-          </Card>
+              <Users className="h-5 w-5 text-blue-600" />
+            </div>
+          </div>
 
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-lg">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-green-100 text-xs sm:text-sm font-medium">Newly Enrolled</p>
-                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.newEnrolled.toLocaleString()}</p>
-                  <div className="flex items-center mt-2">
-                    <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-green-100">This quarter</span>
-                  </div>
-                </div>
-                <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-green-200" />
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">New Enrolled</p>
+                <p className="text-2xl font-bold text-gray-900">{summaryStats.newEnrolled.toLocaleString()}</p>
               </div>
-            </CardContent>
-          </Card>
+              <Heart className="h-5 w-5 text-green-600" />
+            </div>
+          </div>
 
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-lg">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-purple-100 text-xs sm:text-sm font-medium">Viral Suppressed</p>
-                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.viralSuppressed.toLocaleString()}</p>
-                  <div className="flex items-center mt-2">
-                    <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-purple-100">VL &lt; 1000 copies/ml</span>
-                  </div>
-                </div>
-                <TestTube className="h-8 w-8 sm:h-12 sm:w-12 text-purple-200" />
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">Viral Suppressed</p>
+                <p className="text-2xl font-bold text-gray-900">{summaryStats.viralSuppressed.toLocaleString()}</p>
               </div>
-            </CardContent>
-          </Card>
+              <TestTube className="h-5 w-5 text-purple-600" />
+            </div>
+          </div>
 
-          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 shadow-lg">
-            <CardContent className="p-4 sm:p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-orange-100 text-xs sm:text-sm font-medium">TPT Completed</p>
-                  <p className="text-xl sm:text-3xl font-bold">{summaryStats.tptCompleted.toLocaleString()}</p>
-                  <div className="flex items-center mt-2">
-                    <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-orange-100">TB prevention</span>
-                  </div>
-                </div>
-                <Activity className="h-8 w-8 sm:h-12 sm:w-12 text-orange-200" />
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">TPT Complete</p>
+                <p className="text-2xl font-bold text-gray-900">{summaryStats.tptCompleted.toLocaleString()}</p>
               </div>
-            </CardContent>
-          </Card>
+              <Target className="h-5 w-5 text-orange-600" />
+            </div>
+          </div>
         </div>
 
 
@@ -985,22 +939,15 @@ const IndicatorsReport = () => {
           </Card>
         )}
 
-        {/* Main Content Area */}
-        <Card className="shadow-lg border border-gray-200">
-          <CardHeader>
-            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-              <CardTitle className="flex items-center gap-2 text-gray-900 text-lg sm:text-xl">
-                <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6" />
-                Performance Indicators Dashboard
-              </CardTitle>
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 text-xs sm:text-sm text-gray-600">
-                <span>Showing {indicators.length} indicators</span>
-                <Separator orientation="vertical" className="h-4 hidden sm:block" />
-                <span>Last updated: {new Date().toLocaleTimeString()}</span>
-              </div>
+        {/* Main Indicators Table */}
+        <div className="bg-white border border-gray-200 rounded-lg">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold text-gray-900">Performance Indicators</h2>
+              <span className="text-xs text-gray-500">{indicators.length} indicators</span>
             </div>
-          </CardHeader>
-          <CardContent className="p-0">
+          </div>
+          <div className="p-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="px-3 sm:px-6 pt-4">
                 <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-gray-100 h-auto">
@@ -1037,8 +984,8 @@ const IndicatorsReport = () => {
                 </TabsContent>
               ))}
             </Tabs>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Indicator Details Modal */}
         <IndicatorDetailsModal
