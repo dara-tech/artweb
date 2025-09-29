@@ -319,40 +319,6 @@ router.get('/:indicatorId/details', async (req, res) => {
   }
 });
 
-// Get indicators by category (optimized)
-router.get('/category/:category', async (req, res) => {
-  try {
-    const { category } = req.params;
-    const { startDate, endDate, previousEndDate } = req.query;
-    
-    const params = {
-      startDate: startDate || '2025-01-01',
-      endDate: endDate || '2025-03-31',
-      previousEndDate: previousEndDate || '2024-12-31'
-    };
-
-    console.log(`🚀 Executing ${category} indicators with optimized service...`);
-    const result = await optimizedIndicators.executeByCategory(category, params);
-
-    res.json({
-      success: true,
-      data: result.results,
-      performance: {
-        executionTime: result.executionTime,
-        successCount: result.successCount,
-        category: result.category
-      },
-      period: params
-    });
-  } catch (error) {
-    console.error(`❌ Error fetching ${req.params.category} indicators:`, error);
-    res.status(500).json({
-      success: false,
-      error: 'Failed to fetch category indicators',
-      message: error.message
-    });
-  }
-});
 
 // Get details for a specific indicator with pagination
 router.get('/details/:indicatorId', async (req, res) => {

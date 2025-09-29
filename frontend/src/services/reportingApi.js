@@ -19,23 +19,6 @@ export const reportingApi = {
     return response.data
   },
 
-  // Get indicators by category
-  getIndicatorsByCategory: async (category, params = {}) => {
-    const { siteCode, startDate, endDate, previousEndDate, useCache = true } = params
-    const queryParams = {
-      startDate,
-      endDate,
-      previousEndDate,
-      useCache
-    }
-    
-    if (siteCode) {
-      queryParams.siteCode = siteCode
-    }
-    
-    const response = await api.get(`/api/indicators-optimized/category/${category}`, { params: queryParams })
-    return response.data
-  },
 
   // Get specific indicator
   getIndicator: async (indicatorId, params = {}) => {

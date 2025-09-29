@@ -325,12 +325,8 @@ const IndicatorsReport = () => {
         selectedSite: selectedSite ? { code: selectedSite.code, name: selectedSite.name } : 'All Sites'
       });
       
-      let response;
-      if (category === 'all') {
-        response = await reportingApi.getAllIndicators(params);
-      } else {
-        response = await reportingApi.getIndicatorsByCategory(category, params);
-      }
+      // Always get all indicators, filtering will be done on frontend
+      const response = await reportingApi.getAllIndicators(params);
       
       if (response.success) {
         console.log('🔍 FRONTEND API RESPONSE ANALYSIS');
