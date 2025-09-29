@@ -785,22 +785,9 @@ const IndicatorsReport = () => {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-3">
-              <Button onClick={handleRefresh} disabled={loading} variant="outline" size="sm" className="w-full sm:w-auto">
-                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                <span className="sm:hidden">Refresh</span>
-                <span className="hidden sm:inline">Refresh Data</span>
-              </Button>
-              <Button onClick={handleForceRefresh} disabled={loading} variant="outline" size="sm" className="w-full sm:w-auto border-orange-200 text-orange-600 hover:bg-orange-50">
-                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
-                <span className="sm:hidden">Force</span>
-                <span className="hidden sm:inline">Force Refresh</span>
-              </Button>
-              <Button onClick={exportToCSV} variant="default" size="sm" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700">
-                <Download className="h-4 w-4 mr-2" />
-                <span className="sm:hidden">Export</span>
-                <span className="hidden sm:inline">Export Report</span>
-              </Button>
+            <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+              <span>Live Data</span>
             </div>
           </div>
         </div>
@@ -874,93 +861,117 @@ const IndicatorsReport = () => {
         </div>
 
 
-        {/* Period Selector */}
-        <Card className="shadow-xl border-0 bg-gradient-to-br from-slate-50 to-blue-50">
-          <CardHeader className="pb-4">
-            <CardTitle className="flex items-center gap-3 text-slate-800 text-lg sm:text-xl">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
-                <Calendar className="h-5 w-5 text-white" />
+        {/* Enterprise Reporting Configuration */}
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                  <Target className="h-4 w-4 text-slate-600" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-900">Reporting Configuration</h3>
+                  <p className="text-xs text-gray-500">Configure reporting parameters</p>
+                </div>
               </div>
-              <div>
-                <span>Reporting Configuration</span>
-                <p className="text-sm font-normal text-slate-600 mt-1">Configure your reporting parameters and filters</p>
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                <Clock className="h-3 w-3" />
+                <span>Q{selectedQuarter} {selectedYear}</span>
               </div>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Period Selection */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-blue-600" />
-                  Period Selection
-                </h4>
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Year Selector */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-600 flex items-center gap-1.5">
-                      <Calendar className="h-4 w-4 text-blue-600" />
-                      Year
-                    </Label>
-                    <Select value={selectedYear.toString()} onValueChange={handleYearChange}>
-                      <SelectTrigger className="h-10 border-slate-300 focus:border-blue-500 focus:ring-blue-500">
-                        <SelectValue placeholder="Year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableYears.map(year => (
-                          <SelectItem key={year} value={year.toString()}>
-                            {year}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* Period Selection - Minimalist */}
+              <div className="space-y-3">
+                <Label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Reporting Period</Label>
+                <div className="flex gap-2">
+                  <Select value={selectedYear.toString()} onValueChange={handleYearChange}>
+                    <SelectTrigger className="h-9 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableYears.map(year => (
+                        <SelectItem key={year} value={year.toString()}>
+                          {year}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   
-                  {/* Quarter Selector */}
-                  <div className="space-y-2">
-                    <Label className="text-sm font-medium text-slate-600 flex items-center gap-1.5">
-                      <Activity className="h-4 w-4 text-green-600" />
-                      Quarter
-                    </Label>
-                    <Select value={selectedQuarter.toString()} onValueChange={handleQuarterChange}>
-                      <SelectTrigger className="h-10 border-slate-300 focus:border-green-500 focus:ring-green-500">
-                        <SelectValue placeholder="Quarter" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableQuarters.map(quarter => (
-                          <SelectItem 
-                            key={quarter.value} 
-                            value={quarter.value.toString()}
-                            disabled={quarter.disabled}
-                          >
-                            {quarter.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  <Select value={selectedQuarter.toString()} onValueChange={handleQuarterChange}>
+                    <SelectTrigger className="h-9 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableQuarters.map(quarter => (
+                        <SelectItem 
+                          key={quarter.value} 
+                          value={quarter.value.toString()}
+                          disabled={quarter.disabled}
+                        >
+                          Q{quarter.value}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="text-xs text-gray-500">
+                  {dateRange.startDate} - {dateRange.endDate}
                 </div>
               </div>
 
-              {/* Site Selection */}
-              <div className="space-y-4">
-                <h4 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                  <Building2 className="h-4 w-4 text-green-600" />
-                  Site Selection
-                </h4>
+              {/* Site Selection - Minimalist */}
+              <div className="space-y-3">
+                <Label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Site Scope</Label>
                 <SiteFilter
                   sites={sites}
                   selectedSite={selectedSite}
                   onSiteChange={setSelectedSite}
                   disabled={sitesLoading}
                   showAllOption={false}
-                  variant="card"
+                  variant="minimal"
                   className="w-full"
                 />
+                {selectedSite && (
+                  <div className="text-xs text-gray-500">
+                    {selectedSite.name} ({selectedSite.code})
+                  </div>
+                )}
+              </div>
+
+              {/* Quick Actions - Minimalist */}
+              <div className="space-y-3">
+                <Label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Actions</Label>
+                <div className="flex gap-2">
+                  <Button 
+                    onClick={handleRefresh} 
+                    disabled={loading} 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-9 text-xs border-gray-200 hover:bg-gray-50"
+                  >
+                    <RefreshCw className={`h-3 w-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                    Refresh
+                  </Button>
+                  <Button 
+                    onClick={exportToCSV} 
+                    variant="outline" 
+                    size="sm" 
+                    className="h-9 text-xs border-gray-200 hover:bg-gray-50"
+                  >
+                    <Download className="h-3 w-3 mr-1" />
+                    Export
+                  </Button>
+                </div>
+                <div className="text-xs text-gray-500">
+                  {indicators.length} indicators loaded
+                </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Error Message */}
         {error && (

@@ -13,7 +13,7 @@ const SiteFilter = ({
   disabled = false,
   showAllOption = true,
   className = "",
-  variant = "default" // "default", "compact", "card"
+  variant = "default" // "default", "compact", "card", "minimal"
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -29,6 +29,39 @@ const SiteFilter = ({
     if (site.name?.toLowerCase().includes('clinic')) return 'Clinic';
     return 'Health Facility';
   };
+
+  if (variant === "minimal") {
+    return (
+      <Select 
+        value={selectedSite?.code || ''} 
+        onValueChange={(value) => {
+          if (value === 'all') {
+            onSiteChange(null);
+          } else {
+            const site = sites.find(s => s.code === value);
+            onSiteChange(site);
+          }
+        }}
+        disabled={disabled}
+      >
+        <SelectTrigger className="h-9 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
+          <SelectValue placeholder="Select site" />
+        </SelectTrigger>
+        <SelectContent>
+          {showAllOption && (
+            <SelectItem value="all">
+              All Sites
+            </SelectItem>
+          )}
+          {filteredSites.map((site) => (
+            <SelectItem key={site.code} value={site.code}>
+              {site.name} ({site.code})
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+  }
 
   if (variant === "compact") {
     return (
