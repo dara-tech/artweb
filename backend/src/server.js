@@ -25,7 +25,6 @@ const siteManagementRoutes = require('./routes/site-management');
 const siteOperationsRoutes = require('./routes/site-operations');
 const siteIndicatorsRoutes = require('./routes/site-indicators');
 const performanceRoutes = require('./routes/performance');
-const reportingIndicatorsRoutes = require('./routes/reporting-indicators');
 const dataImportExportRoutes = require('./routes/data-import-export');
 const cleanupRoutes = require('./routes/cleanup');
 const simpleCleanupRoutes = require('./routes/simple-cleanup');
@@ -35,8 +34,6 @@ const updateSitesRoutes = require('./routes/update-sites');
 const userManagementRoutes = require('./routes/user-management');
 const indicatorsRoutes = require('./routes/indicators');
 const optimizedIndicatorsRoutes = require('./routes/optimized-indicators');
-const enhancedIndicatorsRoutes = require('./routes/enhanced-indicators');
-const enhancedConflictResolutionRoutes = require('./routes/enhanced-conflict-resolution');
 const auditRoutes = require('./routes/audit');
 const backupScheduler = require('./services/backupScheduler');
 const { errorHandler } = require('./middleware/errorHandler');
@@ -140,8 +137,6 @@ app.use('/api/complete-cleanup', completeCleanupRoutes);
 app.use('/api/update-sites', updateSitesRoutes);
 app.use('/api/user-management', userManagementRoutes);
 app.use('/api/indicators', indicatorsRoutes);
-app.use('/api/indicators-enhanced', enhancedIndicatorsRoutes);
-app.use('/api/conflict-resolution', enhancedConflictResolutionRoutes);
 app.use('/api/audit', auditRoutes);
 
 // Make io available to routes
