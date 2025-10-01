@@ -29,7 +29,7 @@ router.post('/login', [
     // Find user by username with case-insensitive search using MySQL LOWER function
     const user = await User.findOne({
       where: require('sequelize').literal(`LOWER(TRIM(User)) = LOWER('${normalizedUsername}')`),
-      attributes: ['id', 'username', 'password', 'fullName', 'status'] // Only select needed fields
+      attributes: ['id', 'username', 'password', 'fullName', 'status', 'role', 'assignedSites'] // Include role and assignedSites
     });
 
     if (!user) {
@@ -63,7 +63,9 @@ router.post('/login', [
       { 
         userId: user.id,
         username: user.username,
-        role: 'admin' // Default role since database doesn't have role field
+        fullName: user.fullName,
+        role: user.role || 'viewer', // Use actual role from database
+        assignedSites: user.assignedSites
       },
       process.env.JWT_SECRET,
       { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
@@ -79,7 +81,8 @@ router.post('/login', [
         id: user.id,
         username: user.username,
         fullName: user.fullName,
-        role: 'admin', // Default role since database doesn't have role field
+        role: user.role || 'viewer', // Use actual role from database
+        assignedSites: user.assignedSites,
         status: user.status
       }
     });

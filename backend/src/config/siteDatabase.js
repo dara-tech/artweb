@@ -67,7 +67,17 @@ class SiteDatabaseManager {
   async getAllSites() {
     try {
       const [results] = await this.registryConnection.query(
-        'SELECT * FROM sites WHERE status = 1 ORDER BY code'
+        `SELECT 
+          code, 
+          name, 
+          COALESCE(short_name, name) as short_name,
+          COALESCE(display_name, short_name, name) as display_name,
+          COALESCE(search_terms, name) as search_terms,
+          status,
+          database_name
+        FROM sites 
+        WHERE status = 1 
+        ORDER BY code`
       );
       return results;
     } catch (error) {

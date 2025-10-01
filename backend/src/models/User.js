@@ -43,6 +43,22 @@ const User = sequelize.define('User', {
     validate: {
       isIn: [[0, 1]] // 0 = disabled, 1 = active
     }
+  },
+  role: {
+    type: DataTypes.ENUM('super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager'),
+    field: 'Role',
+    allowNull: false,
+    defaultValue: 'viewer',
+    validate: {
+      isIn: [['super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager']]
+    }
+  },
+  assignedSites: {
+    type: DataTypes.JSON,
+    field: 'AssignedSites',
+    allowNull: true,
+    defaultValue: null,
+    comment: 'JSON array of site codes this user can access'
   }
 }, {
   tableName: 'tbluser',
@@ -63,6 +79,11 @@ const User = sequelize.define('User', {
 
 // Instance methods
 User.prototype.validatePassword = async function(password) {
+  // Check if password exists
+  if (!this.password) {
+    return false;
+  }
+  
   // Check if password is hashed (starts with $2a$ or $2b$)
   if (this.password.startsWith('$2a$') || this.password.startsWith('$2b$')) {
     return await bcrypt.compare(password, this.password);

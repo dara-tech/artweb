@@ -17,10 +17,7 @@ function AdultInitialForm() {
   const [activeTab, setActiveTab] = useState("list")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [patients, setPatients] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [itemsPerPage, setItemsPerPage] = useState(null) // Show all patients by default
-  const [currentPage, setCurrentPage] = useState(1)
   const [dropdownOptions, setDropdownOptions] = useState({
     sites: [],
     vcctSites: [],
@@ -185,18 +182,8 @@ function AdultInitialForm() {
     if (id) {
       loadPatientData(id)
       setActiveTab("form")
-    } else {
-      loadPatientsList()
     }
   }, [id])
-
-  // Reload patients when site changes
-  useEffect(() => {
-    console.log('AdultInitialForm selectedSite useEffect triggered', { id, selectedSite })
-    if (!id) {
-      loadPatientsList()
-    }
-  }, [selectedSite])
 
   const loadDropdownData = async () => {
     try {
@@ -235,25 +222,6 @@ function AdultInitialForm() {
     }
   }
 
-  const loadPatientsList = async () => {
-    try {
-      console.log('AdultInitialForm loadPatientsList called with selectedSite:', selectedSite)
-      setLoading(true)
-      setError('')
-      // Fetch patients with site filtering
-      const siteName = selectedSite?.name
-      const url = siteName ? `/api/patients/adult?site=${encodeURIComponent(siteName)}` : '/api/patients/adult'
-      console.log('Loading adult patients from URL:', url)
-      const response = await api.get(url)
-      console.log('Adult patients response:', response.data)
-      setPatients(response.data.patients || [])
-    } catch (error) {
-      console.error('Error loading patients:', error)
-      setError('Error loading patients list')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const loadPatientData = async (clinicId) => {
     try {
@@ -569,7 +537,6 @@ function AdultInitialForm() {
         // Navigate back to list and refresh
         navigate('/patients/adult')
         setActiveTab("list")
-        loadPatientsList()
         
       } catch (error) {
         setError(error.response?.data?.message || 'Error deleting patient')
@@ -596,11 +563,6 @@ function AdultInitialForm() {
     handleClear() // Clear the form for new patient
   }
 
-  // Pagination logic - filtering is handled in PatientList component
-  const totalPages = itemsPerPage ? Math.ceil(patients.length / itemsPerPage) : 1
-  const startIndex = itemsPerPage ? (currentPage - 1) * itemsPerPage : 0
-  const endIndex = itemsPerPage ? startIndex + itemsPerPage : patients.length
-  const paginatedPatients = itemsPerPage ? patients.slice(startIndex, endIndex) : patients
 
   return (
     <div className="space-y-6">
@@ -634,8 +596,8 @@ function AdultInitialForm() {
                   <span className="hidden sm:inline">Back</span>
                 </Button>
                 <div className="min-w-0">
-                  <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 truncate">Adult Patient Management</h1>
-                  <p className="text-gray-600 text-xs sm:text-sm">ការគ្រប់គ្រងអ្នកជំងឺពេញវ័យ</p>
+                  <h1 className="text-xl sm:text-2xl font-semibold text-foreground truncate">Adult Patient Management</h1>
+                  <p className="text-muted-foreground text-xs sm:text-sm">ការគ្រប់គ្រងអ្នកជំងឺពេញវ័យ</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 order-1 sm:order-2">

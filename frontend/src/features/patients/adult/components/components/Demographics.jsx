@@ -6,16 +6,16 @@ function Demographics({ formData, handleInputChange }) {
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div className="bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-xl p-6">
+      <div className="bg-gradient-to-r from-muted to-muted border border-border rounded-xl p-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center">
-            <User className="w-6 h-6 text-indigo-600" />
+          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+            <User className="w-6 h-6 text-muted-foreground" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-foreground">
               ព័ត៌មានបុគ្គល (Demographics)
             </h3>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               ព័ត៌មានផ្ទាល់ខ្លួន និងស្ថានភាពមានផ្ទៃពោះ
             </p>
           </div>

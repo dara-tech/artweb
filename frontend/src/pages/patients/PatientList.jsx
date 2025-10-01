@@ -84,12 +84,12 @@ function PatientList() {
       {Array.from({ length: 3 }).map((_, i) => (
         <Card key={i} className="hover:shadow-lg transition-shadow">
           <CardHeader className="text-center">
-            <div className="h-12 w-12 mx-auto bg-gray-200 rounded-full animate-pulse" />
-            <div className="h-6 bg-gray-200 rounded w-24 mx-auto animate-pulse" />
+            <div className="h-12 w-12 mx-auto bg-muted rounded-full animate-pulse" />
+            <div className="h-6 bg-muted rounded w-24 mx-auto animate-pulse" />
           </CardHeader>
           <CardContent className="text-center">
-            <div className="h-4 bg-gray-200 rounded w-32 mx-auto mb-4 animate-pulse" />
-            <div className="h-10 bg-gray-200 rounded w-full animate-pulse" />
+            <div className="h-4 bg-muted rounded w-32 mx-auto mb-4 animate-pulse" />
+            <div className="h-10 bg-muted rounded w-full animate-pulse" />
           </CardContent>
         </Card>
       ))}
@@ -107,8 +107,8 @@ function PatientList() {
               <Users className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-3xl font-bold text-gray-900 truncate">Patient Management</h1>
-              <div className="hidden sm:flex items-center space-x-2 text-sm text-gray-500">
+              <h1 className="text-lg sm:text-3xl font-bold text-foreground truncate">Patient Management</h1>
+              <div className="hidden sm:flex items-center space-x-2 text-sm text-muted-foreground">
                 <span>Select patient type to manage</span>
               </div>
             </div>
@@ -130,7 +130,7 @@ function PatientList() {
 
         {/* Mobile subtitle */}
         <div className="sm:hidden">
-          <p className="text-sm text-gray-500 mb-2">Select patient type to manage</p>
+          <p className="text-sm text-muted-foreground mb-2">Select patient type to manage</p>
         </div>
 
         {/* Stats row - responsive */}
@@ -139,7 +139,7 @@ function PatientList() {
             <Badge variant="outline" className="px-2 sm:px-3 py-1 text-xs sm:text-sm font-medium">
               {loading ? (
                 <div className="flex items-center space-x-1">
-                  <div className="w-3 h-3 bg-gray-300 rounded animate-pulse" />
+                  <div className="w-3 h-3 bg-muted rounded animate-pulse" />
                   <span>Loading...</span>
                 </div>
               ) : (
@@ -152,7 +152,7 @@ function PatientList() {
               </Badge>
             )}
           </div>
-          <div className="text-xs text-gray-500 hidden sm:block">
+          <div className="text-xs text-muted-foreground hidden sm:block">
             {loading ? (
               <div className="flex items-center space-x-1">
                 <RefreshCw className="w-3 h-3 animate-spin" />
@@ -166,17 +166,17 @@ function PatientList() {
       </div>
 
       {/* Search and Filters - Mobile optimized */}
-      <Card className="border-0 shadow-sm bg-gradient-to-r from-gray-50 to-gray-100">
+        <Card className="border-0 shadow-sm bg-card">
         <CardContent className="p-4 sm:p-6">
           <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:gap-4">
             {/* Search */}
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search patient types..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white border-gray-200 focus:border-green-500 focus:ring-green-500"
+                className="pl-10 bg-background border-border focus:border-primary focus:ring-primary"
               />
             </div>
             
@@ -221,9 +221,9 @@ function PatientList() {
                   <div className="grid grid-cols-1 gap-4 mt-6 overflow-y-auto max-h-[60vh]">
                     {/* Mobile filter controls - single column */}
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">Gender Focus</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">Gender Focus</label>
                       <Select value={filterGender} onValueChange={setFilterGender}>
-                        <SelectTrigger className="bg-white">
+                        <SelectTrigger className="bg-background">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -236,9 +236,9 @@ function PatientList() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">Status</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">Status</label>
                       <Select value={filterStatus} onValueChange={setFilterStatus}>
-                        <SelectTrigger className="bg-white">
+                        <SelectTrigger className="bg-background">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -250,9 +250,9 @@ function PatientList() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">Age Range</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">Age Range</label>
                       <Select value={filterAgeRange} onValueChange={setFilterAgeRange}>
-                        <SelectTrigger className="bg-white">
+                        <SelectTrigger className="bg-background">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -265,9 +265,9 @@ function PatientList() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-medium text-gray-700 mb-2 block">Referral Status</label>
+                      <label className="text-sm font-medium text-foreground mb-2 block">Referral Status</label>
                       <Select value={filterReferral} onValueChange={setFilterReferral}>
-                        <SelectTrigger className="bg-white">
+                        <SelectTrigger className="bg-background">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -314,14 +314,14 @@ function PatientList() {
 
       {/* Desktop Advanced Filters Panel */}
       {showFilters && (
-        <Card className="border-0 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50">
+        <Card className="border-0 shadow-sm bg-card">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 gap-4">
               {/* Gender Filter */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Gender</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Gender</label>
                 <Select value={filterGender} onValueChange={setFilterGender}>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -334,9 +334,9 @@ function PatientList() {
 
               {/* Status Filter */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Status</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Status</label>
                 <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -351,9 +351,9 @@ function PatientList() {
 
               {/* Site Code Filter */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Site Code</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Site Code</label>
                 <Select value={filterSiteCode} onValueChange={setFilterSiteCode}>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -367,9 +367,9 @@ function PatientList() {
 
               {/* Age Range Filter */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Age Range</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Age Range</label>
                 <Select value={filterAgeRange} onValueChange={setFilterAgeRange}>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -383,9 +383,9 @@ function PatientList() {
 
               {/* Date Range Filter */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">First Visit</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">First Visit</label>
                 <Select value={filterDateRange} onValueChange={setFilterDateRange}>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -399,9 +399,9 @@ function PatientList() {
 
               {/* Referral Filter */}
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Referral Status</label>
+                <label className="text-sm font-medium text-foreground mb-2 block">Referral Status</label>
                 <Select value={filterReferral} onValueChange={setFilterReferral}>
-                  <SelectTrigger className="bg-white">
+                  <SelectTrigger className="bg-background">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -414,11 +414,11 @@ function PatientList() {
             </div>
 
             {/* Filter Actions */}
-            <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
-              <div className="text-sm text-gray-600">
+            <div className="flex justify-between items-center mt-4 pt-4 border-t border-border">
+              <div className="text-sm text-muted-foreground">
                 {loading ? (
                   <div className="flex items-center space-x-1">
-                    <div className="w-3 h-3 bg-gray-300 rounded animate-pulse" />
+                    <div className="w-3 h-3 bg-muted rounded animate-pulse" />
                     <span>Loading patient types...</span>
                   </div>
                 ) : (
@@ -455,11 +455,11 @@ function PatientList() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/patients/adult')}>
             <CardHeader className="text-center">
-              <Users className="h-12 w-12 mx-auto text-blue-600" />
+              <Users className="h-12 w-12 mx-auto text-primary" />
               <CardTitle>Adult Patients</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-gray-600 mb-4">Manage adult patients (15+ years)</p>
+              <p className="text-muted-foreground mb-4">Manage adult patients (15+ years)</p>
               <Button className="w-full">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Adult Form
@@ -469,11 +469,11 @@ function PatientList() {
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/patients/child')}>
             <CardHeader className="text-center">
-              <Users className="h-12 w-12 mx-auto text-green-600" />
+              <Users className="h-12 w-12 mx-auto text-primary" />
               <CardTitle>Child Patients</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-gray-600 mb-4">Manage child patients (2-14 years)</p>
+              <p className="text-muted-foreground mb-4">Manage child patients (2-14 years)</p>
               <Button className="w-full" variant="outline">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Child Form
@@ -483,11 +483,11 @@ function PatientList() {
 
           <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/patients/infant')}>
             <CardHeader className="text-center">
-              <Baby className="h-12 w-12 mx-auto text-purple-600" />
+              <Baby className="h-12 w-12 mx-auto text-primary" />
               <CardTitle>Infant Patients</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-gray-600 mb-4">Manage exposed infants (0-24 months)</p>
+              <p className="text-muted-foreground mb-4">Manage exposed infants (0-24 months)</p>
               <Button className="w-full" variant="outline">
                 <UserPlus className="w-4 h-4 mr-2" />
                 Infant Form

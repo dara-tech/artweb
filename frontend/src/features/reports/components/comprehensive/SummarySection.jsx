@@ -26,15 +26,15 @@ const SummarySection = ({ summary }) => {
           <div className="overflow-x-auto">
             <table className="w-full border-collapse">
               <tbody>
-                <tr className="bg-gray-200 font-bold text-lg">
-                  <td className="border border-gray-300 p-4 text-center">សរុបទូទៅ</td>
-                  <td className="border border-gray-300 p-4 text-center text-gray-800">
+                <tr className="bg-muted font-bold text-lg">
+                  <td className="border border-border p-4 text-center">សរុបទូទៅ</td>
+                  <td className="border border-border p-4 text-center text-foreground">
                     {formatNumber(summary.totalMale || 0)}
                   </td>
-                  <td className="border border-gray-300 p-4 text-center text-gray-800">
+                  <td className="border border-border p-4 text-center text-foreground">
                     {formatNumber(summary.totalFemale || 0)}
                   </td>
-                  <td className="border border-gray-300 p-4 text-center text-gray-800">
+                  <td className="border border-border p-4 text-center text-foreground">
                     {formatNumber(summary.totalPatients || 0)}
                   </td>
                 </tr>
@@ -116,9 +116,9 @@ const SummarySection = ({ summary }) => {
           {/* Additional Statistics Row */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             {/* Treatment Coverage */}
-            <div className="text-center p-4 bg-green-100 rounded-lg shadow-sm">
-              <TrendingUp className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-600 mb-1">ការគ្របដណ្តប់ព្យាបាល</p>
+            <div className="text-center p-4 viral-load-low rounded-lg shadow-sm">
+              <TrendingUp className="h-8 w-8 text-foreground mx-auto mb-2" />
+              <p className="text-sm text-foreground mb-1">ការគ្របដណ្តប់ព្យាបាល</p>
               <p className="text-xl font-bold text-green-600">
                 {summary.totalPatients > 0 
                   ? Math.round(((summary.totalOnART || 0) / summary.totalPatients) * 100) 
@@ -127,9 +127,9 @@ const SummarySection = ({ summary }) => {
             </div>
 
             {/* Retention Rate */}
-            <div className="text-center p-4 bg-blue-100 rounded-lg shadow-sm">
-              <CheckCircle className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-600 mb-1">អត្រាកាន់តែ</p>
+            <div className="text-center p-4 status-active rounded-lg shadow-sm">
+              <CheckCircle className="h-8 w-8 text-foreground mx-auto mb-2" />
+              <p className="text-sm text-foreground mb-1">អត្រាកាន់តែ</p>
               <p className="text-xl font-bold text-blue-600">
                 {summary.totalPatients > 0 
                   ? Math.round(((summary.totalPatients - (summary.totalLost || 0)) / summary.totalPatients) * 100) 
@@ -138,9 +138,9 @@ const SummarySection = ({ summary }) => {
             </div>
 
             {/* New Patient Rate */}
-            <div className="text-center p-4 bg-yellow-100 rounded-lg shadow-sm">
-              <Activity className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-              <p className="text-sm text-gray-600 mb-1">អត្រាអ្នកជំងឺថ្មី</p>
+            <div className="text-center p-4 status-warning rounded-lg shadow-sm">
+              <Activity className="h-8 w-8 text-foreground mx-auto mb-2" />
+              <p className="text-sm text-foreground mb-1">អត្រាអ្នកជំងឺថ្មី</p>
               <p className="text-xl font-bold text-yellow-600">
                 {summary.totalPatients > 0 
                   ? Math.round(((summary.totalNewPatients || 0) / summary.totalPatients) * 100) 

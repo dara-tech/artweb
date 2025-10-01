@@ -18,7 +18,7 @@ const authenticateToken = async (req, res, next) => {
     // Get user from database to ensure they still exist and are active
     const user = await User.findOne({
       where: { id: decoded.userId },
-      attributes: ['id', 'username', 'fullName', 'status']
+      attributes: ['id', 'username', 'fullName', 'status', 'role', 'assignedSites']
     });
 
     if (!user) {
@@ -54,7 +54,7 @@ const authenticateToken = async (req, res, next) => {
   }
 };
 
-const requireRole = (roles) => {
+const requireRole = (allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ 
@@ -63,10 +63,48 @@ const requireRole = (roles) => {
       });
     }
 
-    // For now, allow all authenticated users since role field doesn't exist in database
-    // TODO: Implement proper role-based access control when role field is added
+    // Check if user's role is in the allowed roles
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ 
+        error: 'Access Denied',
+        message: `Insufficient permissions. Required roles: ${allowedRoles.join(', ')}` 
+      });
+    }
+
     next();
   };
 };
 
-module.exports = { authenticateToken, requireRole };
+const requireSiteAccess = (siteCode) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({ 
+        error: 'Access Denied',
+        message: 'Authentication required' 
+      });
+    }
+
+    // Super admin can access all sites
+    if (req.user.role === 'super_admin') {
+      return next();
+    }
+
+    // Check if user has access to the specific site
+    const userSites = req.user.assignedSites;
+    if (!userSites || userSites.length === 0) {
+      // If no assigned sites, allow access to all (for backward compatibility)
+      return next();
+    }
+
+    if (!userSites.includes(siteCode)) {
+      return res.status(403).json({ 
+        error: 'Access Denied',
+        message: `You don't have access to site ${siteCode}` 
+      });
+    }
+
+    next();
+  };
+};
+
+module.exports = { authenticateToken, requireRole, requireSiteAccess };

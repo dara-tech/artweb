@@ -482,28 +482,28 @@ const IndicatorsDashboard = () => {
 
   const getIndicatorColor = (indicator) => {
     const title = indicator.Indicator?.toLowerCase() || '';
-    if (title.includes('active') && title.includes('art')) return 'text-blue-600';
-    if (title.includes('enrolled') || title.includes('initiated')) return 'text-green-600';
-    if (title.includes('transfer')) return 'text-purple-600';
-    if (title.includes('lost') || title.includes('ltfu')) return 'text-orange-600';
-    if (title.includes('dead')) return 'text-red-600';
-    if (title.includes('mmd') || title.includes('tld')) return 'text-indigo-600';
-    if (title.includes('tpt')) return 'text-emerald-600';
-    if (title.includes('vl') || title.includes('suppression')) return 'text-cyan-600';
-    return 'text-gray-600';
+    if (title.includes('active') && title.includes('art')) return 'text-primary';
+    if (title.includes('enrolled') || title.includes('initiated')) return 'text-success';
+    if (title.includes('transfer')) return 'text-warning';
+    if (title.includes('lost') || title.includes('ltfu')) return 'text-warning';
+    if (title.includes('dead')) return 'text-destructive';
+    if (title.includes('mmd') || title.includes('tld')) return 'text-secondary';
+    if (title.includes('tpt')) return 'text-success';
+    if (title.includes('vl') || title.includes('suppression')) return 'text-info';
+    return 'text-muted-foreground';
   };
 
   const getIndicatorBgColor = (indicator) => {
     const title = indicator.Indicator?.toLowerCase() || '';
-    if (title.includes('active') && title.includes('art')) return 'bg-blue-50';
-    if (title.includes('enrolled') || title.includes('initiated')) return 'bg-green-50';
-    if (title.includes('transfer')) return 'bg-purple-50';
-    if (title.includes('lost') || title.includes('ltfu')) return 'bg-orange-50';
-    if (title.includes('dead')) return 'bg-red-50';
-    if (title.includes('mmd') || title.includes('tld')) return 'bg-indigo-50';
-    if (title.includes('tpt')) return 'bg-emerald-50';
-    if (title.includes('vl') || title.includes('suppression')) return 'bg-cyan-50';
-    return 'bg-gray-50';
+    if (title.includes('active') && title.includes('art')) return 'bg-primary-light';
+    if (title.includes('enrolled') || title.includes('initiated')) return 'bg-success-light';
+    if (title.includes('transfer')) return 'bg-warning-light';
+    if (title.includes('lost') || title.includes('ltfu')) return 'bg-warning-light';
+    if (title.includes('dead')) return 'bg-destructive-light';
+    if (title.includes('mmd') || title.includes('tld')) return 'bg-secondary-light';
+    if (title.includes('tpt')) return 'bg-success-light';
+    if (title.includes('vl') || title.includes('suppression')) return 'bg-info-light';
+    return 'bg-muted';
   };
 
   const formatNumber = (num) => {
@@ -901,8 +901,8 @@ const IndicatorsDashboard = () => {
                 <span className="truncate">{dateRange.startDate} - {dateRange.endDate}</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="text-xs text-gray-500">View: {chartView}</div>
-                <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                <div className="text-xs text-muted-foreground">View: {chartView}</div>
+                <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
                   <Button
                     variant={chartView === 'mixed' ? 'default' : 'ghost'}
                     size="sm"
@@ -1036,8 +1036,8 @@ const IndicatorsDashboard = () => {
       {/* Error Message */}
       {error && (
         <div className="w-full px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <p className="text-xs sm:text-sm text-red-600">{error}</p>
+          <div className="status-critical rounded-lg p-3">
+            <p className="text-xs sm:text-sm text-foreground">{error}</p>
           </div>
         </div>
       )}
@@ -1058,7 +1058,7 @@ const IndicatorsDashboard = () => {
             <Card
               key={index}
               onClick={() => fetchIndicatorDetails(indicator)}
-              className={`${getIndicatorBgColor(indicator)} hover:shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 animate-in fade-in-0 slide-in-from-bottom-4 cursor-pointer border-0 shadow-md rounded-md flex flex-col`}
+              className={`${getIndicatorBgColor(indicator)} card-interactive animate-fade-in flex flex-col`}
               style={{ animationDelay: `${index * 50}ms` }}
             >
               <CardHeader className="pb-3 flex-shrink-0">
@@ -1067,7 +1067,7 @@ const IndicatorsDashboard = () => {
                     <div className={`${getIndicatorColor(indicator)} flex-shrink-0 mt-0.5`}>
                       {getIndicatorIcon(indicator)}
                     </div>
-                    <CardTitle className="text-xs sm:text-sm font-medium text-gray-900 leading-tight break-words">
+                    <CardTitle className="text-xs sm:text-sm font-medium text-foreground leading-tight break-words">
                       {indicator.Indicator}
                     </CardTitle>
                   </div>
@@ -1080,8 +1080,8 @@ const IndicatorsDashboard = () => {
                     {formatNumber(indicator.TOTAL)}
                   </div>
                   <Badge 
-                    variant={indicator.error ? "destructive" : "secondary"} 
-                    className={`text-xs ${indicator.error ? 'animate-pulse' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}
+                    variant={indicator.error ? "destructive" : "default"} 
+                    className={`text-xs ${indicator.error ? 'animate-pulse' : 'status-active'}`}
                   >
                     {indicator.error ? 'Error' : 'Active'}
                   </Badge>

@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { useAuth } from '../../contexts/AuthContext'
 import { useSite } from '../../contexts/SiteContext'
+import { ThemeToggle } from '../ui/theme-toggle'
 import Sidebar from './Sidebar'
 
 const AdvancedLayout = ({ children }) => {
@@ -122,7 +123,7 @@ const AdvancedLayout = ({ children }) => {
   }, [isFullscreen])
 
   return (
-    <div className={`min-h-screen bg-gray-50 ${isFullscreen ? 'app-mode' : ''}`}>
+    <div className={`min-h-screen bg-background ${isFullscreen ? 'app-mode' : ''}`}>
       <div className="flex h-screen">
         {/* Sidebar - Always visible, even in app mode */}
         <Sidebar 
@@ -135,16 +136,16 @@ const AdvancedLayout = ({ children }) => {
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Top Header */}
-          <header className={`bg-white border-b border-gray-200/60 px-4 py-3 backdrop-blur-sm ${
-            isFullscreen ? 'border-blue-200 bg-blue-50/30' : ''
+          <header className={`bg-card border-b border-border px-4 py-3 backdrop-blur-sm ${
+            isFullscreen ? 'border-primary bg-primary/10' : ''
           }`}>
             <div className="flex items-center justify-between">
               {/* Left side */}
               <div className="flex items-center space-x-4">
                 {/* App Mode Indicator */}
                 {isFullscreen && (
-                  <div className="flex items-center space-x-2 px-2 py-1 bg-blue-100 text-blue-700 rounded-md text-xs font-medium">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="flex items-center space-x-2 px-2 py-1 status-active rounded-md text-xs font-medium">
+                    <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
                     App Mode
                   </div>
                 )}
@@ -153,17 +154,17 @@ const AdvancedLayout = ({ children }) => {
                   variant="ghost"
                   size="sm"
                   onClick={() => setIsMobileOpen(true)}
-                  className="lg:hidden hover:bg-gray-100/50"
+                  className="lg:hidden hover:bg-accent"
                 >
-                  <Menu className="w-5 h-5 text-gray-600" />
+                  <Menu className="w-5 h-5 text-muted-foreground" />
                 </Button>
                 
                 <div className="hidden md:block">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       placeholder="Search patients, reports..."
-                      className="pl-10 w-64 border-gray-200/60 bg-gray-50/30 focus:bg-white transition-colors"
+                      className="pl-10 w-64 bg-muted/30 focus:bg-background transition-colors"
                     />
                   </div>
                 </div>
@@ -177,8 +178,8 @@ const AdvancedLayout = ({ children }) => {
                   variant="ghost" 
                   size="sm" 
                   onClick={toggleFullFrame}
-                  className={`hover:bg-gray-100/50 transition-colors ${
-                    isFullscreen ? 'bg-blue-100 text-blue-600' : ''
+                  className={`hover:bg-accent transition-colors ${
+                    isFullscreen ? 'status-active' : ''
                   }`}
                   title={
                     isFullscreen 
@@ -194,55 +195,58 @@ const AdvancedLayout = ({ children }) => {
                   )}
                 </Button>
 
+                {/* Theme Toggle */}
+                <ThemeToggle />
+
                 {/* Notifications */}
-                <Button variant="ghost" size="sm" className="relative hover:bg-gray-100/50">
-                  <Bell className="w-5 h-5 text-gray-600" />
-                  <div className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-orange-500 rounded-full border border-white"></div>
+                <Button variant="ghost" size="sm" className="relative hover:bg-accent">
+                  <Bell className="w-5 h-5 text-muted-foreground" />
+                  <div className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-destructive rounded-full border border-background"></div>
                 </Button>
 
                 {/* User Menu */}
-                <div className="flex items-center space-x-3 px-2 py-1.5 rounded-lg hover:bg-gray-50/70 transition-colors cursor-pointer">
-                  <div className="w-8 h-8 bg-gradient-to-br from-gray-600 to-gray-700 rounded-full flex items-center justify-center shadow-sm">
-                    <User className="w-4 h-4 text-white" />
+                <div className="flex items-center space-x-3 px-2 py-1.5 rounded-lg hover:bg-accent transition-colors cursor-pointer">
+                  <div className="w-8 h-8 bg-gradient-to-br from-muted-foreground to-foreground rounded-full flex items-center justify-center shadow-sm">
+                    <User className="w-4 h-4 text-background" />
                   </div>
                   <div className="hidden md:block">
-                    <p className="text-sm font-medium text-gray-800">{user?.fullName || 'User'}</p>
-                    <p className="text-xs text-gray-500">{user?.role || 'User'}</p>
+                    <p className="text-sm font-medium text-foreground">{user?.fullName || 'User'}</p>
+                    <p className="text-xs text-muted-foreground">{user?.role || 'User'}</p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-gray-400" />
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </div>
 
                 {/* Settings */}
-                <Button variant="ghost" size="sm" className="hover:bg-gray-100/50">
-                  <Settings className="w-5 h-5 text-gray-600" />
+                <Button variant="ghost" size="sm" className="hover:bg-accent">
+                  <Settings className="w-5 h-5 text-muted-foreground" />
                 </Button>
               </div>
             </div>
           </header>
 
           {/* Breadcrumb - Always visible, even in app mode */}
-          <div className="bg-white/80 border-b border-gray-200/40 px-4 py-2.5 backdrop-blur-sm">
+          <div className="bg-card/80 border-b border-border px-4 py-2.5 backdrop-blur-sm">
             <nav className="flex" aria-label="Breadcrumb">
               <ol className="flex items-center space-x-2">
                 <li>
                   <div className="flex items-center">
-                    <a href="#" className="text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">
+                    <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                       Dashboard
                     </a>
                   </div>
                 </li>
                 <li>
                   <div className="flex items-center">
-                    <ChevronDown className="w-4 h-4 text-gray-300 rotate-[-90deg]" />
-                    <a href="#" className="ml-2 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors">
+                    <ChevronDown className="w-4 h-4 text-muted-foreground rotate-[-90deg]" />
+                    <a href="#" className="ml-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                       Patients
                     </a>
                   </div>
                 </li>
                 <li>
                   <div className="flex items-center">
-                    <ChevronDown className="w-4 h-4 text-gray-300 rotate-[-90deg]" />
-                    <span className="ml-2 text-sm font-medium text-gray-800">
+                    <ChevronDown className="w-4 h-4 text-muted-foreground rotate-[-90deg]" />
+                    <span className="ml-2 text-sm font-medium text-foreground">
                       Adult Patients
                     </span>
                   </div>
@@ -252,7 +256,7 @@ const AdvancedLayout = ({ children }) => {
           </div>
 
           {/* Main Content */}
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex-1 overflow-y-auto bg-background">
             <div className="h-full p-6">
               {children}
             </div>

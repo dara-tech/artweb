@@ -201,8 +201,8 @@ function MedicalTreatmentHistory({
               </RadioGroup>
             </div>
 
-            <div className="ml-6 p-4 bg-red-50 rounded-lg border border-red-200">
-              <Label className="text-sm font-semibold text-gray-700">របេងសួត(PTB)</Label>
+            <div className="ml-6 p-4 status-critical rounded-lg border border-border">
+              <Label className="text-sm font-semibold text-foreground">របេងសួត(PTB)</Label>
               <RadioGroup
                 value={safeFormData.tbResult === -1 || safeFormData.tbResult === null || safeFormData.tbResult === undefined ? "" : safeFormData.tbResult.toString()}
                 onValueChange={(value) => setFormData({...formData, tbResult: parseInt(value)})}

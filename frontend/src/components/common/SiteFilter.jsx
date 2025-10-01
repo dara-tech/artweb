@@ -209,7 +209,7 @@ const SiteFilter = ({
             ))}
 
             {filteredSites.length > 6 && (
-              <div className="px-3 py-2 text-xs text-gray-500 text-center border-t bg-gray-50 rounded-b-lg">
+              <div className="px-3 py-2 text-xs text-muted-foreground text-center border-t bg-muted rounded-b-lg">
                 Showing 6 of {filteredSites.length} sites
                 {searchTerm && (
                   <div className="mt-1">

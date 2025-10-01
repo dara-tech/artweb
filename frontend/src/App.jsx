@@ -14,11 +14,10 @@ import ChildVisitForm from './pages/patients/VisitForm/Child/ChildVisitForm'
 import ChildVisitList from './pages/patients/VisitForm/Child/ChildVisitList'
 import InfantVisitForm from './pages/patients/VisitForm/Infant/InfantVisitForm'
 import InfantVisitList from './pages/patients/VisitForm/Infant/InfantVisitList'
-import BackupManagement from './pages/BackupManagement'
 import DataManagement from './pages/DataManagement'
+import RoleManagement from './pages/RoleManagement'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
 import IndicatorsDashboard from './pages/indicators/IndicatorsDashboard'
-import AuditReports from './pages/audit/AuditReports'
 import AdvancedLayout from './components/layout/AdvancedLayout'
 
 function App() {
@@ -29,8 +28,8 @@ function App() {
   if (loading) {
     console.log('Showing loading screen')
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="text-lg text-foreground">Loading...</div>
       </div>
     )
   }
@@ -42,11 +41,19 @@ function App() {
 
   console.log('User authenticated, showing dashboard')
 
+  // Determine default route based on user role
+  const getDefaultRoute = () => {
+    if (user?.role === 'viewer') {
+      return '/indicators'
+    }
+    return '/dashboard'
+  }
+
   return (
     <SiteProvider>
       <AdvancedLayout>
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/patients" element={<PatientList />} />
           <Route path="/patients/adult" element={<AdultPatientForm />} />
@@ -67,12 +74,11 @@ function App() {
           <Route path="/visits/infant/new" element={<InfantVisitForm />} />
           <Route path="/visits/infant/:clinicId" element={<InfantVisitForm />} />
           <Route path="/visits/infant/:clinicId/:visitId" element={<InfantVisitForm />} />
-          <Route path="/backup" element={<BackupManagement />} />
           <Route path="/data-management" element={<DataManagement />} />
+          <Route path="/role-management" element={<RoleManagement />} />
           <Route path="/indicators" element={<IndicatorsReport />} />
           <Route path="/indicators/dashboard" element={<IndicatorsDashboard />} />
-          <Route path="/audit" element={<AuditReports />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
         </Routes>
       </AdvancedLayout>
     </SiteProvider>

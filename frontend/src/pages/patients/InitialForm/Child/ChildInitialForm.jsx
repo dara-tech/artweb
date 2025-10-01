@@ -16,10 +16,8 @@ function ChildInitialForm() {
   const { selectedSite } = useSite()
   const [activeTab, setActiveTab] = useState("list")
   const [error, setError] = useState('')
-  const [patients, setPatients] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
-  const [itemsPerPage, setItemsPerPage] = useState(50) // Show 50 patients by default
-  const [currentPage, setCurrentPage] = useState(1)
+  
   const [dropdownOptions, setDropdownOptions] = useState({
     sites: [],
     vcctSites: [],
@@ -115,29 +113,13 @@ function ChildInitialForm() {
     hasDrugReaction: -1
   })
 
-  const loadPatientsList = useCallback(async () => {
-    try {
-      setError('')
-      // Fetch patients with site filtering
-      const siteName = selectedSite?.name
-      const url = siteName ? `/api/patients/child?site=${encodeURIComponent(siteName)}` : '/api/patients/child'
-      const response = await api.get(url)
-      setPatients(response.data.patients || [])
-    } catch (error) {
-      console.error('Error loading patients:', error)
-      setError('Error loading patients list')
-    }
-  }, [selectedSite])
-
   useEffect(() => {
     loadDropdownData()
     if (id) {
       loadPatientData(id)
       setActiveTab("form")
-    } else {
-      loadPatientsList()
     }
-  }, [id, loadPatientsList])
+  }, [id])
 
   const loadDropdownData = async () => {
     try {
@@ -418,10 +400,6 @@ function ChildInitialForm() {
   }
 
   // Pagination logic - filtering is handled in PatientList component
-  const totalPages = itemsPerPage ? Math.ceil(patients.length / itemsPerPage) : 1
-  const startIndex = itemsPerPage ? (currentPage - 1) * itemsPerPage : 0
-  const endIndex = itemsPerPage ? startIndex + itemsPerPage : patients.length
-  const paginatedPatients = itemsPerPage ? patients.slice(startIndex, endIndex) : patients
 
 
   return (
@@ -436,19 +414,11 @@ function ChildInitialForm() {
       {!id && activeTab === 'list' ? (
         // Patient List View - Clean, no tabs, no extra headers
         <PatientList
-          patients={patients}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           selectPatient={selectPatient}
-          loadPatientsList={loadPatientsList}
           onNewPatient={newPatient}
-          // Pagination props
-          totalPages={totalPages}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
-          itemsPerPage={itemsPerPage}
-          setItemsPerPage={setItemsPerPage}
-          totalPatients={patients.length}
+          selectedSite={selectedSite}
         />
       ) : (
         // Form View - Show tabs and action buttons
@@ -462,8 +432,8 @@ function ChildInitialForm() {
                   Back to List
                 </Button>
                 <div>
-                  <h1 className="text-2xl font-semibold text-gray-900">Child Patient Management</h1>
-                  <p className="text-gray-600 text-sm">ការគ្រប់គ្រងអ្នកជំងឺកុមារ</p>
+                  <h1 className="text-2xl font-semibold text-foreground">Child Patient Management</h1>
+                  <p className="text-muted-foreground text-sm">ការគ្រប់គ្រងអ្នកជំងឺកុមារ</p>
                 </div>
               </div>
               <div className="flex space-x-2">

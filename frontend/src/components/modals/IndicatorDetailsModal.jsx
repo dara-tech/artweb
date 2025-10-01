@@ -14,7 +14,7 @@ import {
   SortDesc,
 } from 'lucide-react';
 import { formatDateForTable } from '@/utils/dateFormatter';
-import { getCorrectAgeGroup, getCorrectPatientType, getDemographicBreakdown } from '@/utils/ageCalculator';
+import { getCorrectPatientType, getDemographicBreakdown } from '@/utils/ageCalculator';
 
 const IndicatorDetailsModal = ({
   isOpen,
@@ -49,6 +49,8 @@ const IndicatorDetailsModal = ({
     console.log('📊 Modal pagination:', pagination);
     console.log('📊 Safe pagination:', safePagination);
     console.log('📊 Total count from safePagination:', safePagination?.totalCount);
+    console.log('📊 Sample record:', indicatorDetails[0]);
+    console.log('📊 Available fields:', Object.keys(indicatorDetails[0] || {}));
   }
 
   // Skeleton loading component for table rows
@@ -67,12 +69,10 @@ const IndicatorDetailsModal = ({
     const baseColumns = [
       { key: 'clinicid', label: 'Clinic ID', type: 'text' },
       { key: 'sex_display', label: 'Sex', type: 'badge' },
-      { key: 'corrected_patient_type', label: 'Type', type: 'badge' },
+      { key: 'patient_type', label: 'Type', type: 'badge' },
       { key: 'age', label: 'Age', type: 'number' },
-      { key: 'corrected_age_group', label: 'Age Group', type: 'badge' },
       { key: 'DaBirth', label: 'Birth Date', type: 'date' },
-      { key: 'DafirstVisit', label: 'First Visit', type: 'date' },
-      { key: 'transfer_status', label: 'Transfer Status', type: 'text' }
+      { key: 'DafirstVisit', label: 'First Visit', type: 'date' }
     ];
 
     const artColumns = [
@@ -82,9 +82,9 @@ const IndicatorDetailsModal = ({
     ];
 
     const vlColumns = [
-      { key: 'LastVLDate', label: 'Last VL Date', type: 'date', altKey: 'DateResult' },
-      { key: 'LastVLLoad', label: 'Last VL Load', type: 'number', altKey: 'HIVLoad' },
-      { key: 'StatusVL', label: 'VL Status', type: 'badge', altKey: 'vlresultstatus' }
+      { key: 'LastVLDate', label: 'Last VL Date', type: 'date' },
+      { key: 'LastVLLoad', label: 'Last VL Load', type: 'number' },
+      { key: 'StatusVL', label: 'VL Status', type: 'badge' }
     ];
 
     const tptColumns = [
@@ -167,11 +167,13 @@ const IndicatorDetailsModal = ({
 
   const columnConfig = getColumnConfig(selectedIndicator?.Indicator);
 
-  // Add corrected age calculation fields to each record
+  // Add corrected patient type field and convert sex to display text
   const processedRecords = indicatorDetails.map(record => ({
     ...record,
     corrected_patient_type: getCorrectPatientType(record),
-    corrected_age_group: getCorrectAgeGroup(record)
+    // Handle both old and new field names
+    sex_display: record.sex_display || (record.Sex === 1 ? 'Male' : record.Sex === 0 ? 'Female' : 'Unknown'),
+    patient_type: record.patient_type || getCorrectPatientType(record)
   }));
 
   // Sorting functionality
@@ -364,18 +366,18 @@ const IndicatorDetailsModal = ({
                   </div>
                 ) : (
                   <>
-                    <DialogTitle className="text-base sm:text-xl font-semibold text-gray-900 leading-tight">
+                    <DialogTitle className="text-base sm:text-xl font-semibold text-foreground leading-tight">
                       {selectedIndicator?.Indicator}
                       {currentFilters.gender && currentFilters.ageGroup && (
-                        <span className="block text-sm font-normal text-blue-600 mt-1">
+                        <span className="block text-sm font-normal text-primary mt-1">
                           {currentFilters.gender === 'male' ? 'Male' : 'Female'} patients aged {currentFilters.ageGroup === '0-14' ? '0-14' : '15+'} years
                         </span>
                       )}
                     </DialogTitle>
-                    <DialogDescription className="text-xs sm:text-base text-gray-600 mt-1">
+                    <DialogDescription className="text-xs sm:text-base text-muted-foreground mt-1">
                       {processedRecords.length.toLocaleString()} of {(safePagination?.totalCount || 0).toLocaleString()} records
                       {currentFilters.gender && currentFilters.ageGroup && (
-                        <span className="block text-xs text-blue-500">
+                        <span className="block text-xs text-primary">
                           Filtered by: {currentFilters.gender} • {currentFilters.ageGroup}
                         </span>
                       )}
@@ -451,10 +453,10 @@ const IndicatorDetailsModal = ({
               {/* Records Table */}
               <div className="border overflow-hidden">
                 {detailsLoading || searchLoading ? (
-                  <div className="overflow-auto">
+                  <div className="overflow-auto scrollbar-hide">
                     <Table>
-                      <TableHeader className="sticky top-0 bg-white z-10">
-                        <TableRow className="bg-gray-50">
+                      <TableHeader className="sticky top-0 bg-card z-10">
+                        <TableRow className="bg-muted">
                           {Array.from({ length: 8 }, (_, index) => (
                             <TableHead 
                               key={index}
@@ -475,8 +477,8 @@ const IndicatorDetailsModal = ({
                 ) : error ? (
                   <div className="p-8 text-center">
                     <AlertTriangle className="h-12 w-12 text-red-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-red-600 mb-2">Error Loading Data</h3>
-                    <p className="text-red-500 mb-4">
+                    <h3 className="text-lg font-medium text-destructive mb-2">Error Loading Data</h3>
+                    <p className="text-destructive mb-4">
                       {error}
                     </p>
                     <Button 
@@ -491,20 +493,20 @@ const IndicatorDetailsModal = ({
                 ) : processedRecords.length === 0 ? (
                   <div className="p-8 text-center">
                     <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-medium text-gray-600 mb-2">No Records Found</h3>
-                    <p className="text-gray-500">
+                    <h3 className="text-lg font-medium text-muted-foreground mb-2">No Records Found</h3>
+                    <p className="text-muted-foreground">
                       {searchTerm ? 'No records match your search criteria.' : 'No records found for this indicator.'}
                     </p>
                   </div>
                 ) : (
-                  <div className="overflow-auto" style={{ maxHeight: 'calc(95vh - 300px)' }}>
+                  <div className="overflow-auto scrollbar-hide" style={{ maxHeight: 'calc(95vh - 300px)' }}>
                     <Table>
-                      <TableHeader className="sticky top-0 bg-white z-10">
-                        <TableRow className="bg-gray-50">
+                      <TableHeader className="sticky top-0 bg-card z-10">
+                        <TableRow className="bg-primary/10 border-b-2 border-primary/30">
                           {columnConfig.map((column, index) => (
                             <TableHead 
                               key={index}
-                              className="cursor-pointer hover:bg-gray-100 text-xs px-2 py-3 whitespace-nowrap"
+                              className={`cursor-pointer hover:bg-primary/20 text-xs px-2 py-3 whitespace-nowrap text-primary font-medium ${index < columnConfig.length - 1 ? 'border-r border-primary/30' : ''}`}
                               onClick={() => handleSort(column.key)}
                             >
                               <div className="flex items-center space-x-1">
@@ -519,7 +521,7 @@ const IndicatorDetailsModal = ({
                       </TableHeader>
                       <TableBody>
                         {sortedRecords.map((record, index) => (
-                          <TableRow key={index} className="hover:bg-gray-50">
+                          <TableRow key={index} className="hover:bg-muted/50 border-b border-border">
                             {columnConfig.map((column, colIndex) => {
                               const value = record[column.key] || (column.altKey ? record[column.altKey] : null);
                               let displayValue = value || 'N/A';
@@ -529,21 +531,54 @@ const IndicatorDetailsModal = ({
                               }
                               
                               return (
-                                <TableCell key={colIndex} className="text-xs px-2 py-2 max-w-[100px]">
+                                <TableCell key={colIndex} className={`text-xs px-2 py-2 max-w-[100px] ${colIndex < columnConfig.length - 1 ? 'border-r border-border' : ''}`}>
                                   {column.type === 'badge' ? (
                                     <Badge 
                                       variant="outline"
-                                      className="text-xs px-1 py-0"
+                                      className={`text-xs px-1 py-0 ${
+                                        column.key === 'sex_display' 
+                                          ? displayValue === 'Male' 
+                                            ? 'badge-male' 
+                                            : 'badge-female'
+                                          : column.key === 'patient_type'
+                                          ? displayValue === 'Adult' 
+                                            ? 'badge-adult'
+                                            : displayValue === 'Child'
+                                            ? 'badge-child'
+                                            : 'badge-infant'
+                                          : column.key === 'Startartstatus'
+                                          ? displayValue === 'New' 
+                                            ? 'badge-primary'
+                                            : displayValue === 'Continuing'
+                                            ? 'badge-secondary'
+                                            : 'badge-muted'
+                                          : column.key === 'StatusVL'
+                                          ? displayValue === 'DO VL' 
+                                            ? 'badge-warning'
+                                            : displayValue === 'VL-Suppression'
+                                            ? 'badge-success'
+                                            : displayValue === 'Not-Suppression'
+                                            ? 'badge-destructive'
+                                            : 'badge-muted'
+                                          : column.key === 'tptstatus'
+                                          ? displayValue === 'TPT Complete' 
+                                            ? 'badge-success'
+                                            : displayValue === 'Not complete'
+                                            ? 'badge-warning'
+                                            : 'badge-muted'
+                                          : 'badge-muted'
+                                      }`}
                                     >
                                       <span className="truncate">{displayValue}</span>
                                     </Badge>
                                   ) : column.key === 'clinicid' ? (
                                     <div className="flex items-center space-x-1">
-                                      {/* <div className="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium text-xs flex-shrink-0">
-                                        {record.clinicid ? record.clinicid.charAt(0) : '?'}
-                                      </div> */}
-                                      <span className="font-medium truncate">{displayValue}</span>
+                                      <span className="font-medium truncate text-primary">{displayValue}</span>
                                     </div>
+                                  ) : column.key === 'age' ? (
+                                    <span className="truncate block font-medium text-foreground" title={displayValue}>{displayValue}</span>
+                                  ) : column.type === 'date' ? (
+                                    <span className="truncate block text-muted-foreground" title={displayValue}>{displayValue}</span>
                                   ) : (
                                     <span className="truncate block" title={displayValue}>{displayValue}</span>
                                   )}
@@ -562,9 +597,9 @@ const IndicatorDetailsModal = ({
 
            {/* Pagination - Fixed at bottom */}
            {(safePagination?.totalPages || 0) > 1 && !detailsLoading && (
-             <div className="border-t bg-white p-4 flex-shrink-0">
+             <div className="border-t bg-card p-4 flex-shrink-0">
                <div className="flex items-center justify-between">
-                 <div className="text-xs text-gray-600">
+                 <div className="text-xs text-muted-foreground">
                    Page {safePagination?.page || 1} of {safePagination?.totalPages || 1}
                  </div>
                  <div className="flex items-center space-x-1">
@@ -634,7 +669,7 @@ const IndicatorDetailsModal = ({
            
            {/* Skeleton pagination during loading */}
            {detailsLoading && (
-             <div className="border-t bg-white p-4 flex-shrink-0">
+             <div className="border-t bg-card p-4 flex-shrink-0">
                <div className="flex items-center justify-between">
                  <Skeleton className="h-4 w-24" />
                  <div className="flex items-center space-x-1">

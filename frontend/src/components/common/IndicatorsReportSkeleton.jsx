@@ -4,10 +4,10 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const IndicatorsReportSkeleton = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      <div className="container mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
+    <div className="min-h-screen bg-background">
+      <div className=" p-4 sm:p-6 space-y-6 sm:space-y-8">
         {/* Enterprise Header Skeleton */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-8">
+        <div className="bg-card rounded-xl shadow-lg border border-border p-4 sm:p-8">
           <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 sm:gap-6">
             <div className="flex-1">
               <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 mb-4">
@@ -52,7 +52,7 @@ const IndicatorsReportSkeleton = () => {
         </div>
 
         {/* Period Selector Skeleton */}
-        <Card className="shadow-lg border border-gray-200">
+        <Card className="shadow-lg border border-border">
           <CardHeader>
             <Skeleton className="h-6 w-48" />
           </CardHeader>
@@ -74,7 +74,7 @@ const IndicatorsReportSkeleton = () => {
         </Card>
 
         {/* Main Content Area Skeleton */}
-        <Card className="shadow-lg border border-gray-200">
+        <Card className="shadow-lg border border-border">
           <CardHeader>
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
               <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ const IndicatorsReportSkeleton = () => {
           <CardContent className="p-0">
             {/* Tabs Skeleton */}
             <div className="px-3 sm:px-6 pt-4">
-              <div className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-gray-100 h-auto rounded-lg p-1">
+              <div className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-muted h-auto rounded-lg p-1">
                 {Array.from({ length: 6 }).map((_, index) => (
                   <Skeleton key={index} className="h-12 w-full rounded" />
                 ))}
@@ -101,7 +101,7 @@ const IndicatorsReportSkeleton = () => {
             {/* Indicators Content Skeleton */}
             <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
               {/* Report Header Skeleton */}
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+              <div className="bg-card border border-border rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
                     <Skeleton className="h-6 w-48 mb-2" />
@@ -115,51 +115,51 @@ const IndicatorsReportSkeleton = () => {
               </div>
 
               {/* Indicators Table Skeleton - Matching the new 3-row layout */}
-              <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+              <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full">
                     {/* Table Header Skeleton */}
-                    <thead className="bg-gray-50 border-b-2 border-gray-300">
+                    <thead className="bg-muted border-b-2 border-border">
                       <tr>
-                        <th className="px-3 py-4 text-center text-sm font-bold text-gray-700 w-12">
+                        <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-12">
                           <Skeleton className="h-4 w-4 mx-auto" />
                         </th>
-                        <th className="px-4 py-4 text-center text-sm font-bold text-gray-700">
+                        <th className="px-4 py-4 text-center text-sm font-bold text-foreground">
                           <Skeleton className="h-4 w-32 mx-auto" />
                         </th>
-                        <th className="px-3 py-4 text-center text-sm font-bold text-gray-700 w-20">
+                        <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-20">
                           <Skeleton className="h-4 w-16 mx-auto" />
                         </th>
-                        <th className="px-3 py-4 text-center text-sm font-bold text-gray-700 w-24">
+                        <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-24">
                           <Skeleton className="h-4 w-16 mx-auto" />
                         </th>
-                        <th className="px-3 py-4 text-center text-sm font-bold text-gray-700 w-24">
+                        <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-24">
                           <Skeleton className="h-4 w-16 mx-auto" />
                         </th>
-                        <th className="px-3 py-4 text-center text-sm font-bold text-gray-700 w-24">
+                        <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-24">
                           <Skeleton className="h-4 w-16 mx-auto" />
                         </th>
                       </tr>
                     </thead>
 
                     {/* Table Body Skeleton */}
-                    <tbody className="bg-white divide-y divide-gray-200">
+                    <tbody className="bg-card divide-y divide-border">
                       {Array.from({ length: 5 }).map((_, index) => (
                         <React.Fragment key={index}>
                           {/* Indicator Header Row Skeleton */}
-                          <tr className="border-b border-gray-100">
+                          <tr className="border-b border-border">
                             {/* Row Number */}
-                            <td className="px-3 py-4 text-center text-sm font-medium text-gray-900" rowSpan="3">
+                            <td className="px-3 py-4 text-center text-sm font-medium text-foreground" rowSpan="3">
                               <Skeleton className="h-4 w-4 mx-auto" />
                             </td>
 
                             {/* Indicator Name - spans 3 rows */}
-                            <td className="px-4 py-4 text-sm text-gray-900 align-middle text-center" rowSpan="3">
+                            <td className="px-4 py-4 text-sm text-foreground align-middle text-center" rowSpan="3">
                               <Skeleton className="h-4 w-64 mx-auto" />
                             </td>
 
                             {/* Age 0-14 */}
-                            <td className="px-3 py-4 text-center text-sm font-medium text-gray-700">
+                            <td className="px-3 py-4 text-center text-sm font-medium text-muted-foreground">
                               <Skeleton className="h-4 w-8 mx-auto" />
                             </td>
 
@@ -180,8 +180,8 @@ const IndicatorsReportSkeleton = () => {
                           </tr>
 
                           {/* 15+ Age Group Row Skeleton */}
-                          <tr className="bg-gray-50 border-b border-gray-200">
-                            <td className="px-3 py-3 text-center text-sm font-medium text-gray-700">
+                          <tr className="bg-muted/50 border-b border-border">
+                            <td className="px-3 py-3 text-center text-sm font-medium text-muted-foreground">
                               <Skeleton className="h-4 w-8 mx-auto" />
                             </td>
                             <td className="px-3 py-3 text-center">
@@ -196,8 +196,8 @@ const IndicatorsReportSkeleton = () => {
                           </tr>
 
                           {/* Sub-Total Row Skeleton */}
-                          <tr className="bg-blue-50 border-b-2 border-blue-200 font-bold">
-                            <td className="px-3 py-3 text-center text-sm font-bold text-gray-700">
+                          <tr className="bg-primary/10 border-b-2 border-primary/20 font-bold">
+                            <td className="px-3 py-3 text-center text-sm font-bold text-muted-foreground">
                               <Skeleton className="h-4 w-12 mx-auto" />
                             </td>
                             <td className="px-3 py-3 text-center">
@@ -218,7 +218,7 @@ const IndicatorsReportSkeleton = () => {
               </div>
 
               {/* Report Footer Skeleton */}
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
+              <div className="bg-muted/50 border border-border rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
                 <div className="text-center">
                   <Skeleton className="h-4 w-80 mx-auto mb-2" />
                   <Skeleton className="h-3 w-96 mx-auto" />

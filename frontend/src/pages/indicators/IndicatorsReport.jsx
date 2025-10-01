@@ -1,29 +1,31 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { 
   Calendar, Download, RefreshCw, BarChart3, Users, Activity, Heart, TestTube, Eye, 
-  TrendingUp, TrendingDown, AlertTriangle, CheckCircle, Globe, Building2, 
-  Search, FileText, PieChart, LineChart, MapPin, Clock, Target
+  TrendingUp, CheckCircle, AlertTriangle, Target, Clock, EyeOff, Lock
 } from 'lucide-react';
 import siteApi from '../../services/siteApi';
 import reportingApi from '../../services/reportingApi';
 import IndicatorsReportSkeleton from '../../components/common/IndicatorsReportSkeleton';
 import SiteFilter from '../../components/common/SiteFilter';
 import { IndicatorDetailsModal } from '../../components/modals';
+import { useAuth } from '../../contexts/AuthContext';
 
 const IndicatorsReport = () => {
+  const { user } = useAuth();
   const [indicators, setIndicators] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const isLoadingRef = useRef(false);
+  
+  // Check if user is a viewer (read-only access)
+  const isViewer = user?.role === 'viewer';
   const [dateRange, setDateRange] = useState({
     startDate: '2025-01-01',
     endDate: '2025-03-31',
@@ -547,12 +549,6 @@ const IndicatorsReport = () => {
     fetchIndicators(activeTab);
   };
 
-  const handleForceRefresh = () => {
-    // Force refresh with cache busting
-    console.log('🔄 Force refreshing with cache busting...');
-    handleRefresh();
-  };
-
   // Modal handlers
   const handleIndicatorClick = async (indicator, filters = {}) => {
     setSelectedIndicator(indicator);
@@ -764,94 +760,73 @@ const IndicatorsReport = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Minimal Header */}
-        <div className="bg-white border-b border-gray-200 px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-slate-600" />
-              </div>
-              <div>
-                <h1 className="text-lg font-semibold text-gray-900">
-                  {selectedSite ? selectedSite.name : 'National ART Indicators'}
-                </h1>
-                <p className="text-xs text-gray-500">
-                  {selectedSite ? `Site ${selectedSite.code}` : 'All Sites'} • {new Date().toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2 text-xs text-gray-500">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span>Live</span>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background">
+      <div className=" p-4 space-y-6">
+      
 
 
         {/* Executive Summary Dashboard */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-          <Card className="bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0 shadow-lg">
-            <CardContent className=" sm:p-6">
+          <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
+            <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-blue-100 text-xs sm:text-sm font-medium">Active ART Patients</p>
+                  <p className="text-primary-foreground/80 text-xs sm:text-sm font-medium">Active ART Patients</p>
                   <p className="text-xl sm:text-3xl font-bold">{summaryStats.activePatients.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
                     <Activity className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-blue-100">Currently on treatment</span>
+                    <span className="text-xs sm:text-sm text-primary-foreground/80">Currently on treatment</span>
                   </div>
                 </div>
-                <Users className="h-8 w-8 sm:h-12 sm:w-12 text-blue-200" />
+                <Users className="h-8 w-8 sm:h-12 sm:w-12 text-primary-foreground/60" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white border-0 shadow-lg">
+          <Card className="bg-success text-success-foreground border-0 shadow-lg">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-green-100 text-xs sm:text-sm font-medium">Newly Enrolled</p>
+                  <p className="text-success-foreground/80 text-xs sm:text-sm font-medium">Newly Enrolled</p>
                   <p className="text-xl sm:text-3xl font-bold">{summaryStats.newEnrolled.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
                     <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-green-100">This quarter</span>
+                    <span className="text-xs sm:text-sm text-success-foreground/80">This quarter</span>
                   </div>
                 </div>
-                <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-green-200" />
+                <Heart className="h-8 w-8 sm:h-12 sm:w-12 text-success-foreground/60" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-purple-500 to-purple-600 text-white border-0 shadow-lg">
+          <Card className="bg-secondary text-secondary-foreground border-0 shadow-lg">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-purple-100 text-xs sm:text-sm font-medium">Viral Suppressed</p>
+                  <p className="text-secondary-foreground/80 text-xs sm:text-sm font-medium">Viral Suppressed</p>
                   <p className="text-xl sm:text-3xl font-bold">{summaryStats.viralSuppressed.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
                     <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-purple-100">VL &lt; 1000 copies/ml</span>
+                    <span className="text-xs sm:text-sm text-secondary-foreground/80">VL &lt; 1000 copies/ml</span>
                   </div>
                 </div>
-                <TestTube className="h-8 w-8 sm:h-12 sm:w-12 text-purple-200" />
+                <TestTube className="h-8 w-8 sm:h-12 sm:w-12 text-secondary-foreground/60" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-orange-500 to-orange-600 text-white border-0 shadow-lg">
+          <Card className="bg-warning text-warning-foreground border-0 shadow-lg">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-orange-100 text-xs sm:text-sm font-medium">TPT Completed</p>
+                  <p className="text-warning-foreground/80 text-xs sm:text-sm font-medium">TPT Completed</p>
                   <p className="text-xl sm:text-3xl font-bold">{summaryStats.tptCompleted.toLocaleString()}</p>
                   <div className="flex items-center mt-2">
                     <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    <span className="text-xs sm:text-sm text-orange-100">TB prevention</span>
+                    <span className="text-xs sm:text-sm text-warning-foreground/80">TB prevention</span>
                   </div>
                 </div>
-                <Activity className="h-8 w-8 sm:h-12 sm:w-12 text-orange-200" />
+                <Activity className="h-8 w-8 sm:h-12 sm:w-12 text-warning-foreground/60" />
               </div>
             </CardContent>
           </Card>
@@ -859,19 +834,19 @@ const IndicatorsReport = () => {
 
 
         {/* Enterprise Reporting Configuration */}
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-gray-100">
+        <div className="bg-card border border-border rounded-lg shadow-sm">
+          <div className="px-6 py-4 border-b border-border">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center">
-                  <Target className="h-4 w-4 text-slate-600" />
+                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
+                  <Target className="h-4 w-4 text-muted-foreground" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900">Reporting Configuration</h3>
-                  <p className="text-xs text-gray-500">Configure reporting parameters</p>
+                  <h3 className="text-sm font-semibold text-foreground">Reporting Configuration</h3>
+                  <p className="text-xs text-muted-foreground">Configure reporting parameters</p>
                 </div>
               </div>
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3" />
                 <span>Q{selectedQuarter} {selectedYear}</span>
               </div>
@@ -882,10 +857,21 @@ const IndicatorsReport = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Period Selection - Minimalist */}
               <div className="space-y-3">
-                <Label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Reporting Period</Label>
+                <Label className="text-xs font-medium text-foreground uppercase tracking-wide">
+                  Reporting Period
+                  {isViewer && (
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      <EyeOff className="h-3 w-3 inline mr-1" />
+                      Configurable
+                    </span>
+                  )}
+                </Label>
                 <div className="flex gap-2">
-                  <Select value={selectedYear.toString()} onValueChange={handleYearChange}>
-                    <SelectTrigger className="h-9 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
+                  <Select 
+                    value={selectedYear.toString()} 
+                    onValueChange={handleYearChange}
+                  >
+                    <SelectTrigger className="h-9 text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -897,8 +883,11 @@ const IndicatorsReport = () => {
                     </SelectContent>
                   </Select>
                   
-                  <Select value={selectedQuarter.toString()} onValueChange={handleQuarterChange}>
-                    <SelectTrigger className="h-9 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
+                  <Select 
+                    value={selectedQuarter.toString()} 
+                    onValueChange={handleQuarterChange}
+                  >
+                    <SelectTrigger className="h-9 text-sm">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -914,14 +903,23 @@ const IndicatorsReport = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-muted-foreground">
                   {dateRange.startDate} - {dateRange.endDate}
+                  {isViewer && ' (View-only access)'}
                 </div>
               </div>
 
               {/* Site Selection - Minimalist */}
               <div className="space-y-3">
-                <Label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Site Scope</Label>
+                <Label className="text-xs font-medium text-foreground uppercase tracking-wide">
+                  Site Scope
+                  {isViewer && (
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      <EyeOff className="h-3 w-3 inline mr-1" />
+                      Configurable
+                    </span>
+                  )}
+                </Label>
                 <SiteFilter
                   sites={sites}
                   selectedSite={selectedSite}
@@ -932,22 +930,31 @@ const IndicatorsReport = () => {
                   className="w-full"
                 />
                 {selectedSite && (
-                  <div className="text-xs text-gray-500">
+                  <div className="text-xs text-muted-foreground">
                     {selectedSite.name} ({selectedSite.code})
+                    {isViewer && ' (View-only access)'}
                   </div>
                 )}
               </div>
 
               {/* Quick Actions - Minimalist */}
               <div className="space-y-3">
-                <Label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Actions</Label>
+                <Label className="text-xs font-medium text-foreground uppercase tracking-wide">
+                  Actions
+                  {isViewer && (
+                    <span className="ml-2 text-xs text-muted-foreground">
+                      <EyeOff className="h-3 w-3 inline mr-1" />
+                      View & Export
+                    </span>
+                  )}
+                </Label>
                 <div className="flex gap-2">
                   <Button 
                     onClick={handleRefresh} 
                     disabled={loading} 
                     variant="outline" 
                     size="sm" 
-                    className="h-9 text-xs border-gray-200 hover:bg-gray-50"
+                    className="h-9 text-xs border-border hover:bg-accent"
                   >
                     <RefreshCw className={`h-3 w-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
                     Refresh
@@ -956,14 +963,15 @@ const IndicatorsReport = () => {
                     onClick={exportToCSV} 
                     variant="outline" 
                     size="sm" 
-                    className="h-9 text-xs border-gray-200 hover:bg-gray-50"
+                    className="h-9 text-xs border-border hover:bg-accent"
                   >
                     <Download className="h-3 w-3 mr-1" />
                     Export
                   </Button>
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-muted-foreground">
                   {indicators.length} indicators loaded
+                  {isViewer && ' (View-only mode)'}
                 </div>
               </div>
             </div>
@@ -972,35 +980,35 @@ const IndicatorsReport = () => {
 
         {/* Error Message */}
         {error && (
-          <Card className="border-red-200 bg-red-50 shadow-lg">
+          <Card className="border-destructive bg-destructive/10 shadow-lg">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center gap-3">
-                <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
-                <p className="text-red-600 font-medium text-sm sm:text-base">{error}</p>
+                <AlertTriangle className="h-5 w-5 sm:h-6 sm:w-6 text-destructive" />
+                <p className="text-destructive font-medium text-sm sm:text-base">{error}</p>
               </div>
             </CardContent>
           </Card>
         )}
 
         {/* Main Indicators Table */}
-        <div className="bg-white border border-gray-200 rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-100">
+        <div className="bg-card border border-border rounded-lg">
+          <div className="px-6 py-4 border-b border-border">
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-gray-900">Performance Indicators</h2>
-              <span className="text-xs text-gray-500">{indicators.length} indicators</span>
+              <h2 className="text-sm font-semibold text-foreground">Performance Indicators</h2>
+              <span className="text-xs text-muted-foreground">{indicators.length} indicators</span>
             </div>
           </div>
           <div className="p-0">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <div className="px-3 sm:px-6 pt-4">
-                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-gray-100 h-auto">
+                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-muted h-auto">
                   {categories.map((category) => {
                     const filteredCount = getFilteredIndicators(category.id).length;
                     return (
                       <TabsTrigger 
                         key={category.id} 
                         value={category.id} 
-                        className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-white data-[state=active]:shadow-sm p-2 sm:p-3 text-xs sm:text-sm"
+                        className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm p-2 sm:p-3 text-xs sm:text-sm"
                       >
                         {category.icon}
                         <span className="truncate">{category.name}</span>
@@ -1016,7 +1024,7 @@ const IndicatorsReport = () => {
               {/* All Indicators Tab */}
               <TabsContent value="all" className="p-3 sm:p-6 space-y-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-gray-900">All Indicators</h3>
+                  <h3 className="text-lg font-semibold text-foreground">All Indicators</h3>
                   <Badge variant="outline" className="text-sm">
                     {getFilteredIndicators('all').length} indicators
                   </Badge>
@@ -1025,6 +1033,10 @@ const IndicatorsReport = () => {
                   indicators={getFilteredIndicators('all')} 
                   loading={loading} 
                   onIndicatorClick={handleIndicatorClick}
+                  selectedSite={selectedSite}
+                  selectedYear={selectedYear}
+                  selectedQuarter={selectedQuarter}
+                  isViewer={isViewer}
                 />
               </TabsContent>
 
@@ -1036,7 +1048,7 @@ const IndicatorsReport = () => {
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
                         {category.icon}
-                        <h3 className="text-lg font-semibold text-gray-900">{category.name} Indicators</h3>
+                        <h3 className="text-lg font-semibold text-foreground">{category.name} Indicators</h3>
                       </div>
                       <Badge variant="outline" className="text-sm">
                         {filteredIndicators.length} indicators
@@ -1046,6 +1058,10 @@ const IndicatorsReport = () => {
                       indicators={filteredIndicators} 
                       loading={loading} 
                       onIndicatorClick={handleIndicatorClick}
+                      selectedSite={selectedSite}
+                      selectedYear={selectedYear}
+                      selectedQuarter={selectedQuarter}
+                      isViewer={isViewer}
                     />
                   </TabsContent>
                 );
@@ -1077,44 +1093,251 @@ const IndicatorsReport = () => {
   );
 };
 
+// Helper function to get province name from site code
+const getProvinceName = (siteCode) => {
+  if (!siteCode) return 'Unknown';
+  
+  const provinceCode = siteCode.substring(0, 2);
+  const provinceMap = {
+    '02': 'Battambang',
+    '03': 'Kampong Cham', 
+    '12': 'Kampong Thom',
+    '18': 'Preah Sihanouk',
+    '01': 'Phnom Penh',
+    '04': 'Kampong Chhnang',
+    '05': 'Kampong Speu',
+    '06': 'Kampong Thom',
+    '07': 'Kampot',
+    '08': 'Kandal',
+    '09': 'Koh Kong',
+    '10': 'Kratie',
+    '11': 'Mondulkiri',
+    '13': 'Preah Vihear',
+    '14': 'Pursat',
+    '15': 'Ratanakiri',
+    '16': 'Siem Reap',
+    '17': 'Stung Treng',
+    '19': 'Svay Rieng',
+    '20': 'Takeo',
+    '21': 'Oddar Meanchey',
+    '22': 'Kep',
+    '23': 'Pailin',
+    '24': 'Tbong Khmum'
+  };
+  
+  return `${provinceCode}. ${provinceMap[provinceCode] || 'Unknown Province'}`;
+};
+
+// Helper function to get operational district from site
+const getOperationalDistrict = (site) => {
+  if (!site || !site.code) return 'Unknown';
+  
+  const districtCode = site.code.substring(0, 4);
+  const siteName = site.name || '';
+  
+  // Extract district name from site name (usually the second part after province)
+  const nameParts = siteName.split(' ');
+  const districtName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : siteName;
+  
+  return `OD ${districtCode}. ${districtName}`;
+};
+
 // Indicators Table Component
-const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
+const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, selectedYear, selectedQuarter, isViewer }) => {
   if (loading) {
     return (
-      <div className="space-y-4">
-        {[...Array(5)].map((_, i) => (
-          <Card key={i} className="animate-in fade-in-0 slide-in-from-bottom-4" style={{ animationDelay: `${i * 100}ms` }}>
-            <CardContent className="p-4 sm:p-6">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-                <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mt-4">
-                  {[...Array(5)].map((_, j) => (
-                    <div key={j} className="text-right">
-                      <div className="h-6 bg-gray-200 rounded mb-1"></div>
-                      <div className="h-3 bg-gray-200 rounded w-3/4 mx-auto"></div>
-                    </div>
-                  ))}
+      <div className="space-y-4 sm:space-y-6">
+        {/* Report Header Skeleton - Bilingual Format */}
+        <div className="bg-card border border-border rounded-lg shadow-sm p-6 mb-6">
+          <div className="animate-pulse">
+            {/* Main Title Skeleton */}
+            <div className="text-center mb-6">
+              <div className="h-8 bg-muted rounded w-3/4 mx-auto mb-2"></div>
+              <div className="h-4 bg-muted rounded w-1/2 mx-auto"></div>
+            </div>
+
+            {/* Report Parameters Table Skeleton */}
+            <div className="border border-border rounded-lg overflow-hidden">
+              <table className="w-full">
+                <tbody>
+                  {/* Row 1: Facility Name, Facility Code */}
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-3 w-1/4 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-3/4"></div>
+                    </td>
+                    <td className="px-4 py-3 w-1/4 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-2/3"></div>
+                    </td>
+                    <td className="px-4 py-3 w-1/4 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-3/4"></div>
+                    </td>
+                    <td className="px-4 py-3 w-1/4">
+                      <div className="h-4 bg-muted rounded w-1/3"></div>
+                    </td>
+                  </tr>
+                  {/* Row 2: Operational District, Province */}
+                  <tr className="border-b border-border">
+                    <td className="px-4 py-3 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-3/4"></div>
+                    </td>
+                    <td className="px-4 py-3 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-2/3"></div>
+                    </td>
+                    <td className="px-4 py-3 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-1/2"></div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="h-4 bg-muted rounded w-2/3"></div>
+                    </td>
+                  </tr>
+                  {/* Row 3: Year, Quarter */}
+                  <tr>
+                    <td className="px-4 py-3 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-1/3"></div>
+                    </td>
+                    <td className="px-4 py-3 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-1/4"></div>
+                    </td>
+                    <td className="px-4 py-3 border-r border-border">
+                      <div className="h-4 bg-muted rounded w-1/3"></div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="h-4 bg-muted rounded w-1/4"></div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Status Indicators Skeleton */}
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+              <div className="flex items-center gap-4">
+                <div className="h-6 bg-muted rounded w-20"></div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-muted rounded-full"></div>
+                  <div className="h-4 bg-muted rounded w-16"></div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+              <div className="h-4 bg-muted rounded w-32"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Table Skeleton */}
+        <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              {/* Table Header Skeleton */}
+              <thead className="bg-muted border-b-2 border-border">
+                <tr>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-12 border-r border-border">
+                    <div className="h-4 bg-muted rounded w-4 mx-auto"></div>
+                  </th>
+                  <th className="px-4 py-4 text-right text-sm font-bold text-foreground border-r border-border">
+                    <div className="h-4 bg-muted rounded w-32"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
+                    <div className="h-4 bg-muted rounded w-12 mx-auto"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24 border-r border-border">
+                    <div className="h-4 bg-muted rounded w-16"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
+                    <div className="h-4 bg-muted rounded w-16"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24">
+                    <div className="h-4 bg-muted rounded w-16"></div>
+                  </th>
+                </tr>
+              </thead>
+
+              {/* Table Body Skeleton */}
+              <tbody className="bg-card divide-y divide-border">
+                {[...Array(3)].map((_, i) => (
+                  <React.Fragment key={i}>
+                    {/* Indicator Header Row Skeleton */}
+                    <tr className="border-b border-border">
+                      <td className="px-3 py-4 text-right text-sm font-medium text-muted-foreground border-r border-border" rowSpan="3">
+                        <div className="h-4 bg-muted rounded w-4 mx-auto"></div>
+                      </td>
+                      <td className="px-4 py-4 text-sm text-foreground align-middle text-left border-r border-border" rowSpan="3">
+                        <div className="h-4 bg-muted rounded w-48 mb-2"></div>
+                        <div className="h-3 bg-muted rounded w-32"></div>
+                      </td>
+                      <td className="px-3 py-4 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border">
+                        <div className="h-4 bg-muted rounded w-8 mx-auto"></div>
+                      </td>
+                      <td className="px-3 py-4 text-right border-r border-border">
+                        <div className="h-6 bg-muted rounded w-12 ml-auto"></div>
+                      </td>
+                      <td className="px-3 py-4 text-right border-r border-border">
+                        <div className="h-6 bg-muted rounded w-12 ml-auto"></div>
+                      </td>
+                      <td className="px-3 py-4 text-right">
+                        <div className="h-6 bg-muted rounded w-12 ml-auto"></div>
+                      </td>
+                    </tr>
+
+                    {/* 15+ Age Group Row Skeleton */}
+                    <tr className="bg-muted border-b border-border">
+                      <td className="px-3 py-3 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border">
+                        <div className="h-4 bg-muted rounded w-8 mx-auto"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right">
+                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                      </td>
+                    </tr>
+
+                    {/* Sub-Total Row Skeleton */}
+                    <tr className="bg-muted border-b-2 border-border font-bold">
+                      <td className="px-3 py-3 text-center text-sm font-bold text-muted-foreground bg-muted/50 border-r border-border">
+                        <div className="h-4 bg-muted rounded w-12 mx-auto"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right">
+                        <div className="h-7 bg-muted rounded w-20 ml-auto"></div>
+                      </td>
+                    </tr>
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Report Footer Skeleton */}
+        <div className="bg-muted border border-border rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
+          <div className="animate-pulse">
+            <div className="h-4 bg-muted rounded w-3/4 ml-auto"></div>
+            <div className="h-3 bg-muted rounded w-1/2 ml-auto mt-2"></div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (indicators.length === 0) {
     return (
-      <Card className="border-dashed border-2 border-gray-200">
+      <Card className="border-dashed border-2 border-border">
         <CardContent className="p-8 sm:p-12 text-right">
           <div className="flex flex-col items-center gap-4">
-            <div className="p-3 sm:p-4 bg-gray-100 rounded-full">
-              <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
+            <div className="p-3 sm:p-4 bg-muted rounded-full">
+              <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">No Data Available</h3>
-              <p className="text-sm sm:text-base text-gray-500">No indicators found for the selected period and filters.</p>
+              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">No Data Available</h3>
+              <p className="text-sm sm:text-base text-muted-foreground">No indicators found for the selected period and filters.</p>
             </div>
           </div>
         </CardContent>
@@ -1122,234 +1345,137 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
     );
   }
 
-  // Table View - Card-based layout matching the image
-  // eslint-disable-next-line no-constant-condition
-  if (false) {
-    return (
-      <div className="space-y-6">
-        {indicators.map((indicator, index) => (
-          <div key={index} className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
-            {/* Indicator Header */}
-            <div className="bg-gray-50 border-b border-gray-200 px-6 py-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900">
-                    {indicator.Indicator}
-                  </h3>
-                  {indicator.error && (
-                    <Badge variant="destructive" className="mt-2 text-xs">
-                      Error: {indicator.error}
-                    </Badge>
-                  )}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onIndicatorClick && onIndicatorClick(indicator);
-                  }}
-                  className="text-blue-600 border-blue-200 hover:bg-blue-50"
-                >
-                  <Eye className="h-4 w-4 mr-2" />
-                  View Details
-                </Button>
-              </div>
-            </div>
-
-            {/* Data Cards Layout */}
-            <div className="p-6">
-              <div className="flex flex-col lg:flex-row gap-6">
-                {/* Total Card - Left Side */}
-                <div className="lg:w-1/3">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 text-right">
-                    <div className="text-4xl font-bold text-blue-700 mb-2">
-                      {(indicator.TOTAL || 0).toLocaleString()}
-                    </div>
-                    <div className="text-sm font-medium text-blue-600 uppercase tracking-wide">
-                      TOTAL
-                    </div>
-                  </div>
-                </div>
-
-                {/* Breakdown Cards - Right Side */}
-                <div className="lg:w-2/3">
-                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                    {/* Male 0-14 */}
-                    <div className="bg-blue-25 border border-blue-100 rounded-lg p-4 text-right">
-                      <div className="text-2xl font-bold text-blue-600 mb-1">
-                        {(indicator.Male_0_14 || 0).toLocaleString()}
-                      </div>
-                      <div className="text-xs font-medium text-gray-700">Male</div>
-                      <div className="text-xs text-gray-500">0-14 years</div>
-                    </div>
-
-                    {/* Female 0-14 */}
-                    <div className="bg-pink-25 border border-pink-100 rounded-lg p-4 text-right">
-                      <div className="text-2xl font-bold text-pink-600 mb-1">
-                        {(indicator.Female_0_14 || 0).toLocaleString()}
-                      </div>
-                      <div className="text-xs font-medium text-gray-700">Female</div>
-                      <div className="text-xs text-gray-500">0-14 years</div>
-                    </div>
-
-                    {/* Male 15+ */}
-                    <div className="bg-blue-25 border border-blue-100 rounded-lg p-4 text-right">
-                      <div className="text-2xl font-bold text-blue-700 mb-1">
-                        {(indicator.Male_over_14 || 0).toLocaleString()}
-                      </div>
-                      <div className="text-xs font-medium text-gray-700">Male</div>
-                      <div className="text-xs text-gray-500">15+ years</div>
-                    </div>
-
-                    {/* Female 15+ */}
-                    <div className="bg-pink-25 border border-pink-100 rounded-lg p-4 text-right">
-                      <div className="text-2xl font-bold text-pink-700 mb-1">
-                        {(indicator.Female_over_14 || 0).toLocaleString()}
-                      </div>
-                      <div className="text-xs font-medium text-gray-700">Female</div>
-                      <div className="text-xs text-gray-500">15+ years</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Percentage Summary */}
-              <div className="mt-6 pt-4 border-t border-gray-100">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                  <div className="text-right">
-                    <span className="text-gray-500">Male 0-14:</span>
-                    <span className="ml-1 font-semibold text-blue-600">
-                      {indicator.TOTAL ? Math.round(((indicator.Male_0_14 || 0) / indicator.TOTAL) * 100) : 0}%
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-gray-500">Female 0-14:</span>
-                    <span className="ml-1 font-semibold text-pink-600">
-                      {indicator.TOTAL ? Math.round(((indicator.Female_0_14 || 0) / indicator.TOTAL) * 100) : 0}%
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-gray-500">Male 15+:</span>
-                    <span className="ml-1 font-semibold text-blue-700">
-                      {indicator.TOTAL ? Math.round(((indicator.Male_over_14 || 0) / indicator.TOTAL) * 100) : 0}%
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-gray-500">Female 15+:</span>
-                    <span className="ml-1 font-semibold text-pink-700">
-                      {indicator.TOTAL ? Math.round(((indicator.Female_over_14 || 0) / indicator.TOTAL) * 100) : 0}%
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  // Charts View (placeholder for future implementation)
-  // eslint-disable-next-line no-constant-condition
-  if (false) {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-              <PieChart className="h-4 w-4 sm:h-5 sm:w-5" />
-              Gender Distribution
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6">
-            <div className="text-right text-gray-500 py-6 sm:py-8">
-              <PieChart className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-sm sm:text-base">Chart visualization coming soon</p>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-sm sm:text-base">
-              <LineChart className="h-4 w-4 sm:h-5 sm:w-5" />
-              Trend Analysis
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 sm:p-6">
-            <div className="text-right text-gray-500 py-6 sm:py-8">
-              <LineChart className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-sm sm:text-base">Trend analysis coming soon</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
   // Default Table View - Matching the image format exactly
   return (
     <div className="space-y-4 sm:space-y-6">
       {/* Report Header */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">សុចនាករ Indicator</h2>
-            <p className="text-sm sm:text-base text-gray-600">Comprehensive overview of key HIV treatment and prevention indicators</p>
+       {/* Report Header - Bilingual Format */}
+       <div className="bg-card border border-border rounded-lg shadow-sm p-6 mb-6">
+          {/* Main Title */}
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold text-foreground mb-2">
+              របាយការណ៍ស្តីពីការព្យាបាលអ្នកជំងឺអេដស៍ Quarterly Report on ART
+            </h1>
+            <p className="text-sm text-muted-foreground">
+              (orgUnit : {selectedSite ? `${selectedSite.code}. ${selectedSite.name}` : 'All Sites'})
+            </p>
           </div>
-          <div className="text-left sm:text-right">
-            <p className="text-xs sm:text-sm text-gray-500">Generated on</p>
-            <p className="text-base sm:text-lg font-semibold text-gray-900">{new Date().toLocaleDateString()}</p>
+
+          {/* Report Parameters Table */}
+          <div className="border border-border rounded-lg overflow-hidden">
+            <table className="w-full">
+              <tbody>
+                <tr className="border-b border-border">
+                  <td className="px-4 py-3 font-semibold text-foreground border-r border-border w-1/4">
+                    ឈ្មោះមន្ទីរពេទ្យបង្អែក (Facility):
+                  </td>
+                  <td className="px-4 py-3 text-foreground border-r border-border w-1/4">
+                    {selectedSite ? `${selectedSite.code}. ${selectedSite.name}` : 'All Sites'}
+                  </td>
+                  <td className="px-4 py-3 font-semibold text-foreground border-r border-border w-1/4">
+                    លេខកូដ (Facility code):
+                  </td>
+                  <td className="px-4 py-3 text-foreground w-1/4">
+                    {selectedSite ? selectedSite.code : 'All'}
+                  </td>
+                </tr>
+                <tr className="border-b border-border">
+                  <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
+                    ឈ្មោះស្រុកប្រតិបត្តិ (Operational District):
+                  </td>
+                  <td className="px-4 py-3 text-foreground border-r border-border">
+                    {selectedSite ? getOperationalDistrict(selectedSite) : 'All Districts'}
+                  </td>
+                  <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
+                    ខេត្ត-ក្រុង (Province):
+                  </td>
+                  <td className="px-4 py-3 text-foreground">
+                    {selectedSite ? getProvinceName(selectedSite.code) : 'All Provinces'}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
+                    ឆ្នាំ (Year):
+                  </td>
+                  <td className="px-4 py-3 text-foreground border-r border-border">
+                    {selectedYear}
+                  </td>
+                  <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
+                    ត្រីមាសទី (Quarter):
+                  </td>
+                  <td className="px-4 py-3 text-foreground">
+                    Q{selectedQuarter}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Status Indicators */}
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+            <div className="flex items-center gap-4">
+              {isViewer && (
+                <Badge variant="secondary" className="text-xs">
+                  <EyeOff className="h-3 w-3 mr-1" />
+                  View Only
+                </Badge>
+              )}
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                <span>Live Data</span>
+              </div>
+            </div>
+            <div className="text-xs text-muted-foreground">
+              Generated: {new Date().toLocaleDateString('en-GB')} at {new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+            </div>
           </div>
         </div>
-      </div>
 
       {/* Indicators Table - Matching the image layout */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Table Header */}
-            <thead className="bg-gray-50 border-b-2 border-gray-300">
+            <thead className="bg-muted border-b-2 border-border">
               <tr>
-                <th className="px-3 py-4 text-right text-sm font-bold text-gray-700 w-12">
+                <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-12 border-r border-border">
                   #
                 </th>
-                <th className="px-4 py-4 text-right text-sm font-bold text-gray-700">
+                <th className="px-4 py-4 text-right text-sm font-bold text-foreground border-r border-border">
                   សុចនាករ Indicator
                 </th>
-                <th className="px-3 py-4 text-right text-sm font-bold text-gray-700 w-20">
+                <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
                   អាយុ Age
                 </th>
-                <th className="px-3 py-4 text-right text-sm font-bold text-gray-700 w-24">
+                <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24 border-r border-border">
                   ប្រុស Male
                 </th>
-                <th className="px-3 py-4 text-right text-sm font-bold text-gray-700 w-24">
+                <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
                   ស្រី Female
                 </th>
-                <th className="px-3 py-4 text-right text-sm font-bold text-gray-700 w-24">
+                <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24">
                   សរុប Total
                 </th>
               </tr>
             </thead>
 
             {/* Table Body */}
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-card divide-y divide-border">
               {indicators.map((indicator, index) => (
                 <React.Fragment key={index}>
                   {/* Indicator Header Row with Name */}
                   <tr 
-                    className="border-b border-gray-100"
+                    className="border-b border-border"
                   >
                     {/* Row Number */}
-                    <td className="px-3 py-4 text-right text-sm font-medium text-gray-900" rowSpan="3">
+                    <td className="px-3 py-4 text-right text-sm font-medium text-muted-foreground border-r border-border" rowSpan="3">
                       {index + 1}
                     </td>
 
                     {/* Indicator Name - spans 3 rows */}
-                    <td className="px-4 py-4 text-sm text-gray-900 align-middle text-left" rowSpan="3">
+                    <td className="px-4 py-4 text-sm text-foreground align-middle text-left border-r border-border" rowSpan="3">
                       <div 
-                        className="font-medium leading-tight text-left cursor-pointer hover:underline transition-colors"
+                        className="font-medium leading-tight text-left cursor-pointer hover:text-primary hover:underline transition-colors"
                         onClick={() => onIndicatorClick && onIndicatorClick(indicator)}
                         title="Click to view all patients for this indicator"
                       >
@@ -1364,14 +1490,14 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
                     </td>
 
                     {/* Age 0-14 */}
-                    <td className="px-3 py-4 text-center text-sm font-medium text-gray-700">
+                    <td className="px-3 py-4 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border hover:bg-muted/70 hover:font-bold transition-all duration-200">
                       0-14
                     </td>
 
                     {/* Male 0-14 */}
-                    <td className="px-3 py-4 text-right">
+                    <td className="px-3 py-4 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-blue-600 cursor-pointer underline hover:font-bold rounded px-2 py-1 transition-colors"
+                        className="text-lg font-normal text-blue-600 cursor-pointer underline hover:text-blue-800 transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
                           onIndicatorClick && onIndicatorClick(indicator, { gender: 'male', ageGroup: '0-14' });
@@ -1383,9 +1509,9 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
                     </td>
 
                     {/* Female 0-14 */}
-                    <td className="px-3 py-4 text-right">
+                    <td className="px-3 py-4 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-pink-600 cursor-pointer underline hover:font-bold rounded px-2 py-1 transition-colors"
+                        className="text-lg font-normal text-pink-600 cursor-pointer underline hover:text-pink-800 transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
                           onIndicatorClick && onIndicatorClick(indicator, { gender: 'female', ageGroup: '0-14' });
@@ -1398,7 +1524,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
 
                     {/* Total 0-14 */}
                     <td className="px-3 py-4 text-right">
-                      <div className="text-lg text-gray-900">
+                      <div className="text-lg text-foreground">
                         {(Number(indicator.Male_0_14 || 0) + Number(indicator.Female_0_14 || 0)).toLocaleString()}
                       </div>
                     </td>
@@ -1406,13 +1532,13 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
                   </tr>
 
                   {/* 15+ Age Group Row */}
-                  <tr className="bg-gray-50 border-b border-gray-200">
-                    <td className="px-3 py-3 text-center text-sm font-medium text-gray-700">
+                  <tr className="bg-muted border-b border-border">
+                    <td className="px-3 py-3 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border hover:bg-muted/70 hover:font-bold transition-all duration-200">
                       {'>'}14
                     </td>
-                    <td className="px-3 py-3 text-right">
+                    <td className="px-3 py-3 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-blue-700 cursor-pointer underline hover:font-bold rounded px-2 py-1 transition-colors"
+                        className="text-lg font-normal text-blue-600 cursor-pointer underline hover:text-blue-800 transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
                           onIndicatorClick && onIndicatorClick(indicator, { gender: 'male', ageGroup: '>14' });
@@ -1422,9 +1548,9 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
                         {(indicator.Male_over_14 || 0).toLocaleString()}
                       </div>
                     </td>
-                    <td className="px-3 py-3 text-right">
+                    <td className="px-3 py-3 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-pink-700 cursor-pointer underline hover:font-bold rounded px-2 py-1 transition-colors"
+                        className="text-lg font-normal text-pink-600 cursor-pointer underline hover:text-pink-800 transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
                           onIndicatorClick && onIndicatorClick(indicator, { gender: 'female', ageGroup: '>14' });
@@ -1435,29 +1561,29 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
                       </div>
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <div className="text-lg text-gray-900">
+                      <div className="text-lg text-foreground">
                         {(Number(indicator.Male_over_14 || 0) + Number(indicator.Female_over_14 || 0)).toLocaleString()}
                       </div>
                     </td>
                   </tr>
 
                   {/* Sub-Total Row for this indicator */}
-                  <tr className="bg-blue-50 border-b-2 border-blue-200 font-bold">
-                    <td className="px-3 py-3 text-center text-sm font-bold text-gray-700">
+                  <tr className="bg-muted border-b-2 border-border font-bold">
+                    <td className="px-3 py-3 text-center text-sm font-bold text-muted-foreground bg-muted/50 border-r border-border hover:bg-muted/70 hover:font-bold transition-all duration-200">
                       សរុប
                     </td>
-                    <td className="px-3 py-3 text-right">
-                      <div className="text-lg font-bold text-blue-800">
+                    <td className="px-3 py-3 text-right border-r border-border">
+                      <div className="text-lg font-bold text-blue-700">
                         {(Number(indicator.Male_0_14 || 0) + Number(indicator.Male_over_14 || 0)).toLocaleString()}
                       </div>
                     </td>
-                    <td className="px-3 py-3 text-right">
-                      <div className="text-lg font-bold text-pink-800">
+                    <td className="px-3 py-3 text-right border-r border-border">
+                      <div className="text-lg font-bold text-pink-700">
                         {(Number(indicator.Female_0_14 || 0) + Number(indicator.Female_over_14 || 0)).toLocaleString()}
                       </div>
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <div className="text-xl font-bold text-gray-900">
+                      <div className="text-xl font-bold text-foreground">
                         {(indicator.TOTAL || 0).toLocaleString()}
                       </div>
                     </td>
@@ -1472,13 +1598,13 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick }) => {
       </div>
 
       {/* Report Footer */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
-        <div className="text-right text-gray-600">
+      <div className="bg-muted border border-border rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
+        <div className="text-right text-muted-foreground">
           <p className="text-xs sm:text-sm">
             This report contains {indicators.length} indicator{indicators.length !== 1 ? 's' : ''} 
             {' '}with a total of {indicators.reduce((sum, ind) => sum + (ind.TOTAL || 0), 0).toLocaleString()} records.
           </p>
-          <p className="text-xs mt-2 text-gray-500">
+          <p className="text-xs mt-2 text-muted-foreground">
             Data accuracy and completeness may vary by indicator. Please verify critical decisions with source data.
           </p>
         </div>

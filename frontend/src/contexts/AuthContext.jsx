@@ -69,7 +69,6 @@ export const AuthProvider = ({ children }) => {
         localStorage.setItem('token', data.token)
         setUser(data.user)
         setLoading(false)
-        console.log('User state updated, loading set to false')
         return { success: true }
       } else {
         return {
@@ -124,7 +123,9 @@ export const AuthProvider = ({ children }) => {
           const userData = {
             id: payload.userId,
             username: payload.username,
-            role: payload.role
+            fullName: payload.fullName,
+            role: payload.role,
+            assignedSites: payload.assignedSites
           }
           
           console.log('Setting user from token:', userData)
@@ -192,6 +193,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     checkAuthStatus()
   }, [])
+
 
   const value = {
     user,

@@ -5,6 +5,7 @@ import './index.css'
 import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext'
 import { SiteProvider } from './contexts/SiteContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 // Load Kantomruy Pro font
 const link = document.createElement('link')
@@ -18,9 +19,11 @@ document.body.style.fontFamily = 'Kantumruy Pro, sans-serif'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,
 )

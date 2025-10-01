@@ -7,16 +7,16 @@ function PatientInformation({ formData, handleInputChange }) {
   return (
     <div className="space-y-6">
       {/* Section Header */}
-      <div className="bg-gradient-to-r from-slate-50 to-gray-50 border border-slate-200 rounded-xl p-6">
+      <div className="bg-gradient-to-r from-muted to-muted border border-border rounded-xl p-6">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center">
-            <User className="w-6 h-6 text-slate-600" />
+          <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center">
+            <User className="w-6 h-6 text-muted-foreground" />
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">
+            <h3 className="text-xl font-bold text-foreground">
               ព័ត៌មានអ្នកជំងឺ (Patient Information)
             </h3>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="text-sm text-muted-foreground mt-1">
               ព័ត៌មានមូលដ្ឋាន និងព័ត៌មានការពិនិត្យ
             </p>
           </div>
@@ -27,10 +27,10 @@ function PatientInformation({ formData, handleInputChange }) {
       <div className="space-y-6">
         {/* Patient Name */}
         <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-          <CardHeader className="bg-gradient-to-r from-blue-50 to-cyan-50 border-b border-blue-200">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-                <User className="w-4 h-4 text-blue-600" />
+          <CardHeader className="medical-card-header">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg status-active flex items-center justify-center">
+                <User className="w-4 h-4 text-foreground" />
               </div>
               ឈ្មោះអ្នកជំងឺ (Patient Name)
             </CardTitle>
@@ -54,10 +54,10 @@ function PatientInformation({ formData, handleInputChange }) {
 
         {/* Basic Information */}
         <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-          <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
-                <FileText className="w-4 h-4 text-green-600" />
+          <CardHeader className="medical-card-header">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg viral-load-low flex items-center justify-center">
+                <FileText className="w-4 h-4 text-foreground" />
               </div>
               ព័ត៌មានមូលដ្ឋាន (Basic Information)
             </CardTitle>
@@ -109,10 +109,10 @@ function PatientInformation({ formData, handleInputChange }) {
 
         {/* Visit Status */}
         <Card className="border border-gray-200 hover:shadow-md transition-shadow">
-          <CardHeader className="bg-gradient-to-r from-purple-50 to-pink-50 border-b border-purple-200">
-            <CardTitle className="text-lg font-semibold text-gray-800 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
-                <Clock className="w-4 h-4 text-purple-600" />
+          <CardHeader className="medical-card-header">
+            <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg viral-load-undetectable flex items-center justify-center">
+                <Clock className="w-4 h-4 text-foreground" />
               </div>
               ប្រភេទមកពិនិត្យ (Visit Status)
             </CardTitle>

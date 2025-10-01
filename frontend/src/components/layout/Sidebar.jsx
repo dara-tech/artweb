@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -12,24 +12,32 @@ import {
   ChevronLeft, 
   ChevronRight,
   X,
-  Bell,
   ChevronDown,
   ChevronUp,
-  Database,
-  Download,
+  Upload,
   BarChart3,
   FileBarChart,
-  BarChart4,
-  FileText,
-  Activity
+  Shield
 } from "lucide-react"
 import { useAuth } from '../../contexts/AuthContext'
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen }) => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { user, logout } = useAuth()
+  const { user, logout, loading } = useAuth()
   const [expandedMenus, setExpandedMenus] = useState({})
+
+  // Don't render sidebar until user data is loaded
+  if (loading || !user) {
+    return null
+  }
+
+  // Memoized user role check for performance
+  const isViewer = useMemo(() => user?.role === 'viewer', [user?.role])
+  const isAdmin = useMemo(() => 
+    user?.role === 'super_admin' || user?.role === 'admin', 
+    [user?.role]
+  )
 
   const handleLogout = () => {
     logout()
@@ -42,99 +50,116 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     }))
   }
 
-  const navigationItems = [
-    {
-      name: 'Dashboard',
-      href: '/dashboard',
-      icon: LayoutDashboard,
-      current: location.pathname === '/dashboard'
-    },
-    {
-      name: 'All Patients',
-      href: '/patients',
-      icon: Users,
-      current: location.pathname === '/patients',
+  // Memoized navigation items for better performance
+  const navigationItems = useMemo(() => {
+    const items = []
 
-    },
-    {
-      name: 'Adult',
-      icon: User,
-      current: location.pathname.startsWith('/patients/adult') || location.pathname.startsWith('/visits/adult'),
- 
-      hasSubmenu: true,
-      submenu: [
-        {
-          name: 'Initial Form',
-          href: '/patients/adult',
-          current: location.pathname.startsWith('/patients/adult') && !location.pathname.startsWith('/visits/adult'),
-      
-        },
-        {
-          name: 'Visits',
-          href: '/visits/adult',
-          current: location.pathname.startsWith('/visits/adult'),
-   
-        }
-      ]
-    },
-    {
-      name: 'Child',
-      icon: Heart,
-      current: location.pathname.startsWith('/patients/child') || location.pathname.startsWith('/visits/child'),
-      hasSubmenu: true,
-      submenu: [
-        {
-          name: 'Initial Form',
-          href: '/patients/child',
-          current: location.pathname.startsWith('/patients/child') && !location.pathname.startsWith('/visits/child'),
-         
-        },
-        {
-          name: 'Visits',
-          href: '/visits/child',
-          current: location.pathname.startsWith('/visits/child'),
-    
-        }
-      ]
-    },
-    {
-      name: 'Infant',
-      icon: Baby,
-      current: location.pathname.startsWith('/patients/infant') || location.pathname.startsWith('/visits/infant'),
-      hasSubmenu: true,
-      submenu: [
-        {
-          name: 'Initial Form',
-          href: '/patients/infant',
-          current: location.pathname.startsWith('/patients/infant') && !location.pathname.startsWith('/visits/infant'),
- 
+    // Dashboard - hide for viewers
+    if (!isViewer) {
+      items.push({
+        name: 'Dashboard',
+        href: '/dashboard',
+        icon: LayoutDashboard,
+        current: location.pathname === '/dashboard',
+        category: 'main'
+      })
+    }
 
+    // Data entry sections - hide for viewers
+    if (!isViewer) {
+      items.push(
+        {
+          name: 'All Patients',
+          href: '/patients',
+          icon: Users,
+          current: location.pathname === '/patients',
+          category: 'patients'
         },
         {
-          name: 'Visits',
-          href: '/visits/infant',
-          current: location.pathname.startsWith('/visits/infant'),
-      
+          name: 'Adult',
+          icon: User,
+          current: location.pathname.startsWith('/patients/adult') || location.pathname.startsWith('/visits/adult'),
+          hasSubmenu: true,
+          category: 'patients',
+          submenu: [
+            {
+              name: 'Initial Form',
+              href: '/patients/adult',
+              current: location.pathname.startsWith('/patients/adult') && !location.pathname.startsWith('/visits/adult'),
+            },
+            {
+              name: 'Visits',
+              href: '/visits/adult',
+              current: location.pathname.startsWith('/visits/adult'),
+            }
+          ]
+        },
+        {
+          name: 'Child',
+          icon: Heart,
+          current: location.pathname.startsWith('/patients/child') || location.pathname.startsWith('/visits/child'),
+          hasSubmenu: true,
+          category: 'patients',
+          submenu: [
+            {
+              name: 'Initial Form',
+              href: '/patients/child',
+              current: location.pathname.startsWith('/patients/child') && !location.pathname.startsWith('/visits/child'),
+            },
+            {
+              name: 'Visits',
+              href: '/visits/child',
+              current: location.pathname.startsWith('/visits/child'),
+            }
+          ]
+        },
+        {
+          name: 'Infant',
+          icon: Baby,
+          current: location.pathname.startsWith('/patients/infant') || location.pathname.startsWith('/visits/infant'),
+          hasSubmenu: true,
+          category: 'patients',
+          submenu: [
+            {
+              name: 'Initial Form',
+              href: '/patients/infant',
+              current: location.pathname.startsWith('/patients/infant') && !location.pathname.startsWith('/visits/infant'),
+            },
+            {
+              name: 'Visits',
+              href: '/visits/infant',
+              current: location.pathname.startsWith('/visits/infant'),
+            }
+          ]
+        },
+        {
+          name: 'Import Data',
+          href: '/data-management',
+          icon: Upload,
+          current: location.pathname.startsWith('/data-management'),
+          category: 'data'
         }
-      ]
-    },
-    {
-      name: 'Backup & Restore',
-      href: '/backup',
-      icon: Database,
-      current: location.pathname.startsWith('/backup')
-    },
-    {
-      name: 'Data Management',
-      href: '/data-management',
-      icon: Download,
-      current: location.pathname.startsWith('/data-management')
-    },
-    {
+      )
+    }
+
+    // Role Management - Only show for admin and super_admin
+    if (isAdmin) {
+      items.push({
+        name: 'Role Management',
+        href: '/role-management',
+        icon: Shield,
+        current: location.pathname.startsWith('/role-management'),
+        category: 'admin'
+      })
+    }
+
+    // Analytics & Reports - always show
+    items.push({
       name: 'Analytics & Reports',
       icon: BarChart3,
-      current: location.pathname.startsWith('/analytics') || location.pathname.startsWith('/indicators') || location.pathname.startsWith('/audit'),
+      current: location.pathname.startsWith('/analytics') || location.pathname.startsWith('/indicators'),
       hasSubmenu: true,
+      category: 'reports',
       submenu: [
         {
           name: 'Indicators Report',
@@ -142,25 +167,48 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
           icon: FileBarChart,
           current: location.pathname === '/indicators'
         },
-        {
+        // Indicators Dashboard - hide for viewers
+        ...(isViewer ? [] : [{
           name: 'Indicators Dashboard',
           href: '/indicators/dashboard',
           icon: BarChart3,
           current: location.pathname === '/indicators/dashboard'
-        },
-        {
-          name: 'Audit Reports',
-          href: '/audit',
-          icon: FileText,
-          current: location.pathname.startsWith('/audit')
-        }
+        }]),
       ]
-    },
-  ]
+    })
 
-  const handleNavigation = (href) => {
-    navigate(href)
+    return items
+  }, [isViewer, isAdmin, location.pathname])
+
+  const handleNavigation = (href, item) => {
+    // For viewers, if they click on Analytics & Reports, navigate directly to indicators
+    if (isViewer && item?.name === 'Analytics & Reports') {
+      navigate('/indicators')
+    } else {
+      navigate(href)
+    }
     setIsMobileOpen(false)
+  }
+
+  const handleMenuClick = (item) => {
+    if (isCollapsed) {
+      // For collapsed sidebar, handle special cases
+      if (isViewer && item.name === 'Analytics & Reports') {
+        handleNavigation('/indicators', item)
+      } else if (item.hasSubmenu && item.submenu?.length > 0) {
+        // Navigate to first submenu item
+        handleNavigation(item.submenu[0].href, item.submenu[0])
+      } else {
+        handleNavigation(item.href, item)
+      }
+    } else {
+      // For expanded sidebar, toggle submenu
+      if (item.hasSubmenu) {
+        toggleMenu(item.name)
+      } else {
+        handleNavigation(item.href, item)
+      }
+    }
   }
 
   return (
@@ -175,113 +223,128 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
 
       {/* Sidebar */}
       <div className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-300 ease-in-out
+        fixed inset-y-0 left-0 z-50 bg-card border-r border-border transform transition-all duration-300 ease-in-out
         ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:inset-0
         ${isCollapsed ? 'lg:w-16' : 'lg:w-64'}
+        w-64
       `}>
         <div className="flex flex-col h-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-200">
-            {!isCollapsed && (
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">P</span>
+          <div className="flex items-center justify-between p-4 border-b border-border bg-card/50">
+            {!isCollapsed ? (
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+                  <span className="text-primary-foreground font-bold text-sm">P</span>
                 </div>
-                <div>
-                  <h1 className="text-lg font-semibold text-gray-900">PreART System</h1>
-                  <p className="text-xs text-gray-500">Patient Management</p>
+                <div className="flex-1 min-w-0">
+                  <h1 className="text-lg font-semibold text-card-foreground truncate">PreART System</h1>
+                  <p className="text-xs text-muted-foreground truncate">Patient Management</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center w-full">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+                  <span className="text-primary-foreground font-bold text-sm">P</span>
                 </div>
               </div>
             )}
-            {isCollapsed && (
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mx-auto">
-                <span className="text-white font-bold text-sm"></span>
-              </div>
-            )}
+            
+            {/* Toggle Button */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsCollapsed(!isCollapsed)}
-              className="hidden lg:flex"
+              className="hidden lg:flex w-8 h-8 p-0 rounded-full hover:bg-accent/50"
+              title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
             >
-              {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+              {isCollapsed ? (
+                <ChevronRight className="w-4 h-4" />
+              ) : (
+                <ChevronLeft className="w-4 h-4" />
+              )}
             </Button>
+            
+            {/* Mobile Close Button */}
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setIsMobileOpen(false)}
-              className="lg:hidden"
+              className="lg:hidden w-8 h-8 p-0 rounded-full hover:bg-accent/50"
+              title="Close sidebar"
             >
               <X className="w-4 h-4" />
             </Button>
           </div>
 
           {/* User Profile */}
-          <div className="p-4 border-b border-gray-200">
+          {/* <div className="p-4 border-b border-border bg-muted/20">
             {!isCollapsed ? (
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-gray-600" />
+                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center ring-2 ring-border">
+                  <User className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
+                  <p className="text-sm font-medium text-card-foreground truncate">
                     {user?.fullName || 'User'}
                   </p>
-                  <p className="text-xs text-gray-500 truncate">
+                  <p className="text-xs text-muted-foreground truncate">
                     {user?.username || 'admin'}
                   </p>
+                  {isViewer && (
+                    <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 mt-1">
+                      View Only
+                    </span>
+                  )}
                 </div>
-                <Button variant="ghost" size="sm">
-                  <Bell className="w-4 h-4" />
-                </Button>
               </div>
             ) : (
               <div className="flex flex-col items-center space-y-2">
-                <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-gray-600" />
+                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center ring-2 ring-border">
+                  <User className="w-5 h-5 text-muted-foreground" />
                 </div>
-                <Button variant="ghost" size="sm">
-                  <Bell className="w-4 h-4" />
-                </Button>
+                {isViewer && (
+                  <div className="w-2 h-2 bg-blue-500 rounded-full" title="View Only Access" />
+                )}
               </div>
             )}
-          </div>
+          </div> */}
 
           {/* Navigation */}
-          <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 px-3 py-4 space-y-2 overflow-y-auto overflow-x-hidden">
             {navigationItems.map((item) => {
               const Icon = item.icon
               const isExpanded = expandedMenus[item.name]
               
               if (item.hasSubmenu) {
                 return (
-                  <div key={item.name}>
+                  <div key={item.name} className="space-y-1">
                     <Button
                       variant={item.current ? "default" : "ghost"}
                       className={`
-                        w-full justify-start text-left h-12 px-3
+                        w-full justify-start text-left h-11 px-3 rounded-lg transition-all duration-200
                         ${isCollapsed ? 'px-2' : 'px-3'}
                         ${item.current 
-                          ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                          : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                          ? 'bg-primary text-primary-foreground shadow-sm' 
+                          : 'text-card-foreground hover:bg-accent hover:text-accent-foreground'
                         }
                       `}
-                      onClick={() => !isCollapsed && toggleMenu(item.name)}
+                      onClick={() => handleMenuClick(item)}
+                      title={isCollapsed ? item.name : undefined}
                     >
-                      <Icon className={`w-5 h-5 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
+                      <Icon className={`w-5 h-5 flex-shrink-0 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
                       {!isCollapsed && (
                         <>
-                          <span className="flex-1">{item.name}</span>
+                          <span className="flex-1 text-left font-medium">{item.name}</span>
                           {item.badge && (
                             <Badge variant="secondary" className="ml-2 text-xs">
                               {item.badge}
                             </Badge>
                           )}
                           {isExpanded ? (
-                            <ChevronUp className="w-4 h-4 ml-2" />
+                            <ChevronUp className="w-4 h-4 ml-2 flex-shrink-0" />
                           ) : (
-                            <ChevronDown className="w-4 h-4 ml-2" />
+                            <ChevronDown className="w-4 h-4 ml-2 flex-shrink-0" />
                           )}
                         </>
                       )}
@@ -289,7 +352,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
                     
                     {/* Submenu */}
                     {!isCollapsed && isExpanded && item.submenu && (
-                      <div className="ml-4 mt-1 space-y-1 border-l-2 border-gray-200 pl-3 bg-gray-50/50 rounded-r-lg py-1">
+                      <div className="ml-6 space-y-1 border-l-2 border-border/50 pl-4">
                         {item.submenu.map((subItem) => {
                           const SubIcon = subItem.icon;
                           return (
@@ -297,20 +360,20 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
                               key={subItem.name}
                               variant={subItem.current ? "default" : "ghost"}
                               className={`
-                                w-full justify-start text-left h-9 px-3 text-sm
+                                w-full justify-start text-left h-9 px-3 text-sm rounded-md transition-all duration-200
                                 ${subItem.current 
-                                  ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm' 
-                                  : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700 border border-transparent hover:border-blue-200'
+                                  ? 'bg-primary/10 text-primary border border-primary/20 shadow-sm' 
+                                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                                 }
                               `}
-                              onClick={() => handleNavigation(subItem.href)}
+                              onClick={() => handleNavigation(subItem.href, subItem)}
                             >
                               {SubIcon ? (
-                                <SubIcon className="w-4 h-4 mr-3" />
+                                <SubIcon className="w-4 h-4 mr-3 flex-shrink-0" />
                               ) : (
-                                <div className="w-2 h-2 rounded-full bg-current opacity-40 mr-3"></div>
+                                <div className="w-2 h-2 rounded-full bg-current opacity-40 mr-3 flex-shrink-0"></div>
                               )}
-                              <span className="flex-1">{subItem.name}</span>
+                              <span className="flex-1 text-left">{subItem.name}</span>
                               {subItem.badge && (
                                 <Badge variant="secondary" className="ml-2 text-xs">
                                   {subItem.badge}
@@ -330,19 +393,20 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
                   key={item.name}
                   variant={item.current ? "default" : "ghost"}
                   className={`
-                    w-full justify-start text-left h-12 px-3
+                    w-full justify-start text-left h-11 px-3 rounded-lg transition-all duration-200
                     ${isCollapsed ? 'px-2' : 'px-3'}
                     ${item.current 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700' 
-                      : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                      ? 'bg-primary text-primary-foreground shadow-sm' 
+                      : 'text-card-foreground hover:bg-accent hover:text-accent-foreground'
                     }
                   `}
-                  onClick={() => handleNavigation(item.href)}
+                  onClick={() => handleMenuClick(item)}
+                  title={isCollapsed ? item.name : undefined}
                 >
-                  <Icon className={`w-5 h-5 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
+                  <Icon className={`w-5 h-5 flex-shrink-0 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
                   {!isCollapsed && (
                     <>
-                      <span className="flex-1">{item.name}</span>
+                      <span className="flex-1 text-left font-medium">{item.name}</span>
                       {item.badge && (
                         <Badge variant="secondary" className="ml-2 text-xs">
                           {item.badge}
@@ -356,17 +420,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
           </nav>
 
           {/* Footer */}
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-border bg-muted/10">
             <Button
               variant="ghost"
               className={`
-                w-full justify-start text-left h-12 px-3 text-gray-700 hover:bg-gray-100 hover:text-gray-900
+                w-full justify-start text-left h-11 px-3 rounded-lg text-card-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200
                 ${isCollapsed ? 'px-2' : 'px-3'}
               `}
               onClick={handleLogout}
+              title={isCollapsed ? 'Logout' : undefined}
             >
-              <LogOut className={`w-5 h-5 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
-              {!isCollapsed && <span>Logout</span>}
+              <LogOut className={`w-5 h-5 flex-shrink-0 ${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
+              {!isCollapsed && <span className="font-medium">Logout</span>}
             </Button>
           </div>
         </div>

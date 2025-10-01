@@ -15,11 +15,11 @@ const AdultPatientsSection = ({ adultData }) => {
 
   return (
     <Card className="border-2 shadow-lg">
-      <CardHeader className="bg-blue-50">
-        <CardTitle className="text-xl font-bold text-blue-800 flex items-center">
+      <CardHeader className="bg-muted">
+        <CardTitle className="text-xl font-bold text-foreground flex items-center">
           <User className="h-6 w-6 mr-2" />
           <span className="mr-2">អ្នកជំងឺពេញវ័យ (១៥+ ឆ្នាំ)</span>
-          <span className="text-sm font-normal text-gray-600">- ការវិភាគពេញលេញ</span>
+          <span className="text-sm font-normal text-muted-foreground">- ការវិភាគពេញលេញ</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">

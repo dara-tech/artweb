@@ -3,6 +3,8 @@ const { body, validationResult, param } = require('express-validator');
 const { ChildPatient } = require('../models');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { sequelize } = require('../config/database');
+const { siteDatabaseManager } = require('../config/siteDatabase');
+const { resolveSite } = require('../utils/siteUtils');
 const { Op } = require('sequelize');
 
 const router = express.Router();
@@ -96,9 +98,9 @@ router.get('/status-counts', [authenticateToken], async (req, res, next) => {
 });
 
 // Get all child patients with search and pagination
-router.get('/', [authenticateToken], async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-    const { page = 1, limit, search, clinicId, site, status } = req.query;
+    const { page = 1, limit, search, clinicId, site, status, ageRange, dateRange, nationality } = req.query;
     // Smart pagination: only apply limit/offset if explicitly provided
     const limitNum = limit ? parseInt(limit) : null;
     const offset = limitNum ? (parseInt(page) - 1) * limitNum : 0;
@@ -135,11 +137,6 @@ router.get('/', [authenticateToken], async (req, res, next) => {
       replacements.clinicId = clinicId;
     }
     
-    if (site) {
-      conditions.push('s.NameEn = :site');
-      replacements.site = site;
-    }
-    
     // Add status filter (based on patient status from tblpatientstatus)
     if (status) {
       if (status === 'active') {
@@ -159,32 +156,106 @@ router.get('/', [authenticateToken], async (req, res, next) => {
       }
     }
     
+    // Add age range filter
+    if (ageRange) {
+      const now = new Date();
+      if (ageRange === '0-2') {
+        conditions.push('YEAR(now()) - YEAR(c.DaBirth) BETWEEN 0 AND 2');
+      } else if (ageRange === '2-5') {
+        conditions.push('YEAR(now()) - YEAR(c.DaBirth) BETWEEN 2 AND 5');
+      } else if (ageRange === '5-10') {
+        conditions.push('YEAR(now()) - YEAR(c.DaBirth) BETWEEN 5 AND 10');
+      } else if (ageRange === '10-14') {
+        conditions.push('YEAR(now()) - YEAR(c.DaBirth) BETWEEN 10 AND 14');
+      }
+    }
+    
+    // Add date range filter (first visit date)
+    if (dateRange) {
+      const now = new Date();
+      if (dateRange === '30days') {
+        conditions.push('c.DafirstVisit >= DATE_SUB(NOW(), INTERVAL 30 DAY)');
+      } else if (dateRange === '90days') {
+        conditions.push('c.DafirstVisit >= DATE_SUB(NOW(), INTERVAL 90 DAY)');
+      } else if (dateRange === '1year') {
+        conditions.push('c.DafirstVisit >= DATE_SUB(NOW(), INTERVAL 1 YEAR)');
+      }
+    }
+    
+    // Add nationality filter
+    if (nationality) {
+      conditions.push('c.Nationality = :nationality');
+      replacements.nationality = nationality;
+    }
+    
+    
     const whereCondition = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
 
-    // Get count first
-    const countResult = await sequelize.query(`
-      SELECT COUNT(*) as count
-      FROM tblcimain c
-      LEFT JOIN tblsitename s ON c._site_code = s.SiteCode
-      LEFT JOIN tblcvpatientstatus ps ON c.ClinicID = ps.ClinicID
-      ${whereCondition}
-    `, {
-      replacements,
-      type: sequelize.QueryTypes.SELECT
-    });
-    const count = countResult[0].count;
+    // Determine which database(s) to use
+    let siteCodes = [];
+    
+    // If site is provided, use specific site
+    if (site) {
+      try {
+        const { siteCode: resolvedSiteCode } = await resolveSite(site);
+        siteCodes = [resolvedSiteCode];
+      } catch (error) {
+        return res.status(404).json({
+          error: 'Site not found',
+          message: error.message,
+          availableSites: (await siteDatabaseManager.getAllSites()).map(s => ({ 
+            code: s.code, 
+            name: s.display_name || s.short_name || s.name 
+          }))
+        });
+      }
+    } else {
+      // If no site specified, query all available sites
+      const allSites = await siteDatabaseManager.getAllSites();
+      siteCodes = allSites.map(s => s.code);
+    }
+    
+    // Get count from all sites
+    let totalCount = 0;
+    for (const siteCode of siteCodes) {
+      try {
+        const siteConnection = await siteDatabaseManager.getSiteConnection(siteCode);
+        const countResult = await siteConnection.query(`
+        SELECT COUNT(*) as count
+        FROM tblcimain c
+        LEFT JOIN tblsitename s ON c.SiteName = s.SiteCode
+        LEFT JOIN tblcvpatientstatus ps ON c.ClinicID = ps.ClinicID
+        WHERE 1=1
+        ${whereCondition ? 'AND ' + whereCondition.replace('WHERE ', '') : ''}
+      `, {
+        replacements: { 
+          ...replacements
+        },
+        type: siteConnection.QueryTypes.SELECT
+      });
+      const siteCount = countResult[0]?.count || 0;
+      totalCount += siteCount;
+      } catch (error) {
+        console.error(`Error querying site ${siteCode}:`, error.message);
+      }
+    }
 
-    // Get patients with essential data only
-    const rows = await sequelize.query(`
-      SELECT 
-        c.ClinicID as clinicId,
+    // Get patients from all sites
+    let allRows = [];
+    for (const siteCode of siteCodes) {
+      const siteConnection = await siteDatabaseManager.getSiteConnection(siteCode);
+      const siteInfo = await siteDatabaseManager.getSiteInfo(siteCode);
+      const siteName = siteInfo?.display_name || siteInfo?.short_name || siteInfo?.name || siteCode;
+      const rows = await siteConnection.query(`
+        SELECT 
+          c.ClinicID as clinicId,
         c.DaFirstVisit as dateFirstVisit,
         c.DaBirth as dateOfBirth,
         c.Sex as sex,
         c.Referred as referred,
         c.OffIn as offIn,
-        c._site_code as _site_code,
-        s.NameEn as siteName,
+        :siteCode as siteCode,
+        :siteName as siteName,
         c.Artnum as artNumber,
         c.VcctID as vcctId,
         c.Nationality as nationality,
@@ -192,42 +263,61 @@ router.get('/', [authenticateToken], async (req, res, next) => {
         ps.Cause as statusCause,
         ps.Da as statusDate
       FROM tblcimain c
-      LEFT JOIN tblsitename s ON c._site_code = s.SiteCode
+      LEFT JOIN tblsitename s ON c.SiteName = s.SiteCode
       LEFT JOIN tblcvpatientstatus ps ON c.ClinicID = ps.ClinicID
-      ${whereCondition}
-      ORDER BY c.ClinicID DESC
-      ${limitNum ? `LIMIT ${limitNum} OFFSET ${offset}` : ''}
-    `, {
-      replacements,
-      type: sequelize.QueryTypes.SELECT
-    });
+      WHERE 1=1
+      ${whereCondition ? 'AND ' + whereCondition.replace('WHERE ', '') : ''}
+        ORDER BY c.ClinicID DESC
+        ${limitNum ? `LIMIT ${limitNum} OFFSET ${offset}` : ''}
+      `, {
+        replacements: { 
+          ...replacements,
+          siteCode: siteCode,
+          siteName: siteName
+        },
+        type: siteConnection.QueryTypes.SELECT
+      });
+      allRows = allRows.concat(rows);
+    }
+    
+    // Sort all results by ClinicID DESC and apply pagination
+    allRows.sort((a, b) => b.clinicId - a.clinicId);
+    const paginatedRows = limitNum ? allRows.slice(offset, offset + limitNum) : allRows;
 
     // Format the data like the VB.NET ViewData function
-    const formattedRows = rows.map((row, index) => ({
-      no: offset + index + 1,
-      clinicId: String(row.clinicId).padStart(7, '0'),
-      dateFirst: row.dateFirstVisit,
-      age: calculateAge(row.dateOfBirth, row.dateFirstVisit),
-      sex: row.sex === 0 ? 'Female' : 'Male',
-      referred: getReferredText(row.referred),
-      transferIn: row.offIn === 1,
-      _site_code: row._site_code || '',
-      siteName: row.siteName || '',
-      artNumber: row.artNumber || '',
-      lostReturn: 'N/A', // Child patients don't have TypeofReturn column
-      vcctCode: row.vcctId || '',
-      nationality: row.nationality || '',
-      patientStatus: getPatientStatusText(row.patientStatus, null),
-      patientStatusValue: row.patientStatus,
-      statusCause: row.statusCause || '',
-      statusDate: row.statusDate || ''
-    }));
+    const formattedRows = paginatedRows.map((row, index) => {
+      // Use site information directly from the query results (from registry database)
+      const artNumber = row.artNumber || '';
+      const extractedSiteCode = row.siteCode || '';
+      const siteName = row.siteName || '';
+      
+      return {
+        no: offset + index + 1,
+        clinicId: String(row.clinicId).padStart(7, '0'),
+        dateFirstVisit: row.dateFirstVisit,
+        age: calculateAge(row.dateOfBirth, row.dateFirstVisit),
+        sex: row.sex === 0 ? 'Female' : 'Male',
+        referred: getReferredText(row.referred),
+        transferIn: row.offIn === 1,
+        site_code: extractedSiteCode || '',
+        siteCode: extractedSiteCode || '',
+        siteName: siteName,
+        artNumber: artNumber,
+        lostReturn: 'N/A', // Child patients don't have TypeofReturn column
+        vcctCode: row.vcctId || '',
+        nationality: row.nationality || '',
+        patientStatus: getPatientStatusText(row.patientStatus, null),
+        patientStatusValue: row.patientStatus,
+        statusCause: row.statusCause || '',
+        statusDate: row.statusDate || ''
+      };
+    });
 
     res.json({
       patients: formattedRows,
-      total: count,
+      total: totalCount,
       page: parseInt(page),
-      totalPages: Math.ceil(count / limit)
+      totalPages: limitNum ? Math.ceil(totalCount / limitNum) : 1
     });
 
   } catch (error) {

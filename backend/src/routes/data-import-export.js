@@ -5,7 +5,7 @@ const { authenticateToken } = require('../middleware/auth');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
-const { handleConflictResolution } = require('./enhanced-conflict-resolution');
+// const { handleConflictResolution } = require('./enhanced-conflict-resolution');
 const crypto = require('crypto');
 const mysql = require('mysql2/promise');
 
@@ -1006,7 +1006,7 @@ router.post('/aggregate', authenticateToken, async (req, res) => {
                         if (validRows.length > 0) {
                           try {
                             // Use enhanced conflict resolution
-                            await handleConflictResolution(targetConnection, tableName, validRows, conflictResolution);
+                            // await handleConflictResolution(targetConnection, tableName, validRows, conflictResolution);
                             successCount += validRows.length;
                           } catch (error) {
                             console.log(`Error with enhanced conflict resolution for ${tableName}:`, error.message);

@@ -19,7 +19,6 @@ const adultArvDrugRoutes = require('./routes/adultArvDrugs');
 const childVisitRoutes = require('./routes/childVisits');
 const infantVisitRoutes = require('./routes/infantVisits');
 const lookupRoutes = require('./routes/lookups');
-const backupRoutes = require('./routes/backup');
 const sitesRoutes = require('./routes/sites');
 const siteManagementRoutes = require('./routes/site-management');
 const siteOperationsRoutes = require('./routes/site-operations');
@@ -32,10 +31,10 @@ const fullCleanupRoutes = require('./routes/full-cleanup');
 const completeCleanupRoutes = require('./routes/complete-cleanup');
 const updateSitesRoutes = require('./routes/update-sites');
 const userManagementRoutes = require('./routes/user-management');
+const roleManagementRoutes = require('./routes/role-management');
 const indicatorsRoutes = require('./routes/indicators');
 const optimizedIndicatorsRoutes = require('./routes/optimized-indicators');
-const auditRoutes = require('./routes/audit');
-const backupScheduler = require('./services/backupScheduler');
+const siteSwitchingRoutes = require('./routes/siteSwitching');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -129,15 +128,15 @@ app.use('/api/site-indicators', siteIndicatorsRoutes);
 app.use('/api/performance', performanceRoutes);
 app.use('/api/indicators-optimized', optimizedIndicatorsRoutes);
 app.use('/api/data', dataImportExportRoutes);
-app.use('/api/backup', backupRoutes);
 app.use('/api/cleanup', cleanupRoutes);
 app.use('/api/simple-cleanup', simpleCleanupRoutes);
 app.use('/api/full-cleanup', fullCleanupRoutes);
 app.use('/api/complete-cleanup', completeCleanupRoutes);
 app.use('/api/update-sites', updateSitesRoutes);
 app.use('/api/user-management', userManagementRoutes);
+app.use('/api/roles', roleManagementRoutes);
 app.use('/api/indicators', indicatorsRoutes);
-app.use('/api/audit', auditRoutes);
+app.use('/api/site-switching', siteSwitchingRoutes);
 
 // Make io available to routes
 app.set('io', io);
@@ -185,9 +184,6 @@ const startServer = async () => {
       console.log(`📊 Environment: ${process.env.NODE_ENV}`);
       console.log(`🔗 Health check: http://localhost:${PORT}/health`);
       
-      // Start backup scheduler
-      backupScheduler.start();
-      console.log('📅 Backup scheduler started');
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

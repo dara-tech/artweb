@@ -171,11 +171,11 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
 
   const getStatusBadge = (offIn) => {
     switch (offIn) {
-      case 0: return <Badge className="bg-green-100 text-green-800">Active</Badge>
-      case 1: return <Badge className="bg-yellow-100 text-yellow-800">Pre-ART</Badge>
-      case 2: return <Badge className="bg-red-100 text-red-800">Lost</Badge>
-      case 3: return <Badge className="bg-blue-100 text-blue-800">Transferred</Badge>
-      case 4: return <Badge className="bg-gray-100 text-gray-800">Died</Badge>
+      case 0: return <Badge className="status-active">Active</Badge>
+      case 1: return <Badge className="status-warning">Pre-ART</Badge>
+      case 2: return <Badge className="status-critical">Lost</Badge>
+      case 3: return <Badge className="status-inactive">Transferred</Badge>
+      case 4: return <Badge className="status-critical">Died</Badge>
       default: return <Badge variant="outline">Unknown</Badge>
     }
   }
@@ -225,7 +225,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                 onClick={onClose}
                 variant="ghost"
                 size="sm"
-                className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-gray-100"
+                className="h-8 w-8 sm:h-9 sm:w-9 p-0 hover:bg-accent"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -333,7 +333,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800 text-sm px-3 py-1">
+                    <Badge variant="secondary" className="status-active text-sm px-3 py-1">
                       {sortedPatients.length.toLocaleString()} Results
                     </Badge>
                     <Badge variant="outline" className="text-sm px-3 py-1">
@@ -352,35 +352,35 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                     <Card key={i} className="animate-pulse">
                       <CardContent className="p-4 sm:p-6">
                         <div className="flex items-center space-x-4">
-                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gray-200 rounded-full"></div>
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-muted rounded-full"></div>
                           <div className="flex-1 space-y-2">
-                            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                            <div className="h-4 bg-muted rounded w-1/4"></div>
+                            <div className="h-3 bg-muted rounded w-1/2"></div>
                           </div>
-                          <div className="w-16 sm:w-20 h-6 bg-gray-200 rounded"></div>
+                          <div className="w-16 sm:w-20 h-6 bg-muted rounded"></div>
                         </div>
                       </CardContent>
                     </Card>
                   ))}
                 </div>
               ) : error ? (
-                <Card className="border-red-200 bg-red-50">
+                <Card className="status-critical">
                   <CardContent className="p-6 sm:p-8 text-center">
-                    <AlertCircle className="h-10 w-10 sm:h-12 sm:w-12 text-red-500 mx-auto mb-4" />
-                    <h3 className="text-base sm:text-lg font-semibold text-red-800 mb-2">Error Loading Patients</h3>
-                    <p className="text-sm sm:text-base text-red-600 mb-4">{error}</p>
-                    <Button onClick={loadPatientDetails} variant="outline" className="border-red-300 text-red-700 hover:bg-red-100">
+                    <AlertCircle className="h-10 w-10 sm:h-12 sm:w-12 text-foreground mx-auto mb-4" />
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">Error Loading Patients</h3>
+                    <p className="text-sm sm:text-base text-foreground mb-4">{error}</p>
+                    <Button onClick={loadPatientDetails} variant="outline" className="border-border text-foreground hover:bg-accent">
                       <RefreshCw className="h-4 w-4 mr-2" />
                       Try Again
                     </Button>
                   </CardContent>
                 </Card>
               ) : currentPatients.length === 0 ? (
-                <Card className="border-gray-200 bg-gray-50">
+                <Card className="border-border bg-muted">
                   <CardContent className="p-6 sm:p-8 text-center">
-                    <Users className="h-10 w-10 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-600 mb-2">No Patients Found</h3>
-                    <p className="text-sm sm:text-base text-gray-500">
+                    <Users className="h-10 w-10 sm:h-12 sm:w-12 text-muted-foreground mx-auto mb-4" />
+                    <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">No Patients Found</h3>
+                    <p className="text-sm sm:text-base text-muted-foreground">
                       {searchTerm ? 'No patients match your search criteria.' : 'No patients found for this period.'}
                     </p>
                   </CardContent>
@@ -390,7 +390,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                   <div className="overflow-x-auto">
                     <Table>
                       <TableHeader>
-                        <TableRow className="bg-gray-50">
+                        <TableRow className="bg-muted">
                           <TableHead className="w-12">
                             <Checkbox
                               checked={selectedPatients.length === currentPatients.length && currentPatients.length > 0}
@@ -398,7 +398,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                             />
                           </TableHead>
                           <TableHead 
-                            className="cursor-pointer hover:bg-gray-100"
+                            className="cursor-pointer hover:bg-accent"
                             onClick={() => handleSort('ClinicID')}
                           >
                             <div className="flex items-center space-x-2">
@@ -409,7 +409,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                             </div>
                           </TableHead>
                           <TableHead 
-                            className="cursor-pointer hover:bg-gray-100"
+                            className="cursor-pointer hover:bg-accent"
                             onClick={() => handleSort('Type')}
                           >
                             <div className="flex items-center space-x-2">
@@ -420,7 +420,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                             </div>
                           </TableHead>
                           <TableHead 
-                            className="cursor-pointer hover:bg-gray-100"
+                            className="cursor-pointer hover:bg-accent"
                             onClick={() => handleSort('Sex')}
                           >
                             <div className="flex items-center space-x-2">
@@ -431,7 +431,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                             </div>
                           </TableHead>
                           <TableHead 
-                            className="cursor-pointer hover:bg-gray-100"
+                            className="cursor-pointer hover:bg-accent"
                             onClick={() => handleSort('Age')}
                           >
                             <div className="flex items-center space-x-2">
@@ -442,7 +442,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                             </div>
                           </TableHead>
                           <TableHead 
-                            className="cursor-pointer hover:bg-gray-100"
+                            className="cursor-pointer hover:bg-accent"
                             onClick={() => handleSort('DaFirstVisit')}
                           >
                             <div className="flex items-center space-x-2">
@@ -453,7 +453,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                             </div>
                           </TableHead>
                           <TableHead 
-                            className="cursor-pointer hover:bg-gray-100"
+                            className="cursor-pointer hover:bg-accent"
                             onClick={() => handleSort('OffIn')}
                           >
                             <div className="flex items-center space-x-2">
@@ -468,7 +468,7 @@ const PatientDetailsModal = ({ category, period, onClose }) => {
                       </TableHeader>
                       <TableBody>
                         {currentPatients.map((patient, index) => (
-                          <TableRow key={index} className="hover:bg-gray-50">
+                          <TableRow key={index} className="hover:bg-accent">
                             <TableCell>
                               <Checkbox
                                 checked={selectedPatients.includes(patient.ClinicID)}

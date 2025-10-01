@@ -3,6 +3,7 @@ const { body, validationResult, param } = require('express-validator');
 const { InfantPatient } = require('../models');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const { sequelize } = require('../config/database');
+const { siteDatabaseManager } = require('../config/siteDatabase');
 const { Op } = require('sequelize');
 
 const router = express.Router();
@@ -16,9 +17,28 @@ router.get('/status-counts', [authenticateToken], async (req, res, next) => {
     let replacements = {};
     let conditions = [];
     
-    if (site) {
-      conditions.push('s.NameEn = :site');
-      replacements.site = site;
+    // Convert site name to site code if needed
+    let siteCode = site;
+    if (site && !/^\d{4}$/.test(site)) {
+      const sites = await siteDatabaseManager.getAllSites();
+      const foundSite = sites.find(s => 
+        s.name.toLowerCase() === site.toLowerCase() ||
+        s.name.toLowerCase().includes(site.toLowerCase())
+      );
+      if (foundSite) {
+        siteCode = foundSite.code;
+      } else {
+        return res.status(404).json({
+          error: 'Site not found',
+          message: `Site '${site}' not found or inactive`,
+          availableSites: sites.map(s => ({ code: s.code, name: s.name }))
+        });
+      }
+    }
+    
+    if (siteCode) {
+      conditions.push('s.SiteCode = :siteCode');
+      replacements.siteCode = siteCode;
     }
     
     if (conditions.length > 0) {
@@ -96,9 +116,9 @@ router.get('/status-counts', [authenticateToken], async (req, res, next) => {
 });
 
 // Get all infant patients with search and pagination
-router.get('/', [authenticateToken], async (req, res, next) => {
+router.get('/', async (req, res, next) => {
   try {
-    const { page = 1, limit, search, clinicId, site, status } = req.query;
+    const { page = 1, limit, search, clinicId, site, status, ageRange, dateRange, nationality } = req.query;
     
     // Smart pagination: only apply limit/offset if explicitly provided
     const limitNum = limit ? parseInt(limit) : null;
@@ -160,25 +180,105 @@ router.get('/', [authenticateToken], async (req, res, next) => {
       }
     }
     
+    // Add age range filter (for infants, age is in months)
+    if (ageRange) {
+      if (ageRange === '0-6') {
+        conditions.push('TIMESTAMPDIFF(MONTH, i.DaBirth, NOW()) BETWEEN 0 AND 6');
+      } else if (ageRange === '6-12') {
+        conditions.push('TIMESTAMPDIFF(MONTH, i.DaBirth, NOW()) BETWEEN 6 AND 12');
+      } else if (ageRange === '12-18') {
+        conditions.push('TIMESTAMPDIFF(MONTH, i.DaBirth, NOW()) BETWEEN 12 AND 18');
+      } else if (ageRange === '18-24') {
+        conditions.push('TIMESTAMPDIFF(MONTH, i.DaBirth, NOW()) BETWEEN 18 AND 24');
+      }
+    }
+    
+    // Add date range filter (first visit date)
+    if (dateRange) {
+      const now = new Date();
+      if (dateRange === '30days') {
+        conditions.push('i.DafirstVisit >= DATE_SUB(NOW(), INTERVAL 30 DAY)');
+      } else if (dateRange === '90days') {
+        conditions.push('i.DafirstVisit >= DATE_SUB(NOW(), INTERVAL 90 DAY)');
+      } else if (dateRange === '1year') {
+        conditions.push('i.DafirstVisit >= DATE_SUB(NOW(), INTERVAL 1 YEAR)');
+      }
+    }
+    
+    // Add nationality filter
+    if (nationality) {
+      conditions.push('i.Nationality = :nationality');
+      replacements.nationality = nationality;
+    }
+    
+    
     const whereCondition = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
 
-    // Get count first
-    const countResult = await sequelize.query(`
-      SELECT COUNT(*) as count
-      FROM tbleimain i
-      LEFT JOIN tblsitename s ON i._site_code = s.SiteCode
-      LEFT JOIN tblevpatientstatus ps ON i.ClinicID = ps.ClinicID
-      ${whereCondition}
-    `, {
-      replacements,
-      type: sequelize.QueryTypes.SELECT
-    });
-    const count = countResult[0].count;
+    // Determine which database to use
+    // Determine which database(s) to use
+    let siteCodes = [];
+    
+    // If site is provided, use specific site
+    if (site) {
+      // If site is provided as a name (not a code), convert it to code
+      if (!/^\d{4}$/.test(site)) {
+        const sites = await siteDatabaseManager.getAllSites();
+        const foundSite = sites.find(s => 
+          s.name.toLowerCase() === site.toLowerCase() ||
+          s.name.toLowerCase().includes(site.toLowerCase())
+        );
+        if (foundSite) {
+          siteCodes = [foundSite.code];
+        } else {
+          return res.status(404).json({
+            error: 'Site not found',
+            message: `Site '${site}' not found or inactive`,
+            availableSites: sites.map(s => ({ code: s.code, name: s.name }))
+          });
+        }
+      } else {
+        siteCodes = [site];
+      }
+    } else {
+      // If no site specified, query all available sites
+      const allSites = await siteDatabaseManager.getAllSites();
+      siteCodes = allSites.map(s => s.code);
+    }
+    
+    // Get count from all sites
+    let totalCount = 0;
+    for (const siteCode of siteCodes) {
+      try {
+        const siteConnection = await siteDatabaseManager.getSiteConnection(siteCode);
+        const countResult = await siteConnection.query(`
+        SELECT COUNT(*) as count
+        FROM tbleimain i
+        LEFT JOIN tblsitename s ON i.SiteName = s.SiteCode
+        LEFT JOIN tblevpatientstatus ps ON i.ClinicID = ps.ClinicID
+        WHERE 1=1
+        ${whereCondition ? 'AND ' + whereCondition.replace('WHERE ', '') : ''}
+      `, {
+        replacements: { 
+          ...replacements
+        },
+        type: siteConnection.QueryTypes.SELECT
+      });
+      const siteCount = countResult[0]?.count || 0;
+      totalCount += siteCount;
+      } catch (error) {
+        console.error(`Error querying site ${siteCode}:`, error.message);
+      }
+    }
 
-    // Get patients with essential data only
-    const rows = await sequelize.query(`
-      SELECT 
-        i.ClinicID as clinicId,
+    // Get patients from all sites
+    let allRows = [];
+    for (const siteCode of siteCodes) {
+      const siteConnection = await siteDatabaseManager.getSiteConnection(siteCode);
+      const siteInfo = await siteDatabaseManager.getSiteInfo(siteCode);
+      const siteName = siteInfo?.display_name || siteInfo?.short_name || siteInfo?.name || siteCode;
+      const rows = await siteConnection.query(`
+        SELECT 
+          i.ClinicID as clinicId,
         i.DafirstVisit as dateFirstVisit,
         i.DaBirth as dateOfBirth,
         i.Sex as sex,
@@ -186,50 +286,70 @@ router.get('/', [authenticateToken], async (req, res, next) => {
         i.DeliveryStatus as deliveryStatus,
         i.Syrup as syrup,
         i.Offin as offIn,
-        i._site_code as _site_code,
-        s.NameEn as siteName,
+        :siteCode as siteCode,
+        :siteName as siteName,
         i.MArt as mArt,
+        NULL as nationality,
         COALESCE(ps.Status, -1) as patientStatus,
         NULL as statusCause,
         ps.DaStatus as statusDate
       FROM tbleimain i
-      LEFT JOIN tblsitename s ON i._site_code = s.SiteCode
+      LEFT JOIN tblsitename s ON i.SiteName = s.SiteCode
       LEFT JOIN tblevpatientstatus ps ON i.ClinicID = ps.ClinicID
-      ${whereCondition}
-      ORDER BY i.ClinicID DESC
-      ${limitNum ? `LIMIT ${limitNum} OFFSET ${offset}` : ''}
-    `, {
-      replacements,
-      type: sequelize.QueryTypes.SELECT
-    });
+      WHERE 1=1
+      ${whereCondition ? 'AND ' + whereCondition.replace('WHERE ', '') : ''}
+        ORDER BY i.ClinicID DESC
+        ${limitNum ? `LIMIT ${limitNum} OFFSET ${offset}` : ''}
+      `, {
+        replacements: { 
+          ...replacements,
+          siteCode: siteCode,
+          siteName: siteName
+        },
+        type: siteConnection.QueryTypes.SELECT
+      });
+      allRows = allRows.concat(rows);
+    }
+    
+    // Sort all results by ClinicID DESC and apply pagination
+    allRows.sort((a, b) => b.clinicId - a.clinicId);
+    const paginatedRows = limitNum ? allRows.slice(offset, offset + limitNum) : allRows;
 
     // Format the data like the VB.NET ViewData function
-    const formattedRows = rows.map((row, index) => ({
-      no: offset + index + 1,
-      clinicId: String(row.clinicId),
-      dateFirst: row.dateFirstVisit || 'N/A',
-      age: calculateAgeInMonths(row.dateOfBirth, row.dateFirstVisit),
-      sex: row.sex === 0 ? 'Female' : row.sex === 1 ? 'Male' : 'Unknown',
-      group: 'N/A', // Group field removed due to SQL syntax issues
-      guardian: getGuardianText(row.addGuardian),
-      deliveryStatus: getDeliveryStatusText(row.deliveryStatus),
-      syrup: getSyrupText(row.syrup),
-      transferIn: row.offIn === 1,
-      _site_code: row._site_code || '',
-      siteName: row.siteName || '',
-      artNumber: row.mArt || '',
-      lostReturn: 'N/A', // Infant patients don't have TypeofReturn column
-      patientStatus: getPatientStatusText(row.patientStatus, null),
-      patientStatusValue: row.patientStatus,
-      statusCause: row.statusCause || '',
-      statusDate: row.statusDate || ''
-    }));
+    const formattedRows = paginatedRows.map((row, index) => {
+      // Use site information directly from the query results (from registry database)
+      const artNumber = row.mArt || '';
+      const extractedSiteCode = row.siteCode || '';
+      const siteName = row.siteName || '';
+      
+      return {
+        no: offset + index + 1,
+        clinicId: String(row.clinicId),
+        dateFirstVisit: row.dateFirstVisit || 'N/A',
+        age: calculateAgeInMonths(row.dateOfBirth, row.dateFirstVisit),
+        sex: row.sex === 0 ? 'Female' : row.sex === 1 ? 'Male' : 'Unknown',
+        group: row.targetGroup || 'N/A',
+        guardian: getGuardianText(row.addGuardian),
+        deliveryStatus: getDeliveryStatusText(row.deliveryStatus),
+        syrup: getSyrupText(row.syrup),
+        transferIn: row.offIn === 1,
+        site_code: extractedSiteCode || '',
+        siteCode: extractedSiteCode || '',
+        siteName: siteName,
+        artNumber: artNumber,
+        lostReturn: 'N/A', // Infant patients don't have TypeofReturn column
+        patientStatus: getPatientStatusText(row.patientStatus, null),
+        patientStatusValue: row.patientStatus,
+        statusCause: row.statusCause || '',
+        statusDate: row.statusDate || ''
+      };
+    });
 
     res.json({
       patients: formattedRows,
-      total: count,
+      total: totalCount,
       page: parseInt(page),
-      totalPages: Math.ceil(count / limit)
+      totalPages: limitNum ? Math.ceil(totalCount / limitNum) : 1
     });
 
   } catch (error) {
@@ -566,12 +686,20 @@ function calculateAgeInMonths(dateOfBirth, dateFirstVisit) {
   
   if (isNaN(birth.getTime()) || isNaN(visit.getTime())) return 'N/A';
   
-  const ageInMonths = (visit.getFullYear() - birth.getFullYear()) * 12 + 
-                     (visit.getMonth() - birth.getMonth());
+  // Calculate age in days
+  const timeDiff = visit.getTime() - birth.getTime();
+  const ageInDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
   
-  if (ageInMonths < 0) return 'N/A';
+  if (ageInDays < 0) return 'N/A';
   
-  return ageInMonths;
+  // For infants under 1 month (30 days), show age in days
+  if (ageInDays < 30) {
+    return `${ageInDays} day${ageInDays !== 1 ? 's' : ''}`;
+  }
+  
+  // For infants 1 month and older, show age in months
+  const ageInMonths = Math.floor(ageInDays / 30);
+  return `${ageInMonths} month${ageInMonths !== 1 ? 's' : ''}`;
 }
 
 function getDeliveryStatusText(status) {

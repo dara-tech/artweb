@@ -1,175 +1,1646 @@
 @import "tailwindcss";
 
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* ===========================================
+       EXPERT HEALTHCARE DESIGN SYSTEM
+       =========================================== */
+    
+    /* === CORE COLOR PALETTE === */
+    /* Primary Brand Colors */
+    --primary: 215 85% 65%;                    /* Medical Blue - Trust & Professionalism */
+    --primary-foreground: 0 0% 100%;           /* White text on primary */
+    --primary-hover: 215 85% 60%;              /* Slightly darker for hover */
+    --primary-light: 215 85% 95%;              /* Very light for backgrounds */
+    --primary-dark: 215 85% 35%;               /* Dark for text on light backgrounds */
+    
+    /* Secondary Brand Colors */
+    --secondary: 170 65% 55%;                  /* Medical Teal - Complementary */
+    --secondary-foreground: 0 0% 100%;         /* White text on secondary */
+    --secondary-hover: 170 65% 50%;            /* Slightly darker for hover */
+    --secondary-light: 170 65% 95%;            /* Very light for backgrounds */
+    --secondary-dark: 170 65% 30%;             /* Dark for text on light backgrounds */
+    
+    /* Semantic Colors */
+    --success: 140 75% 55%;                    /* Medical Green - Success states */
+    --success-foreground: 0 0% 100%;           /* White text on success */
+    --success-hover: 140 75% 50%;              /* Slightly darker for hover */
+    --success-light: 140 75% 95%;              /* Very light for backgrounds */
+    --success-dark: 140 75% 30%;               /* Dark for text on light backgrounds */
+    
+    --warning: 35 90% 65%;                     /* Medical Amber - Warning states */
+    --warning-foreground: 0 0% 100%;           /* White text on warning */
+    --warning-hover: 35 90% 60%;               /* Slightly darker for hover */
+    --warning-light: 35 90% 95%;               /* Very light for backgrounds */
+    --warning-dark: 35 90% 30%;                /* Dark for text on light backgrounds */
+    
+    --destructive: 8 80% 70%;                  /* Medical Red - Error/Critical states */
+    --destructive-foreground: 0 0% 100%;       /* White text on destructive */
+    --destructive-hover: 8 80% 65%;            /* Slightly darker for hover */
+    --destructive-light: 8 80% 95%;            /* Very light for backgrounds */
+    --destructive-dark: 8 80% 30%;             /* Dark for text on light backgrounds */
+    
+    --info: 215 85% 65%;                       /* Medical Blue - Info states */
+    --info-foreground: 0 0% 100%;              /* White text on info */
+    --info-hover: 215 85% 60%;                 /* Slightly darker for hover */
+    --info-light: 215 85% 95%;                 /* Very light for backgrounds */
+    --info-dark: 215 85% 30%;                  /* Dark for text on light backgrounds */
+    
+    /* === NEUTRAL SCALE === */
+    --background: 0 0% 100%;                   /* Pure white background */
+    --foreground: 220 4% 10%;                  /* Near black text */
+    --card: 0 0% 100%;                         /* White card background */
+    --card-foreground: 220 4% 10%;             /* Dark text on cards */
+    --popover: 0 0% 100%;                      /* White popover background */
+    --popover-foreground: 220 4% 10%;          /* Dark text on popovers */
+    
+    /* Muted Colors */
+    --muted: 220 12% 97%;                      /* Very light gray */
+    --muted-foreground: 220 4% 45%;            /* Medium gray text */
+    --muted-hover: 220 12% 94%;                /* Slightly darker for hover */
+    
+    /* Border & Input Colors */
+    --border: 220 10% 90%;                     /* Light gray borders */
+    --input: 220 10% 90%;                      /* Light gray input borders */
+    --ring: 215 85% 65%;                       /* Primary blue for focus rings */
+    
+    /* Clean Status Colors - Subtle & Professional */
+    --status-success: 140 75% 55%;          /* Clean emerald success */
+    --status-warning: 35 90% 65%;           /* Clean amber warning */
+    --status-critical: 8 80% 70%;           /* Clean red critical */
+    --status-info: 215 85% 65%;             /* Clean blue info */
+    --status-neutral: 220 15% 50%;          /* Clean slate neutral */
+    --status-accent: 170 65% 55%;           /* Clean teal accent */
+    --status-highlight: 260 80% 70%;        /* Clean purple highlight */
+    
+    /* Clean Patient Status Colors */
+    --patient-active: 140 75% 55%;          /* Clean emerald active */
+    --patient-inactive: 220 15% 50%;        /* Clean slate inactive */
+    --patient-transferred: 35 90% 65%;      /* Clean amber transferred */
+    --patient-lost: 8 80% 70%;              /* Clean red lost */
+    --patient-dead: 220 10% 35%;            /* Respectful dark */
+    --patient-pending: 50 90% 65%;          /* Clean amber pending */
+    --patient-completed: 155 80% 55%;       /* Clean emerald completed */
+    
+    /* Clean Medical Data Colors */
+    --viral-load-high: 8 80% 70%;           /* Clean red high viral load */
+    --viral-load-low: 140 75% 55%;          /* Clean emerald low viral load */
+    --viral-load-undetectable: 170 65% 55%; /* Clean teal undetectable */
+    --cd4-high: 140 75% 55%;                /* Clean emerald high CD4 */
+    --cd4-low: 35 90% 65%;                  /* Clean amber low CD4 */
+    --cd4-critical: 8 80% 70%;              /* Clean red critical CD4 */
+    --cd4-excellent: 155 80% 55%;           /* Clean emerald excellent CD4 */
+    --cd4-good: 170 65% 55%;                /* Clean teal good CD4 */
+    
+    /* Enhanced Clean Theme */
+    --background: 210 15% 99%;
+    --foreground: 210 4% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 4% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --popover-foreground: 210 4% 10%;
+    --primary: 215 85% 65%;                 /* Clean medical blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 12% 97%;
+    --secondary-foreground: 210 4% 10%;
+    --muted: 210 12% 97%;
+    --muted-foreground: 210 5% 55%;
+    --accent: 170 65% 55%;                  /* Clean medical teal */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 8 80% 70%;               /* Clean destructive */
+    --destructive-foreground: 0 0% 100%;
+    --border: 210 10% 94%;
+    --input: 210 10% 94%;
+    --ring: 215 85% 65%;                    /* Clean medical blue ring */
     --radius: 0.5rem;
 
+    /* Clean Healthcare Specific Variables */
+    --medical-primary: 215 85% 65%;         /* Clean medical blue */
+    --medical-secondary: 170 65% 55%;       /* Clean medical teal */
+    --medical-success: 140 75% 55%;         /* Clean emerald success */
+    --medical-warning: 35 90% 65%;          /* Clean amber warning */
+    --medical-critical: 8 80% 70%;          /* Clean red critical */
+    --medical-info: 215 85% 65%;            /* Clean info blue */
+    --medical-accent: 260 80% 70%;          /* Clean purple accent */
+    --medical-highlight: 155 80% 55%;       /* Clean emerald highlight */
+    
+    /* Clean Chart Colors for Medical Data */
+    --chart-1: 215 85% 65%;                 /* Clean medical blue */
+    --chart-2: 170 65% 55%;                 /* Clean medical teal */
+    --chart-3: 140 75% 55%;                 /* Clean emerald green */
+    --chart-4: 35 90% 65%;                  /* Clean amber orange */
+    --chart-5: 260 80% 70%;                 /* Clean purple */
+    --chart-6: 8 80% 70%;                   /* Clean red */
+    --chart-7: 185 75% 60%;                 /* Clean cyan */
+    --chart-8: 235 90% 72%;                 /* Clean indigo */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 94.1%;
+    /* Clean Healthcare Dark Mode Color Palette */
+    
+    /* Clean Dark Mode Grays - Minimal & Sophisticated */
+    --dark-gray-50: 220 8% 8%;              /* Clean deep background */
+    --dark-gray-100: 220 8% 14%;            /* Clean dark background */
+    --dark-gray-200: 220 7% 20%;            /* Clean dark border */
+    --dark-gray-300: 220 6% 26%;            /* Clean medium dark border */
+    --dark-gray-400: 220 5% 38%;            /* Clean disabled text */
+    --dark-gray-500: 220 4% 55%;            /* Clean muted text */
+    --dark-gray-600: 220 4% 70%;            /* Clean secondary text */
+    --dark-gray-700: 220 4% 84%;            /* Clean primary text */
+    --dark-gray-800: 220 4% 90%;            /* Clean light text */
+    --dark-gray-900: 220 4% 96%;            /* Clean lightest text */
+    
+    /* Clean Dark Mode Theme */
+    --background: 220 8% 6%;
+    --foreground: 220 4% 98%;
+    --card: 220 8% 10%;
+    --card-foreground: 220 4% 98%;
+    --popover: 220 8% 10%;
+    --popover-foreground: 220 4% 98%;
+    --primary: 215 80% 75%;                 /* Clean blue for dark mode */
+    --primary-foreground: 220 8% 6%;
+    --secondary: 220 8% 20%;
+    --secondary-foreground: 220 4% 96%;
+    --muted: 220 8% 16%;
+    --muted-foreground: 220 4% 65%;
+    --accent: 170 60% 65%;                  /* Clean teal for dark mode */
+    --accent-foreground: 220 8% 6%;
+    --destructive: 8 75% 75%;               /* Clean red for dark mode */
+    --destructive-foreground: 220 8% 6%;
+    --border: 220 6% 20%;
+    --input: 220 6% 20%;
+    --ring: 215 80% 75%;                    /* Clean blue ring for dark mode */
+    
+    /* Clean Dark Mode Healthcare Colors */
+    --medical-primary: 215 80% 75%;         /* Clean blue for dark mode */
+    --medical-secondary: 170 60% 65%;       /* Clean teal for dark mode */
+    --medical-success: 140 70% 65%;         /* Clean emerald for dark mode */
+    --medical-warning: 35 85% 75%;          /* Clean amber for dark mode */
+    --medical-critical: 8 75% 75%;          /* Clean red for dark mode */
+    --medical-info: 215 80% 75%;            /* Clean info blue for dark mode */
+    --medical-accent: 260 75% 80%;          /* Clean purple accent for dark mode */
+    --medical-highlight: 155 75% 65%;       /* Clean emerald highlight for dark mode */
+    
+    /* Clean Dark Mode Chart Colors */
+    --chart-1: 215 80% 75%;                 /* Clean blue */
+    --chart-2: 170 60% 65%;                 /* Clean teal */
+    --chart-3: 140 70% 65%;                 /* Clean emerald green */
+    --chart-4: 35 85% 75%;                  /* Clean amber orange */
+    --chart-5: 260 75% 80%;                 /* Clean purple */
+    --chart-6: 8 75% 75%;                   /* Clean red */
+    --chart-7: 185 70% 70%;                 /* Clean cyan */
+    --chart-8: 235 85% 80%;                 /* Clean indigo */
   }
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Inter', 'Kantumruy Pro', system-ui, -apple-system, sans-serif;
   }
 }
 
-@theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-}
-
-:root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+/* Healthcare-Specific Utility Classes */
+@layer utilities {
+  /* Clean Medical Status Badges */
+  .status-active {
+    background: linear-gradient(135deg, rgb(34 197 94), rgb(22 163 74));
+    color: white;
+    box-shadow: 0 1px 3px rgb(34 197 94 / 0.2);
   }
+  
+  .dark .status-active {
+    background: linear-gradient(135deg, rgb(34 197 94), rgb(22 163 74));
+    color: white;
+    box-shadow: 0 2px 6px rgb(34 197 94 / 0.3);
+  }
+  
+  .status-warning {
+    background: linear-gradient(135deg, rgb(251 146 60), rgb(234 88 12));
+    color: white;
+    box-shadow: 0 1px 3px rgb(251 146 60 / 0.2);
+  }
+  
+  .dark .status-warning {
+    background: linear-gradient(135deg, rgb(251 146 60), rgb(234 88 12));
+    color: white;
+    box-shadow: 0 2px 6px rgb(251 146 60 / 0.3);
+  }
+  
+  .status-critical {
+    background: linear-gradient(135deg, rgb(239 68 68), rgb(220 38 38));
+    color: white;
+    box-shadow: 0 1px 3px rgb(239 68 68 / 0.2);
+  }
+  
+  .dark .status-critical {
+    background: linear-gradient(135deg, rgb(239 68 68), rgb(220 38 38));
+    color: white;
+    box-shadow: 0 2px 6px rgb(239 68 68 / 0.3);
+  }
+  
+  .status-inactive {
+    background: linear-gradient(135deg, rgb(156 163 175), rgb(107 114 128));
+    color: white;
+    box-shadow: 0 1px 3px rgb(156 163 175 / 0.2);
+  }
+  
+  .dark .status-inactive {
+    background: linear-gradient(135deg, rgb(156 163 175), rgb(107 114 128));
+    color: white;
+    box-shadow: 0 2px 6px rgb(156 163 175 / 0.3);
+  }
+  
+  /* Clean Patient Status Colors */
+  .patient-active {
+    background: linear-gradient(135deg, rgb(240 253 244), rgb(220 252 231));
+    color: rgb(21 128 61);
+    border: 1px solid rgb(34 197 94);
+    box-shadow: 0 1px 3px rgb(34 197 94 / 0.1);
+  }
+  
+  .dark .patient-active {
+    background: linear-gradient(135deg, rgb(20 83 45 / 0.15), rgb(20 83 45 / 0.08));
+    color: rgb(134 239 172);
+    border: 1px solid rgb(34 197 94);
+    box-shadow: 0 2px 6px rgb(34 197 94 / 0.2);
+  }
+  
+  .patient-transferred {
+    background: linear-gradient(135deg, rgb(255 247 237), rgb(254 215 170));
+    color: rgb(194 65 12);
+    border: 1px solid rgb(251 146 60);
+    box-shadow: 0 1px 3px rgb(251 146 60 / 0.1);
+  }
+  
+  .dark .patient-transferred {
+    background: linear-gradient(135deg, rgb(154 52 18 / 0.15), rgb(154 52 18 / 0.08));
+    color: rgb(251 146 60);
+    border: 1px solid rgb(251 146 60);
+    box-shadow: 0 2px 6px rgb(251 146 60 / 0.2);
+  }
+  
+  .patient-lost {
+    background: linear-gradient(135deg, rgb(254 242 242), rgb(254 202 202));
+    color: rgb(153 27 27);
+    border: 1px solid rgb(239 68 68);
+    box-shadow: 0 1px 3px rgb(239 68 68 / 0.1);
+  }
+  
+  .dark .patient-lost {
+    background: linear-gradient(135deg, rgb(153 27 27 / 0.15), rgb(153 27 27 / 0.08));
+    color: rgb(248 113 113);
+    border: 1px solid rgb(239 68 68);
+    box-shadow: 0 2px 6px rgb(239 68 68 / 0.2);
+  }
+  
+  .patient-dead {
+    background: linear-gradient(135deg, rgb(249 250 251), rgb(243 244 246));
+    color: rgb(55 65 81);
+    border: 1px solid rgb(107 114 128);
+    box-shadow: 0 1px 3px rgb(107 114 128 / 0.1);
+  }
+  
+  .dark .patient-dead {
+    background: linear-gradient(135deg, rgb(17 24 39 / 0.15), rgb(17 24 39 / 0.08));
+    color: rgb(156 163 175);
+    border: 1px solid rgb(107 114 128);
+    box-shadow: 0 2px 6px rgb(107 114 128 / 0.2);
+  }
+  
+  /* Clean Medical Data Indicators */
+  .viral-load-high {
+    background: linear-gradient(135deg, rgb(254 242 242), rgb(252 165 165));
+    color: rgb(153 27 27);
+    border: 1px solid rgb(239 68 68);
+    box-shadow: 0 1px 3px rgb(239 68 68 / 0.15);
+  }
+  
+  .dark .viral-load-high {
+    background: linear-gradient(135deg, rgb(153 27 27 / 0.2), rgb(153 27 27 / 0.12));
+    color: rgb(248 113 113);
+    border: 1px solid rgb(239 68 68);
+    box-shadow: 0 2px 6px rgb(239 68 68 / 0.25);
+  }
+  
+  .viral-load-low {
+    background: linear-gradient(135deg, rgb(240 253 244), rgb(220 252 231));
+    color: rgb(22 101 52);
+    border: 1px solid rgb(34 197 94);
+    box-shadow: 0 1px 3px rgb(34 197 94 / 0.15);
+  }
+  
+  .dark .viral-load-low {
+    background: linear-gradient(135deg, rgb(20 83 45 / 0.2), rgb(20 83 45 / 0.12));
+    color: rgb(74 222 128);
+    border: 1px solid rgb(34 197 94);
+    box-shadow: 0 2px 6px rgb(34 197 94 / 0.25);
+  }
+  
+  .viral-load-undetectable {
+    background: linear-gradient(135deg, rgb(239 246 255), rgb(219 234 254));
+    color: rgb(30 64 175);
+    border: 1px solid rgb(59 130 246);
+    box-shadow: 0 1px 3px rgb(59 130 246 / 0.15);
+  }
+  
+  .dark .viral-load-undetectable {
+    background: linear-gradient(135deg, rgb(30 64 175 / 0.2), rgb(30 64 175 / 0.12));
+    color: rgb(96 165 250);
+    border: 1px solid rgb(59 130 246);
+    box-shadow: 0 2px 6px rgb(59 130 246 / 0.25);
+  }
+  
+  .cd4-high {
+    background: linear-gradient(135deg, rgb(240 253 244), rgb(220 252 231));
+    color: rgb(22 101 52);
+    border: 1px solid rgb(34 197 94);
+    box-shadow: 0 1px 3px rgb(34 197 94 / 0.15);
+  }
+  
+  .dark .cd4-high {
+    background: linear-gradient(135deg, rgb(20 83 45 / 0.2), rgb(20 83 45 / 0.12));
+    color: rgb(74 222 128);
+    border: 1px solid rgb(34 197 94);
+    box-shadow: 0 2px 6px rgb(34 197 94 / 0.25);
+  }
+  
+  .cd4-low {
+    background: linear-gradient(135deg, rgb(255 247 237), rgb(254 215 170));
+    color: rgb(154 52 18);
+    border: 1px solid rgb(251 146 60);
+    box-shadow: 0 1px 3px rgb(251 146 60 / 0.15);
+  }
+  
+  .dark .cd4-low {
+    background: linear-gradient(135deg, rgb(154 52 18 / 0.2), rgb(154 52 18 / 0.12));
+    color: rgb(251 146 60);
+    border: 1px solid rgb(251 146 60);
+    box-shadow: 0 2px 6px rgb(251 146 60 / 0.25);
+  }
+  
+  .cd4-critical {
+    background: linear-gradient(135deg, rgb(254 242 242), rgb(252 165 165));
+    color: rgb(153 27 27);
+    border: 1px solid rgb(239 68 68);
+    box-shadow: 0 1px 3px rgb(239 68 68 / 0.15);
+  }
+  
+  .dark .cd4-critical {
+    background: linear-gradient(135deg, rgb(153 27 27 / 0.2), rgb(153 27 27 / 0.12));
+    color: rgb(248 113 113);
+    border: 1px solid rgb(239 68 68);
+    box-shadow: 0 2px 6px rgb(239 68 68 / 0.25);
+  }
+  
+  /* Clean Healthcare Card Styles */
+  .medical-card {
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card) / 0.98));
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
+    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .medical-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+  
+  .medical-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+  }
+  
+  .medical-card:hover::before {
+    opacity: 1;
+  }
+  
+  .medical-card-header {
+    background: linear-gradient(135deg, hsl(var(--muted) / 0.6), hsl(var(--muted) / 0.4));
+    border-bottom: 1px solid hsl(var(--border));
+    padding: 1.25rem;
+    border-radius: 0.75rem 0.75rem 0 0;
+    position: relative;
+  }
+  
+  .medical-card-content {
+    padding: 1.25rem;
+    position: relative;
+  }
+  
+  /* Clean Healthcare Form Styles */
+  .medical-input {
+    border: 1px solid hsl(var(--border));
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+  
+  .medical-input::placeholder {
+    color: hsl(var(--muted-foreground));
+  }
+  
+  .medical-input:focus {
+    border-color: hsl(var(--primary));
+    outline: 2px solid hsl(var(--primary) / 0.15);
+    outline-offset: 2px;
+  }
+  
+  .medical-label {
+    color: hsl(var(--foreground));
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+  
+  .medical-error {
+    color: hsl(var(--destructive));
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+  
+  /* Clean Healthcare Table Styles */
+  .medical-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .medical-table th {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--foreground));
+    font-weight: 600;
+    text-align: left;
+    padding: 0.75rem;
+    border-bottom: 1px solid hsl(var(--border));
+  }
+  
+  .medical-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
+  }
+  
+  .medical-table tr:hover {
+    background-color: hsl(var(--muted) / 0.3);
+  }
+  
+  /* Clean Healthcare Button Variants */
+  .btn-medical-primary {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+  
+  .btn-medical-primary:hover {
+    background-color: hsl(var(--primary) / 0.9);
+  }
+  
+  .btn-medical-primary:focus {
+    outline: 2px solid hsl(var(--primary) / 0.15);
+    outline-offset: 2px;
+  }
+  
+  .btn-medical-secondary {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+  }
+  
+  .btn-medical-secondary:hover {
+    background-color: hsl(var(--secondary) / 0.8);
+  }
+  
+  .btn-medical-secondary:focus {
+    outline: 2px solid hsl(var(--secondary) / 0.15);
+    outline-offset: 2px;
+  }
+  
+  .btn-medical-success {
+    background-color: rgb(22 163 74);
+    color: white;
+  }
+  
+  .btn-medical-success:hover {
+    background-color: rgb(21 128 61);
+  }
+  
+  .btn-medical-success:focus {
+    outline: 2px solid rgb(34 197 94 / 0.15);
+    outline-offset: 2px;
+  }
+  
+  .btn-medical-warning {
+    background-color: rgb(234 88 12);
+    color: white;
+  }
+  
+  .btn-medical-warning:hover {
+    background-color: rgb(194 65 12);
+  }
+  
+  .btn-medical-warning:focus {
+    outline: 2px solid rgb(251 146 60 / 0.15);
+    outline-offset: 2px;
+  }
+  
+  .btn-medical-critical {
+    background-color: rgb(220 38 38);
+    color: white;
+  }
+  
+  .btn-medical-critical:hover {
+    background-color: rgb(185 28 28);
+  }
+  
+  .btn-medical-critical:focus {
+    outline: 2px solid rgb(248 113 113 / 0.15);
+    outline-offset: 2px;
+  }
+}
+
+/* Clean Healthcare-Specific Animations */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulse-medical {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Hide scrollbar but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;  /* Safari and Chrome */
+}
+
+.animate-pulse-medical {
+  animation: pulse-medical 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Clean Healthcare Focus States */
+.focus-medical {
+  outline: none;
+}
+
+.focus-medical:focus {
+  outline: 2px solid hsl(var(--primary) / 0.15);
+  outline-offset: 2px;
+  border-color: hsl(var(--primary));
+}
+
+/* Clean Healthcare Scrollbar Styling */
+.medical-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.medical-scrollbar::-webkit-scrollbar-track {
+  background-color: hsl(var(--muted));
+}
+
+.medical-scrollbar::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 9999px;
+}
+
+.medical-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--muted-foreground));
+}
+
+/* Sidebar Active State Override */
+.sidebar-active {
+  background-color: hsl(215 85% 65%) !important; /* Clean medical blue */
+  color: white !important;
+}
+
+.sidebar-active:hover {
+  background-color: hsl(var(--muted)) !important; /* Light gray for light mode, dark gray for dark mode */
+  color: hsl(var(--muted-foreground)) !important; /* Dark text for light mode, light text for dark mode */
+}
+
+/* ===========================================
+   EXPERT COMPONENT SYSTEM
+   =========================================== */
+
+@layer utilities {
+  /* === BUTTON SYSTEM === */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+  
+  .btn-primary {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .btn-primary:hover {
+    background-color: hsl(var(--primary-hover)) !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+  
+  .btn-secondary {
+    background-color: hsl(var(--secondary)) !important;
+    color: hsl(var(--secondary-foreground)) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .btn-secondary:hover {
+    background-color: hsl(var(--secondary-hover)) !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+  
+  .btn-success {
+    background-color: hsl(var(--success)) !important;
+    color: hsl(var(--success-foreground)) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .btn-success:hover {
+    background-color: hsl(var(--success-hover)) !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+  
+  .btn-warning {
+    background-color: hsl(var(--warning)) !important;
+    color: hsl(var(--warning-foreground)) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .btn-warning:hover {
+    background-color: hsl(var(--warning-hover)) !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+  
+  .btn-destructive {
+    background-color: hsl(var(--destructive)) !important;
+    color: hsl(var(--destructive-foreground)) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .btn-destructive:hover {
+    background-color: hsl(var(--destructive-hover)) !important;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+  
+  .btn-outline {
+    border: 1px solid hsl(var(--input)) !important;
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .btn-outline:hover {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  .btn-ghost {
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  .btn-ghost:hover {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  .btn-link {
+    color: hsl(var(--primary)) !important;
+    text-underline-offset: 4px;
+  }
+  
+  .btn-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Button Sizes */
+  .btn-sm {
+    @apply h-8 px-3 text-xs;
+  }
+  
+  .btn-md {
+    @apply h-9 px-4 py-2;
+  }
+  
+  .btn-lg {
+    @apply h-10 px-6 py-2;
+  }
+  
+  .btn-xl {
+    @apply h-12 px-8 py-3 text-lg;
+  }
+  
+  /* === CARD SYSTEM === */
+  .card {
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+    border-radius: 0.5rem;
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .card-hover {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .card-hover:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .card-interactive {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .card-interactive:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transform: translateY(-4px);
+    border-color: hsl(var(--primary) / 0.2);
+  }
+  
+  /* === BADGE SYSTEM === */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 9999px;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    transition: colors 0.2s ease-in-out;
+    border: none;
+  }
+  
+  .badge-primary {
+    background-color: hsl(var(--primary)) !important;
+    color: white !important;
+  }
+  
+  .badge-secondary {
+    background-color: hsl(var(--secondary)) !important;
+    color: white !important;
+  }
+  
+  .badge-success {
+    background-color: hsl(var(--success)) !important;
+    color: white !important;
+  }
+  
+  .badge-warning {
+    background-color: hsl(var(--warning)) !important;
+    color: white !important;
+  }
+  
+  .badge-destructive {
+    background-color: hsl(var(--destructive)) !important;
+    color: white !important;
+  }
+  
+  .badge-outline {
+    background-color: transparent !important;
+    border: 1px solid hsl(var(--border)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  /* Consistent badge variants for medical data */
+  .badge-info {
+    background-color: hsl(var(--info)) !important;
+    color: white !important;
+  }
+  
+  .badge-muted {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  /* === MEDICAL STATUS BADGES === */
+  .status-active {
+    background-color: hsl(var(--success)) !important;
+    color: white !important;
+  }
+  
+  .status-inactive {
+    background-color: hsl(220 15% 85%) !important; /* Light gray background */
+    color: hsl(220 15% 25%) !important; /* Dark gray text for better contrast */
+  }
+  
+  .status-transferred {
+    background-color: hsl(var(--warning)) !important;
+    color: white !important;
+  }
+  
+  /* Ensure transferred status always has white text */
+  .status-transferred,
+  .status-transferred-out {
+    color: white !important;
+    font-weight: 600 !important;
+  }
+  
+  /* Transferred Out specific styling */
+  .status-transferred-out {
+    background-color: hsl(var(--muted)) !important;
+    color: white !important;
+  }
+  
+  .status-lost {
+    background-color: hsl(var(--destructive)) !important;
+    color: white !important;
+  }
+  
+  .status-dead {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+    opacity: 0.75;
+  }
+  
+  /* Gender badges - consistent styling */
+  .badge-male {
+    background-color: hsl(var(--primary)) !important;
+    color: white !important;
+  }
+  
+  .badge-female {
+    background-color: hsl(var(--secondary)) !important;
+    color: white !important;
+  }
+  
+  /* Nationality badges - consistent styling */
+  .badge-nationality {
+    background-color: hsl(var(--info)) !important;
+    color: white !important;
+  }
+  
+  /* Patient type badges - consistent styling */
+  .badge-adult {
+    background-color: hsl(var(--primary)) !important;
+    color: white !important;
+  }
+  
+  .badge-child {
+    background-color: hsl(var(--success)) !important;
+    color: white !important;
+  }
+  
+  .badge-infant {
+    background-color: hsl(var(--warning)) !important;
+    color: white !important;
+  }
+  
+  /* === MEDICAL DATA INDICATORS === */
+  .viral-load-high {
+    background-color: hsl(0 85% 85%) !important; /* Light red background */
+    color: hsl(0 85% 15%) !important; /* Dark red text */
+  }
+  
+  .viral-load-low {
+    background-color: hsl(140 70% 85%) !important; /* Light green background */
+    color: hsl(140 70% 15%) !important; /* Dark green text */
+  }
+  
+  .viral-load-undetectable {
+    background-color: hsl(170 60% 85%) !important; /* Light teal background */
+    color: hsl(170 60% 15%) !important; /* Dark teal text */
+  }
+  
+  .cd4-high {
+    background-color: hsl(140 70% 85%) !important; /* Light green background */
+    color: hsl(140 70% 15%) !important; /* Dark green text */
+  }
+  
+  .cd4-low {
+    background-color: hsl(35 85% 85%) !important; /* Light orange background */
+    color: hsl(35 85% 15%) !important; /* Dark orange text */
+  }
+  
+  .cd4-critical {
+    background-color: hsl(0 85% 85%) !important; /* Light red background */
+    color: hsl(0 85% 15%) !important; /* Dark red text */
+  }
+  
+  /* === FORM SYSTEM === */
+  .form-input {
+    display: flex;
+    height: 2.25rem;
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid hsl(var(--input));
+    background-color: hsl(var(--background));
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition: colors 0.2s ease-in-out;
+  }
+  
+  .form-input:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #3b82f6;
+  }
+  
+  .form-input:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  
+  .form-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--foreground));
+  }
+  
+  .form-error {
+    font-size: 0.875rem;
+    color: hsl(var(--destructive));
+  }
+  
+  .form-help {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+  }
+  
+  /* === LAYOUT UTILITIES === */
+  .container {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 80rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  
+  .section {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  @media (min-width: 640px) {
+    .section {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .section {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
+  }
+  
+  .grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  
+  @media (min-width: 640px) {
+    .grid-responsive {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .grid-responsive {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .grid-responsive {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  
+  /* === ANIMATION UTILITIES === */
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-scale-in {
+    animation: scaleIn 0.2s ease-out;
+  }
+  
+  /* === INTERACTION STATES === */
+  .interactive {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .interactive:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transform: translateY(-2px);
+  }
+  
+  .interactive:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  
+  .interactive-subtle {
+    transition: colors 0.2s ease-in-out;
+  }
+  
+  .interactive-subtle:hover {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  .interactive-strong {
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .interactive-strong:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    transform: translateY(-4px);
+  }
+  
+  .interactive-strong:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  }
+}
+
+/* === KEYFRAME ANIMATIONS === */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes scaleIn {
+  from { 
+    opacity: 0; 
+    transform: scale(0.95); 
+  }
+  to { 
+    opacity: 1; 
+    transform: scale(1); 
+  }
+}
+
+/* === EXPERT OVERRIDES === */
+@layer utilities {
+  /* Force consistent color application */
+  .bg-primary { background-color: hsl(var(--primary)) !important; }
+  .text-primary-foreground { color: hsl(var(--primary-foreground)) !important; }
+  .bg-secondary { background-color: hsl(var(--secondary)) !important; }
+  .text-secondary-foreground { color: hsl(var(--secondary-foreground)) !important; }
+  .bg-success { background-color: hsl(var(--success)) !important; }
+  .text-success-foreground { color: hsl(var(--success-foreground)) !important; }
+  .bg-warning { background-color: hsl(var(--warning)) !important; }
+  .text-warning-foreground { color: hsl(var(--warning-foreground)) !important; }
+  .bg-destructive { background-color: hsl(var(--destructive)) !important; }
+  .text-destructive-foreground { color: hsl(var(--destructive-foreground)) !important; }
+  .bg-info { background-color: hsl(var(--info)) !important; }
+  .text-info-foreground { color: hsl(var(--info-foreground)) !important; }
+  
+  /* Force background and foreground colors */
+  .bg-background { background-color: hsl(var(--background)) !important; }
+  .text-foreground { color: hsl(var(--foreground)) !important; }
+  .bg-card { background-color: hsl(var(--card)) !important; }
+  .text-card-foreground { color: hsl(var(--card-foreground)) !important; }
+  .bg-muted { background-color: hsl(var(--muted)) !important; }
+  .text-muted-foreground { color: hsl(var(--muted-foreground)) !important; }
+  .bg-popover { background-color: hsl(var(--popover)) !important; }
+  .text-popover-foreground { color: hsl(var(--popover-foreground)) !important; }
+  
+  /* Consistent hover states */
+  .hover\:bg-primary:hover { background-color: hsl(var(--primary-hover)) !important; }
+  .hover\:bg-secondary:hover { background-color: hsl(var(--secondary-hover)) !important; }
+  .hover\:bg-success:hover { background-color: hsl(var(--success-hover)) !important; }
+  .hover\:bg-warning:hover { background-color: hsl(var(--warning-hover)) !important; }
+  .hover\:bg-destructive:hover { background-color: hsl(var(--destructive-hover)) !important; }
+  .hover\:bg-info:hover { background-color: hsl(var(--info-hover)) !important; }
+  
+  /* Muted hover states */
+  .hover\:bg-muted:hover { background-color: hsl(var(--muted-hover)) !important; }
+  .hover\:text-muted-foreground:hover { color: hsl(var(--muted-foreground)) !important; }
+  
+  /* Sidebar active state */
+  .sidebar-active {
+    background-color: hsl(var(--primary)) !important;
+    color: hsl(var(--primary-foreground)) !important;
+  }
+  
+  .sidebar-active:hover {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  /* Force body and main layout backgrounds */
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background)) !important;
+    color: hsl(var(--foreground)) !important;
+  }
+  
+  html {
+    background-color: hsl(var(--background)) !important;
+  }
+  
+  #root {
+    background-color: hsl(var(--background)) !important;
+    min-height: 100vh;
+  }
+  
+  /* Force dialog and modal backgrounds */
+  [data-radix-dialog-content] {
+    background-color: hsl(var(--card)) !important;
+    color: hsl(var(--card-foreground)) !important;
+  }
+  
+  /* Force table backgrounds */
+  table {
+    background-color: hsl(var(--card)) !important;
+  }
+  
+  thead {
+    background-color: hsl(var(--muted)) !important;
+  }
+  
+  tbody tr {
+    background-color: hsl(var(--card)) !important;
+  }
+  
+  tbody tr:hover {
+    background-color: hsl(var(--muted) / 0.5) !important;
+  }
+  
+  /* Dark mode specific overrides */
+  .dark body {
+    background-color: hsl(220 8% 6%) !important;
+    color: hsl(220 4% 98%) !important;
+  }
+  
+  .dark #root {
+    background-color: hsl(220 8% 6%) !important;
+  }
+  
+  .dark html {
+    background-color: hsl(220 8% 6%) !important;
+  }
+  
+  .dark [data-radix-dialog-content] {
+    background-color: hsl(220 8% 10%) !important;
+    color: hsl(220 4% 98%) !important;
+  }
+  
+  .dark table {
+    background-color: hsl(220 8% 10%) !important;
+  }
+  
+  .dark thead {
+    background-color: hsl(220 8% 16%) !important;
+  }
+  
+  .dark tbody tr {
+    background-color: hsl(220 8% 10%) !important;
+  }
+  
+  .dark tbody tr:hover {
+    background-color: hsl(220 8% 16% / 0.5) !important;
+  }
+  
+  /* Force consistent badge colors - override any conflicting styles */
+  .badge[class*="bg-"] {
+    color: white !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  
+  /* Remove any gradient backgrounds from badges */
+  .badge[style*="gradient"],
+  .badge[class*="gradient"] {
+    background-image: none !important;
+    background: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  /* Specific badge color overrides for consistency */
+  .badge.bg-orange-500,
+  .badge.bg-orange-600,
+  .badge.bg-orange-400 {
+    background-color: hsl(var(--warning)) !important;
+    color: white !important;
+  }
+  
+  .badge.bg-blue-500,
+  .badge.bg-blue-600,
+  .badge.bg-blue-400 {
+    background-color: hsl(var(--primary)) !important;
+    color: white !important;
+  }
+  
+  .badge.bg-green-500,
+  .badge.bg-green-600,
+  .badge.bg-green-400 {
+    background-color: hsl(var(--success)) !important;
+    color: white !important;
+  }
+  
+  .badge.bg-red-500,
+  .badge.bg-red-600,
+  .badge.bg-red-400 {
+    background-color: hsl(var(--destructive)) !important;
+    color: white !important;
+  }
+  
+  .badge.bg-gray-500,
+  .badge.bg-gray-600,
+  .badge.bg-gray-400 {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  .badge.bg-teal-500,
+  .badge.bg-teal-600,
+  .badge.bg-teal-400 {
+    background-color: hsl(var(--secondary)) !important;
+    color: white !important;
+  }
+  
+  .badge.bg-cyan-500,
+  .badge.bg-cyan-600,
+  .badge.bg-cyan-400 {
+    background-color: hsl(var(--info)) !important;
+    color: white !important;
+  }
+  
+  /* Override any inline styles or hardcoded colors */
+  .badge[style*="background"] {
+    background-image: none !important;
+    background: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  /* Override common hardcoded badge colors */
+  .badge.bg-gray-500,
+  .badge.bg-gray-600,
+  .badge.bg-gray-700,
+  .badge.bg-gray-800 {
+    background-color: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+  }
+  
+  .badge.bg-emerald-500,
+  .badge.bg-emerald-600,
+  .badge.bg-green-500,
+  .badge.bg-green-600 {
+    background-color: hsl(var(--success)) !important;
+    color: white !important;
+  }
+  
+  .badge.bg-amber-500,
+  .badge.bg-amber-600,
+  .badge.bg-yellow-500,
+  .badge.bg-yellow-600 {
+    background-color: hsl(var(--warning)) !important;
+    color: white !important;
+  }
+  
+  .badge.bg-rose-500,
+  .badge.bg-rose-600,
+  .badge.bg-pink-500,
+  .badge.bg-pink-600 {
+    background-color: hsl(var(--destructive)) !important;
+    color: white !important;
+  }
+  
+  /* Force all badges to use solid colors - but respect semantic colors */
+  .badge {
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+  
+  /* Override any gradient or special effects */
+  .badge[class*="gradient"],
+  .badge[style*="gradient"],
+  .badge[class*="shadow"],
+  .badge[style*="shadow"] {
+    background-image: none !important;
+    background: hsl(var(--muted)) !important;
+    color: hsl(var(--muted-foreground)) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+  
+  /* Dark mode badge enhancements for better contrast */
+  .dark .badge-primary,
+  .dark .badge-secondary,
+  .dark .badge-success,
+  .dark .badge-warning,
+  .dark .badge-destructive,
+  .dark .badge-info,
+  .dark .badge-male,
+  .dark .badge-female,
+  .dark .badge-nationality,
+  .dark .badge-adult,
+  .dark .badge-child,
+  .dark .badge-infant,
+  .dark .status-active,
+  .dark .status-transferred,
+  .dark .status-transferred-out,
+  .dark .status-lost {
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Dark mode status-inactive styling */
+  .dark .status-inactive {
+    background-color: hsl(220 15% 25%) !important; /* Dark gray background */
+    color: hsl(220 15% 85%) !important; /* Light gray text for better contrast */
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Dark mode VL and CD4 badges - use white text on darker backgrounds */
+  .dark .viral-load-high {
+    background-color: hsl(0 85% 35%) !important; /* Dark red background */
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .dark .viral-load-low {
+    background-color: hsl(140 70% 35%) !important; /* Dark green background */
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .dark .viral-load-undetectable {
+    background-color: hsl(170 60% 35%) !important; /* Dark teal background */
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .dark .cd4-high {
+    background-color: hsl(140 70% 35%) !important; /* Dark green background */
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .dark .cd4-low {
+    background-color: hsl(35 85% 35%) !important; /* Dark orange background */
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  .dark .cd4-critical {
+    background-color: hsl(0 85% 35%) !important; /* Dark red background */
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  /* Light mode badge enhancements for better contrast */
+  .badge-primary,
+  .badge-secondary,
+  .badge-success,
+  .badge-warning,
+  .badge-destructive,
+  .badge-info,
+  .badge-male,
+  .badge-female,
+  .badge-nationality,
+  .badge-adult,
+  .badge-child,
+  .badge-infant,
+  .status-active,
+  .status-transferred,
+  .status-transferred-out,
+  .status-lost {
+    color: white !important;
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+  }
+  
+  /* Light mode status-inactive styling */
+  .status-inactive {
+    background-color: hsl(220 15% 85%) !important; /* Light gray background */
+    color: hsl(220 15% 25%) !important; /* Dark gray text for better contrast */
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  /* Light mode VL and CD4 badges - use black text on light backgrounds */
+  .viral-load-high,
+  .viral-load-low,
+  .viral-load-undetectable,
+  .cd4-high,
+  .cd4-low,
+  .cd4-critical {
+    font-weight: 600 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.5) !important;
+  }
+}
+
+@layer utilities {
+  .hover\:bg-blue-50:hover {
+    background-color: hsl(215 90% 98%) !important; /* Clean light blue */
+    color: hsl(215 85% 30%) !important; /* Clean dark blue text */
+    border-color: hsl(215 85% 85%) !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .hover\:bg-green-50:hover {
+    background-color: hsl(140 80% 98%) !important; /* Clean light green */
+    color: hsl(140 75% 30%) !important; /* Clean dark green text */
+    border-color: hsl(140 75% 85%) !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .hover\:bg-orange-50:hover {
+    background-color: hsl(35 95% 98%) !important; /* Clean light orange */
+    color: hsl(35 90% 30%) !important; /* Clean dark orange text */
+    border-color: hsl(35 90% 85%) !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  .hover\:bg-red-50:hover {
+    background-color: hsl(8 85% 98%) !important; /* Clean light red */
+    color: hsl(8 80% 30%) !important; /* Clean dark red text */
+    border-color: hsl(8 80% 85%) !important;
+    transition: all 0.2s ease !important;
+  }
+  
+  /* Clean Hover States for Healthcare UI */
+  .hover\:bg-card:hover {
+    background-color: hsl(0 0% 100%) !important; /* Pure white for cards */
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -1px rgb(0 0 0 / 0.06) !important;
+    border-color: hsl(215 85% 70% / 0.2) !important; /* Clean blue border */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .hover\:bg-muted:hover {
+    background-color: hsl(210 12% 98%) !important; /* Clean lighter muted */
+    transform: translateY(-1px) !important;
+    box-shadow: 0 1px 4px rgb(0 0 0 / 0.05) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .hover\:scale-105:hover {
+    transform: scale(1.02) !important;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .hover\:scale-102:hover {
+    transform: scale(1.01) !important;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Clean Medical Card Hover Effects */
+  .hover\:medical-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px -4px rgb(0 0 0 / 0.08), 0 4px 8px -2px rgb(0 0 0 / 0.06) !important;
+    border-color: hsl(var(--primary)) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Clean Button Hover Enhancements */
+  .hover\:btn-primary:hover {
+    background: linear-gradient(135deg, hsl(215 85% 70%), hsl(170 65% 60%)) !important; /* Clean blue to teal */
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px hsl(215 85% 70% / 0.25) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .hover\:btn-success:hover {
+    background: linear-gradient(135deg, hsl(140 75% 60%), hsl(155 80% 60%)) !important; /* Clean green to emerald */
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px hsl(140 75% 60% / 0.25) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .hover\:btn-warning:hover {
+    background: linear-gradient(135deg, hsl(35 90% 70%), hsl(50 90% 70%)) !important; /* Clean orange to amber */
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px hsl(35 90% 70% / 0.25) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  .hover\:btn-critical:hover {
+    background: linear-gradient(135deg, hsl(8 80% 75%), hsl(345 80% 70%)) !important; /* Clean red to rose */
+    color: white !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px hsl(8 80% 75% / 0.25) !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  
+  /* Clean Rich Healthcare Classes */
+  .status-accent {
+    background-color: hsl(var(--status-accent)) !important;
+    color: white !important;
+  }
+  
+  .status-highlight {
+    background-color: hsl(var(--status-highlight)) !important;
+    color: white !important;
+  }
+  
+  .patient-pending {
+    background-color: hsl(var(--patient-pending)) !important;
+    color: white !important;
+  }
+  
+  .patient-completed {
+    background-color: hsl(var(--patient-completed)) !important;
+    color: white !important;
+  }
+  
+  .cd4-excellent {
+    background-color: hsl(var(--cd4-excellent)) !important;
+    color: white !important;
+  }
+  
+  .cd4-good {
+    background-color: hsl(var(--cd4-good)) !important;
+    color: white !important;
+  }
+  
+  /* Clean Gradient Classes */
+  .gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--medical-accent))) !important;
+    color: white !important;
+  }
+  
+  .gradient-success {
+    background: linear-gradient(135deg, hsl(var(--status-success)), hsl(var(--patient-completed))) !important;
+    color: white !important;
+  }
+  
+  .gradient-warning {
+    background: linear-gradient(135deg, hsl(var(--status-warning)), hsl(var(--patient-pending))) !important;
+    color: white !important;
+  }
+  
+  .gradient-critical {
+    background: linear-gradient(135deg, hsl(var(--status-critical)), hsl(var(--patient-lost))) !important;
+    color: white !important;
   }
 }
