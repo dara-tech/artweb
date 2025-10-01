@@ -39,6 +39,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     [user?.role]
   )
 
+  // Hide sidebar completely for viewers
+  if (isViewer) {
+    return null
+  }
+
   const handleLogout = () => {
     logout()
   }

@@ -207,4 +207,169 @@ router.get('/sites/:siteCode/indicators', authenticateToken, async (req, res) =>
   }
 });
 
+// Create new site in registry
+router.post('/sites', authenticateToken, async (req, res) => {
+  try {
+    const { 
+      code, 
+      name, 
+      short_name, 
+      display_name, 
+      search_terms, 
+      file_name,
+      province, 
+      type, 
+      database_name, 
+      status = 1 
+    } = req.body;
+
+    // Validate required fields
+    if (!code || !name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Site code and name are required'
+      });
+    }
+
+    // Check if site code already exists
+    const existingSite = await siteDatabaseManager.getSiteInfo(code);
+    if (existingSite) {
+      return res.status(400).json({
+        success: false,
+        message: 'Site code already exists'
+      });
+    }
+
+    // Insert new site into registry
+    const registryConnection = siteDatabaseManager.getRegistryConnection();
+    await registryConnection.query(`
+      INSERT INTO sites (code, name, short_name, display_name, search_terms, file_name, province, type, database_name, status) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [code, name, short_name, display_name, search_terms, file_name, province, type, database_name, status]);
+
+    res.json({
+      success: true,
+      message: 'Site created successfully',
+      site: { 
+        code, 
+        name, 
+        short_name, 
+        display_name, 
+        search_terms, 
+        file_name,
+        province, 
+        type, 
+        database_name, 
+        status 
+      }
+    });
+
+  } catch (error) {
+    console.error('Create site error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create site',
+      error: error.message
+    });
+  }
+});
+
+// Update site in registry
+router.put('/sites/:siteCode', authenticateToken, async (req, res) => {
+  try {
+    const { siteCode } = req.params;
+    const { 
+      name, 
+      short_name, 
+      display_name, 
+      search_terms, 
+      file_name,
+      province, 
+      type, 
+      database_name, 
+      status 
+    } = req.body;
+
+    // Check if site exists
+    const existingSite = await siteDatabaseManager.getSiteInfo(siteCode);
+    if (!existingSite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Site not found'
+      });
+    }
+
+    // Update site in registry
+    const registryConnection = siteDatabaseManager.getRegistryConnection();
+    await registryConnection.query(`
+      UPDATE sites 
+      SET name = COALESCE(?, name),
+          short_name = COALESCE(?, short_name),
+          display_name = COALESCE(?, display_name),
+          search_terms = COALESCE(?, search_terms),
+          file_name = COALESCE(?, file_name),
+          province = COALESCE(?, province),
+          type = COALESCE(?, type),
+          database_name = COALESCE(?, database_name),
+          status = COALESCE(?, status),
+          updated_at = CURRENT_TIMESTAMP
+      WHERE code = ?
+    `, [name, short_name, display_name, search_terms, file_name, province, type, database_name, status, siteCode]);
+
+    // Get updated site info
+    const updatedSite = await siteDatabaseManager.getSiteInfo(siteCode);
+
+    res.json({
+      success: true,
+      message: 'Site updated successfully',
+      site: updatedSite
+    });
+
+  } catch (error) {
+    console.error('Update site error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update site',
+      error: error.message
+    });
+  }
+});
+
+// Delete site from registry (soft delete)
+router.delete('/sites/:siteCode', authenticateToken, async (req, res) => {
+  try {
+    const { siteCode } = req.params;
+
+    // Check if site exists
+    const existingSite = await siteDatabaseManager.getSiteInfo(siteCode);
+    if (!existingSite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Site not found'
+      });
+    }
+
+    // Soft delete site (set status to 0)
+    const registryConnection = siteDatabaseManager.getRegistryConnection();
+    await registryConnection.query(`
+      UPDATE sites 
+      SET status = 0, updated_at = CURRENT_TIMESTAMP
+      WHERE code = ?
+    `, [siteCode]);
+
+    res.json({
+      success: true,
+      message: 'Site deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('Delete site error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to delete site',
+      error: error.message
+    });
+  }
+});
+
 module.exports = router;

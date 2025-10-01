@@ -22,3 +22,5 @@ export { Sheet, SheetPortal, SheetOverlay, SheetTrigger, SheetClose, SheetConten
 export { Skeleton } from './skeleton'
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from './table'
 export { Tabs, TabsList, TabsTrigger, TabsContent } from './tabs'
+export { Toast, ToastAction, ToastClose, ToastTitle, ToastDescription, ToastContent, ToastIcon, toastVariants } from './toast'
+export { Toaster } from './toaster'

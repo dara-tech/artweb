@@ -73,6 +73,7 @@ class SiteDatabaseManager {
           COALESCE(short_name, name) as short_name,
           COALESCE(display_name, short_name, name) as display_name,
           COALESCE(search_terms, name) as search_terms,
+          file_name,
           status,
           database_name
         FROM sites 

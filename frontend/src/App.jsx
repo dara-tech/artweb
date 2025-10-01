@@ -19,6 +19,8 @@ import RoleManagement from './pages/RoleManagement'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
 import IndicatorsDashboard from './pages/indicators/IndicatorsDashboard'
 import AdvancedLayout from './components/layout/AdvancedLayout'
+import { Toaster } from './components/ui'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
   const { user, loading } = useAuth()
@@ -54,33 +56,141 @@ function App() {
       <AdvancedLayout>
         <Routes>
           <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/patients" element={<PatientList />} />
-          <Route path="/patients/adult" element={<AdultPatientForm />} />
-          <Route path="/patients/adult/:id" element={<AdultPatientForm />} />
-          <Route path="/patients/child" element={<ChildPatientForm />} />
-          <Route path="/patients/child/:id" element={<ChildPatientForm />} />
-          <Route path="/patients/infant" element={<InfantPatientForm />} />
-          <Route path="/patients/infant/:id" element={<InfantPatientForm />} />
-          <Route path="/visits/adult" element={<AdultVisitList />} />
-          <Route path="/visits/adult/new" element={<AdultVisitForm />} />
-          <Route path="/visits/adult/:clinicId" element={<AdultVisitForm />} />
-          <Route path="/visits/adult/:clinicId/:visitId" element={<AdultVisitForm />} />
-          <Route path="/visits/child" element={<ChildVisitList />} />
-          <Route path="/visits/child/new" element={<ChildVisitForm />} />
-          <Route path="/visits/child/:clinicId" element={<ChildVisitForm />} />
-          <Route path="/visits/child/:clinicId/:visitId" element={<ChildVisitForm />} />
-          <Route path="/visits/infant" element={<InfantVisitList />} />
-          <Route path="/visits/infant/new" element={<InfantVisitForm />} />
-          <Route path="/visits/infant/:clinicId" element={<InfantVisitForm />} />
-          <Route path="/visits/infant/:clinicId/:visitId" element={<InfantVisitForm />} />
-          <Route path="/data-management" element={<DataManagement />} />
-          <Route path="/role-management" element={<RoleManagement />} />
+          
+          {/* Dashboard - Not accessible to viewers */}
+          <Route path="/dashboard" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <Dashboard />
+            </ProtectedRoute>
+          } />
+          
+          {/* Patient Management - Not accessible to viewers */}
+          <Route path="/patients" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <PatientList />
+            </ProtectedRoute>
+          } />
+          <Route path="/patients/adult" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <AdultPatientForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/patients/adult/:id" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <AdultPatientForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/patients/child" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ChildPatientForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/patients/child/:id" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ChildPatientForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/patients/infant" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <InfantPatientForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/patients/infant/:id" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <InfantPatientForm />
+            </ProtectedRoute>
+          } />
+          
+          {/* Visit Management - Not accessible to viewers */}
+          <Route path="/visits/adult" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <AdultVisitList />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/adult/new" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <AdultVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/adult/:clinicId" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <AdultVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/adult/:clinicId/:visitId" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <AdultVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/child" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ChildVisitList />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/child/new" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ChildVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/child/:clinicId" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ChildVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/child/:clinicId/:visitId" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ChildVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/infant" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <InfantVisitList />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/infant/new" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <InfantVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/infant/:clinicId" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <InfantVisitForm />
+            </ProtectedRoute>
+          } />
+          <Route path="/visits/infant/:clinicId/:visitId" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <InfantVisitForm />
+            </ProtectedRoute>
+          } />
+          
+          {/* Data Management - Not accessible to viewers */}
+          <Route path="/data-management" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <DataManagement />
+            </ProtectedRoute>
+          } />
+          
+          {/* Role Management - Only for super_admin and admin */}
+          <Route path="/role-management" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <RoleManagement />
+            </ProtectedRoute>
+          } />
+          
+          {/* Indicators - Accessible to all authenticated users */}
           <Route path="/indicators" element={<IndicatorsReport />} />
-          <Route path="/indicators/dashboard" element={<IndicatorsDashboard />} />
+          
+          {/* Indicators Dashboard - Not accessible to viewers */}
+          <Route path="/indicators/dashboard" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <IndicatorsDashboard />
+            </ProtectedRoute>
+          } />
+          
           <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
         </Routes>
       </AdvancedLayout>
+      <Toaster />
     </SiteProvider>
   )
 }

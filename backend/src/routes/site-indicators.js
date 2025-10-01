@@ -192,6 +192,9 @@ router.get('/sites/:siteCode/indicators/:indicatorId/details', authenticateToken
     const { siteCode, indicatorId } = req.params;
     const { startDate, endDate, previousEndDate, page = 1, limit = 50, search = '', ageGroup = '', gender = '' } = req.query;
     
+    // Allow higher limits for export requests (when limit > 1000)
+    const effectiveLimit = parseInt(limit) > 1000 ? Math.min(parseInt(limit), 100000) : parseInt(limit);
+    
     console.log('🔍 Site details request params:', { siteCode, indicatorId, search, ageGroup, gender });
     
     if (!startDate || !endDate) {
@@ -230,7 +233,7 @@ router.get('/sites/:siteCode/indicators/:indicatorId/details', authenticateToken
       indicatorId,
       params,
       parseInt(page),
-      parseInt(limit),
+      effectiveLimit,
       search,
       ageGroup,
       gender

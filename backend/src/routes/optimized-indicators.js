@@ -264,7 +264,7 @@ router.get('/:indicatorId/details', async (req, res) => {
       endDate: endDate || '2025-03-31',
       previousEndDate: previousEndDate || '2024-12-31',
       page: parseInt(page),
-      limit: Math.min(parseInt(limit), 10000), // Max 10000 records per page for exports
+      limit: Math.min(parseInt(limit), 100000), // Max 100000 records per page for exports
       search: search.trim(),
       gender: gender || null,
       ageGroup: ageGroup || null
@@ -331,7 +331,7 @@ router.get('/details/:indicatorId', async (req, res) => {
       endDate: endDate || '2025-03-31',
       previousEndDate: previousEndDate || '2024-12-31',
       page: parseInt(page),
-      limit: Math.min(parseInt(limit), 10000), // Max 10000 records per page for exports
+      limit: Math.min(parseInt(limit), 100000), // Max 100000 records per page for exports
       search: search.trim(),
       gender: gender || null,
       ageGroup: ageGroup || null

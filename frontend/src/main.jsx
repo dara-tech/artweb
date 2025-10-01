@@ -7,14 +7,14 @@ import { AuthProvider } from './contexts/AuthContext'
 import { SiteProvider } from './contexts/SiteContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 
-// Load Kantomruy Pro font
+// Load Noto Sans Khmer font (best Khmer font for web)
 const link = document.createElement('link')
 link.rel = 'stylesheet'
-link.href = 'https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@100;200;300;400;500;600;700&display=swap'
+link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Khmer:wght@100;200;300;400;500;600;700;800;900&display=swap'
 document.head.appendChild(link)
 
-// Apply Kantumruy Pro font to body
-document.body.style.fontFamily = 'Kantumruy Pro, sans-serif'
+// Apply Noto Sans Khmer font to body
+document.body.style.fontFamily = 'Noto Sans Khmer, sans-serif'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

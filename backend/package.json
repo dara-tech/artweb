@@ -17,7 +17,9 @@
     "test-frontend-integration": "node scripts/test-frontend-integration.js",
     "verify-site-specific-usage": "node scripts/verify-site-specific-usage.js",
     "setup-user-table": "node scripts/setup-user-table.js",
-    "test-real-auth": "node scripts/test-real-auth.js"
+    "test-real-auth": "node scripts/test-real-auth.js",
+    "add-file-name-field": "node scripts/add-file-name-field.js",
+    "test-file-name-api": "node scripts/test-file-name-api.js"
   },
   "keywords": [
     "medical",

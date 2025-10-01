@@ -201,11 +201,71 @@ class OptimizedIndicators {
           },
           type: sequelize.QueryTypes.SELECT
         });
-        return this.processDetailsWithPagination(result, params);
+        const totalCount = countResult[0].total;
+        
+        // Use fallback query with pagination
+        const fallbackResult = await sequelize.query(paginatedFallbackQuery, {
+          replacements: {
+            StartDate: params.startDate,
+            EndDate: params.endDate,
+            PreviousEndDate: params.previousEndDate,
+            SiteCode: params.siteCode || null,
+            lost_code: 0,
+            dead_code: 1,
+            transfer_out_code: 3,
+            transfer_in_code: 1,
+            mmd_eligible_code: 0,
+            mmd_drug_quantity: 60,
+            vl_suppression_threshold: 1000,
+            tld_regimen_formula: '3TC + DTG + TDF',
+            tpt_start_code: 0,
+            tpt_complete_code: 1
+          },
+          type: sequelize.QueryTypes.SELECT
+        });
+        
+        // Transform and filter the result
+        const transformedResult = fallbackResult.map(record => ({
+          ...record,
+          site_code: record.site_code || record.clinicid
+        }));
+        
+        let filteredResult = this.applyFilters(transformedResult, params);
+        
+        // Calculate pagination info
+        const filteredCount = filteredResult.length;
+        const totalPages = Math.ceil(totalCount / limit);
+        const hasNext = page < totalPages;
+        const hasPrev = page > 1;
+        
+        return {
+          data: filteredResult,
+          pagination: {
+            page,
+            limit,
+            totalCount,
+            filteredCount,
+            totalPages,
+            hasNext,
+            hasPrev
+          }
+        };
       }
 
-      // Execute the query to get detailed records
-      const result = await sequelize.query(query, {
+      // Add LIMIT and OFFSET to the query for database-level pagination
+      const page = params.page || 1;
+      const limit = Math.min(params.limit || 100, 100000); // Cap at 100k
+      const offset = (page - 1) * limit;
+      
+      // Add pagination to the query (remove semicolon first if present)
+      const cleanQuery = query.trim().replace(/;+$/, '');
+      const paginatedQuery = `${cleanQuery} LIMIT ${limit} OFFSET ${offset}`;
+      
+      console.log(`🔍 Executing paginated query: LIMIT ${limit} OFFSET ${offset}`);
+      console.log(`🔍 Query length: ${paginatedQuery.length} characters`);
+      
+      // Execute the paginated query to get detailed records
+      const result = await sequelize.query(paginatedQuery, {
         replacements: {
           StartDate: params.startDate,
           EndDate: params.endDate,
@@ -223,6 +283,29 @@ class OptimizedIndicators {
         },
         type: sequelize.QueryTypes.SELECT
       });
+      
+      // Get total count for pagination info
+      const countQuery = `SELECT COUNT(*) as total FROM (${query}) as count_query`;
+      const countResult = await sequelize.query(countQuery, {
+        replacements: {
+          StartDate: params.startDate,
+          EndDate: params.endDate,
+          PreviousEndDate: params.previousEndDate,
+          lost_code: 0,
+          dead_code: 1,
+          transfer_out_code: 3,
+          transfer_in_code: 1,
+          mmd_eligible_code: 0,
+          mmd_drug_quantity: 60,
+          vl_suppression_threshold: 1000,
+          tld_regimen_formula: '3TC + DTG + TDF',
+          tpt_start_code: 0,
+          tpt_complete_code: 1
+        },
+        type: sequelize.QueryTypes.SELECT
+      });
+      
+      const totalCount = countResult[0].total;
 
       // Transform the result to add site_code column if it doesn't exist
       const transformedResult = result.map(record => {
@@ -247,37 +330,46 @@ class OptimizedIndicators {
         });
       }
 
-      // Store total count before filtering
-      const totalCount = transformedResult.length;
-      console.log(`📊 Total records before filtering: ${totalCount}`);
+      console.log(`📊 Total records in database: ${totalCount}`);
+      console.log(`📊 Records fetched: ${transformedResult.length}`);
       
-      // Apply filtering before pagination
+      // Apply filtering to the fetched records
       let filteredResult = this.applyFilters(transformedResult, params);
       
-      // Cache the full result (only for non-paginated, non-search requests)
-      if (useCache && params.page === 1 && !params.search && !params.gender && !params.ageGroup) {
-        const cacheKey = `indicator_details:${indicatorId}:${JSON.stringify({
-          startDate: params.startDate,
-          endDate: params.endDate,
-          previousEndDate: params.previousEndDate
-        })}`;
-        cache.set('medium', cacheKey, transformedResult, 300000); // 5 minutes
-      }
-
+      // Calculate pagination info
+      const filteredCount = filteredResult.length;
+      const totalPages = Math.ceil(totalCount / limit);
+      const hasNext = page < totalPages;
+      const hasPrev = page > 1;
+      
       const executionTime = performance.now() - startTime;
-      console.log(`✅ ${indicatorId} details completed in ${executionTime.toFixed(2)}ms`);
-      console.log(`📊 About to call processDetailsWithPagination with totalCount: ${totalCount}`);
-
-      const paginatedResult = this.processDetailsWithPagination(filteredResult, params, totalCount);
-      console.log(`📊 processDetailsWithPagination returned:`, {
-        dataLength: paginatedResult.data?.length || 0,
-        pagination: paginatedResult.pagination,
-        totalCount: paginatedResult.pagination?.totalCount
+      
+      console.log(`✅ Indicator ${indicatorId} details executed successfully:`, {
+        totalRecords: totalCount,
+        fetchedRecords: transformedResult.length,
+        filteredRecords: filteredCount,
+        page: page,
+        limit: limit,
+        executionTime: `${executionTime.toFixed(2)}ms`
       });
       
-      return paginatedResult;
+      return {
+        data: filteredResult,
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          filteredCount,
+          totalPages,
+          hasNext,
+          hasPrev
+        },
+        executionTime
+      };
     } catch (error) {
       console.error(`❌ Error executing ${indicatorId} details:`, error.message);
+      console.error(`❌ Error stack:`, error.stack);
+      console.error(`❌ Query that failed:`, paginatedQuery.substring(0, 500) + '...');
       throw error;
     }
   }

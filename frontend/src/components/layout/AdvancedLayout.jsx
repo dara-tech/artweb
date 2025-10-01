@@ -7,9 +7,9 @@ import {
   Bell, 
   User, 
   Settings,
-  ChevronDown,
   Maximize2,
-  Minimize2
+  Minimize2,
+  LogOut
 } from "lucide-react"
 import { useAuth } from '../../contexts/AuthContext'
 import { useSite } from '../../contexts/SiteContext'
@@ -21,8 +21,15 @@ const AdvancedLayout = ({ children }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const [isFullFrame, setIsFullFrame] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const { isMultiSite } = useSite()
+
+  // Check if user is a viewer
+  const isViewer = user?.role === 'viewer'
+
+  const handleLogout = () => {
+    logout()
+  }
 
   // Check if fullscreen is supported
   const isFullscreenSupported = () => {
@@ -124,17 +131,19 @@ const AdvancedLayout = ({ children }) => {
 
   return (
     <div className={`min-h-screen bg-background ${isFullscreen ? 'app-mode' : ''}`}>
-      <div className="flex h-screen">
-        {/* Sidebar - Always visible, even in app mode */}
-        <Sidebar 
-          isCollapsed={isCollapsed}
-          setIsCollapsed={setIsCollapsed}
-          isMobileOpen={isMobileOpen}
-          setIsMobileOpen={setIsMobileOpen}
-        />
+      <div className={`flex h-screen ${isViewer ? 'flex-col' : ''}`}>
+        {/* Sidebar - Hidden for viewers */}
+        {!isViewer && (
+          <Sidebar 
+            isCollapsed={isCollapsed}
+            setIsCollapsed={setIsCollapsed}
+            isMobileOpen={isMobileOpen}
+            setIsMobileOpen={setIsMobileOpen}
+          />
+        )}
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className={`flex-1 flex flex-col overflow-hidden ${isViewer ? 'w-full' : ''}`}>
           {/* Top Header */}
           <header className={`bg-card border-b border-border px-4 py-3 backdrop-blur-sm ${
             isFullscreen ? 'border-primary bg-primary/10' : ''
@@ -150,14 +159,16 @@ const AdvancedLayout = ({ children }) => {
                   </div>
                 )}
                 
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsMobileOpen(true)}
-                  className="lg:hidden hover:bg-accent"
-                >
-                  <Menu className="w-5 h-5 text-muted-foreground" />
-                </Button>
+                {!isViewer && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setIsMobileOpen(true)}
+                    className="lg:hidden hover:bg-accent"
+                  >
+                    <Menu className="w-5 h-5 text-muted-foreground" />
+                  </Button>
+                )}
                 
                 <div className="hidden md:block">
                   <div className="relative">
@@ -194,16 +205,8 @@ const AdvancedLayout = ({ children }) => {
                     <Maximize2 className="w-5 h-5" />
                   )}
                 </Button>
-
                 {/* Theme Toggle */}
                 <ThemeToggle />
-
-                {/* Notifications */}
-                <Button variant="ghost" size="sm" className="relative hover:bg-accent">
-                  <Bell className="w-5 h-5 text-muted-foreground" />
-                  <div className="absolute -top-0.5 -right-0.5 h-2 w-2 bg-destructive rounded-full border border-background"></div>
-                </Button>
-
                 {/* User Menu */}
                 <div className="flex items-center space-x-3 px-2 py-1.5 rounded-lg hover:bg-accent transition-colors cursor-pointer">
                   <div className="w-8 h-8 bg-gradient-to-br from-muted-foreground to-foreground rounded-full flex items-center justify-center shadow-sm">
@@ -211,49 +214,27 @@ const AdvancedLayout = ({ children }) => {
                   </div>
                   <div className="hidden md:block">
                     <p className="text-sm font-medium text-foreground">{user?.fullName || 'User'}</p>
-                    <p className="text-xs text-muted-foreground">{user?.role || 'User'}</p>
                   </div>
-                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
                 </div>
 
-                {/* Settings */}
-                <Button variant="ghost" size="sm" className="hover:bg-accent">
-                  <Settings className="w-5 h-5 text-muted-foreground" />
-                </Button>
+             
+
+                {/* Logout button for viewers */}
+                {isViewer && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={handleLogout}
+                    className="hover:bg-destructive/10 hover:text-destructive"
+                    title="Logout"
+                  >
+                    <LogOut className="w-5 h-5 text-muted-foreground" />
+                  </Button>
+                )}
               </div>
             </div>
           </header>
 
-          {/* Breadcrumb - Always visible, even in app mode */}
-          <div className="bg-card/80 border-b border-border px-4 py-2.5 backdrop-blur-sm">
-            <nav className="flex" aria-label="Breadcrumb">
-              <ol className="flex items-center space-x-2">
-                <li>
-                  <div className="flex items-center">
-                    <a href="#" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                      Dashboard
-                    </a>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <ChevronDown className="w-4 h-4 text-muted-foreground rotate-[-90deg]" />
-                    <a href="#" className="ml-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                      Patients
-                    </a>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center">
-                    <ChevronDown className="w-4 h-4 text-muted-foreground rotate-[-90deg]" />
-                    <span className="ml-2 text-sm font-medium text-foreground">
-                      Adult Patients
-                    </span>
-                  </div>
-                </li>
-              </ol>
-            </nav>
-          </div>
 
           {/* Main Content */}
           <main className="flex-1 overflow-y-auto bg-background">

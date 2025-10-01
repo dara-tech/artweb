@@ -19,7 +19,7 @@ const SiteFilter = ({
 
   const filteredSites = sites.filter(site => 
     site.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    site.code.toLowerCase().includes(searchTerm.toLowerCase())
+    (site.fileName || site.file_name || site.code).toLowerCase().includes(searchTerm.toLowerCase())
   );
 
 
@@ -55,7 +55,7 @@ const SiteFilter = ({
           )}
           {filteredSites.map((site) => (
             <SelectItem key={site.code} value={site.code}>
-              {site.name} ({site.code})
+              {site.fileName || site.file_name || site.code} - {site.name}
             </SelectItem>
           ))}
         </SelectContent>
@@ -105,14 +105,14 @@ const SiteFilter = ({
                   <div className="flex flex-col flex-1 min-w-0">
                     <span className="font-semibold text-gray-900 text-sm sm:text-base truncate">{site.name}</span>
                     <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                      <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
-                        {site.code}
+                      <Badge variant="secondary" className="text-xs px-1.5 py-0.5"> 
+                        {site.fileName || site.file_name || site.code}
                       </Badge>
-                      <span className="text-xs text-gray-500 hidden sm:inline">{getSiteType(site)}</span>
+                      <span className="text-xs primary-foreground hidden sm:inline">{getSiteType(site)}</span>
                     </div>
                   </div>
                   {site.patientCount && (
-                    <Badge variant="outline" className="text-xs hidden sm:flex">
+                    <Badge variant="outline" className="text-xs hidden sm:flex primary-foreground">
                       {site.patientCount.toLocaleString()}
                     </Badge>
                   )}
@@ -175,7 +175,7 @@ const SiteFilter = ({
                   <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">All Sites</div>
                   <div className="text-xs text-gray-500 hidden sm:block">All sites combined</div>
                 </div>
-                {!selectedSite && <span className="text-blue-600 flex-shrink-0">✓</span>}
+                {!selectedSite && <span className="tick-green flex-shrink-0">✓</span>}
               </div>
             )}
 
@@ -192,7 +192,7 @@ const SiteFilter = ({
                   <div className="font-semibold text-gray-900 text-sm sm:text-base truncate">{site.name}</div>
                   <div className="flex items-center gap-1 sm:gap-2 mt-1 flex-wrap">
                     <Badge variant="secondary" className="text-xs px-1.5 sm:px-2 py-0.5">
-                      {site.code}
+                      {site.fileName || site.file_name || site.code}
                     </Badge>
                     <span className="text-xs text-gray-500 hidden sm:inline">{getSiteType(site)}</span>
                   </div>
@@ -203,7 +203,7 @@ const SiteFilter = ({
                       {site.patientCount.toLocaleString()} records
                     </div>
                   )}
-                  {selectedSite?.code === site.code && <span className="text-green-600 mt-1">✓</span>}
+                  {selectedSite?.code === site.code && <span className="tick-green mt-1">✓</span>}
                 </div>
               </div>
             ))}
@@ -264,7 +264,7 @@ const SiteFilter = ({
                   <span className="font-semibold text-gray-900 text-sm sm:text-base truncate">{site.name}</span>
                   <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
                     <Badge variant="secondary" className="text-xs px-1.5 sm:px-2 py-0.5">
-                      {site.code}
+                      {site.fileName || site.file_name || site.code}
                     </Badge>
                     <span className="text-xs text-gray-500 hidden sm:inline">{getSiteType(site)}</span>
                   </div>

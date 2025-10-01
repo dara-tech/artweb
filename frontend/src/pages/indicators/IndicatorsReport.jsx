@@ -42,16 +42,8 @@ const IndicatorsReport = () => {
   const [selectedSite, setSelectedSite] = useState(null);
   const [sitesLoading, setSitesLoading] = useState(false);
   
-  // Auto-select site 0201 when sites are loaded
-  useEffect(() => {
-    if (sites.length > 0 && !selectedSite) {
-      const site0201 = sites.find(site => site.code === '0201');
-      if (site0201) {
-        console.log('🏥 Auto-selecting site 0201:', site0201);
-        setSelectedSite(site0201);
-      }
-    }
-  }, [sites, selectedSite]);
+  // Auto-select first site when sites are loaded
+  // "All Sites" functionality is disabled
   
   // Enterprise-level state
   const [summaryStats, setSummaryStats] = useState({
@@ -71,6 +63,8 @@ const IndicatorsReport = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentFilters, setCurrentFilters] = useState({});
   const [detailsError, setDetailsError] = useState(null);
+  const [isSampleData, setIsSampleData] = useState(false);
+  const [sampleDataInfo, setSampleDataInfo] = useState(null);
 
   // Debug modal state changes (only when modal opens with data)
   useEffect(() => {
@@ -324,7 +318,7 @@ const IndicatorsReport = () => {
       console.log('🔍 API Request Parameters:', {
         category,
         params,
-        selectedSite: selectedSite ? { code: selectedSite.code, name: selectedSite.name } : 'All Sites'
+        selectedSite: selectedSite ? { code: selectedSite.code, name: selectedSite.name } : 'No site selected'
       });
       
       // Always get all indicators, filtering will be done on frontend
@@ -481,6 +475,12 @@ const IndicatorsReport = () => {
       
       setSites(sitesData);
       console.log('Loaded sites with data:', sitesData?.length || 0);
+      
+      // Auto-select first site if none is selected
+      if (sitesData && sitesData.length > 0 && !selectedSite) {
+        setSelectedSite(sitesData[0]);
+        console.log('Auto-selected first site:', sitesData[0]);
+      }
     } catch (error) {
       console.error('Error loading sites with data:', error);
       // Fallback to all sites if the new endpoint fails
@@ -493,6 +493,12 @@ const IndicatorsReport = () => {
         );
         setSites(uniqueSites);
         console.log('Loaded fallback sites (deduplicated):', uniqueSites.length);
+        
+        // Auto-select first site if none is selected
+        if (uniqueSites && uniqueSites.length > 0 && !selectedSite) {
+          setSelectedSite(uniqueSites[0]);
+          console.log('Auto-selected first fallback site:', uniqueSites[0]);
+        }
       } catch (fallbackError) {
         console.error('Error loading fallback sites:', fallbackError);
         setSites([]);
@@ -568,6 +574,8 @@ const IndicatorsReport = () => {
     setSearchTerm('');
     setCurrentFilters({});
     setDetailsError(null);
+    setIsSampleData(false);
+    setSampleDataInfo(null);
   };
 
   const handleSearchChange = (value) => {
@@ -666,6 +674,28 @@ const IndicatorsReport = () => {
         setIndicatorDetails(response.data || []);
         setPagination(response.pagination || {});
         setDetailsError(null);
+        
+        // Check if this is sample data or aggregated data
+        if (response.isSampleData) {
+          setIsSampleData(true);
+          setSampleDataInfo({
+            sampleSite: response.sampleSite,
+            message: response.message
+          });
+          console.log('📊 Sample data detected:', response.message);
+        } else if (response.isAggregatedData) {
+          setIsSampleData(false);
+          setSampleDataInfo({
+            isAggregated: true,
+            sourceSites: response.sourceSites,
+            message: response.message
+          });
+          console.log('📊 Aggregated data detected:', response.message);
+        } else {
+          setIsSampleData(false);
+          setSampleDataInfo(null);
+        }
+        
         console.log('✅ Loaded', response.data?.length || 0, 'records for', indicator.Indicator);
         console.log('📊 Full API Response:', response);
         console.log('📊 Pagination data:', response.pagination);
@@ -765,8 +795,117 @@ const IndicatorsReport = () => {
       
 
 
-        {/* Executive Summary Dashboard */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+       
+
+
+        {/* Report Configuration Panel */}
+        <div className="bg-card border border-border rounded-lg shadow-sm">
+          <div className="p-4 sm:p-6">
+            <div className="space-y-6">
+              {/* Health Facility Selection */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-primary" />
+                  <Label className="text-sm font-semibold text-foreground">Health Facility</Label>
+                </div>
+                <div className="space-y-3">
+                  <SiteFilter
+                    sites={sites}
+                    selectedSite={selectedSite}
+                    onSiteChange={setSelectedSite}
+                    disabled={sitesLoading}
+                    showAllOption={false}
+                    variant="minimal"
+                    className="w-full h-11 text-sm"
+                  />
+           
+                </div>
+              </div>
+
+              {/* Time Period Configuration */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <Label className="text-sm font-semibold text-foreground">Reporting Period</Label>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button 
+                      onClick={handleRefresh} 
+                      disabled={loading} 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-9 text-xs border-border/60 hover:border-primary hover:bg-primary/5 transition-all duration-200 group"
+                    >
+                      <RefreshCw className={`h-3 w-3 mr-2 transition-transform duration-200 ${loading ? 'animate-spin' : 'group-hover:rotate-180'}`} />
+                      {loading ? 'Refreshing...' : 'Refresh'}
+                    </Button>
+                    <Button 
+                      onClick={exportToCSV} 
+                      variant="outline" 
+                      size="sm" 
+                      className="h-9 text-xs border-border/60 hover:border-primary hover:bg-primary/5 transition-all duration-200 group"
+                      disabled={!selectedSite || loading}
+                    >
+                      <Download className="h-3 w-3 mr-2 transition-transform duration-200 group-hover:translate-y-0.5" />
+                      Export
+                    </Button>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Year</Label>
+                      <Select 
+                        value={selectedYear.toString()} 
+                        onValueChange={handleYearChange}
+                      >
+                        <SelectTrigger className="h-11 text-sm border-border/60 hover:border-border focus:border-primary">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableYears.map(year => (
+                            <SelectItem key={year} value={year.toString()}>
+                              {year}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Quarter</Label>
+                      <Select 
+                        value={selectedQuarter.toString()} 
+                        onValueChange={handleQuarterChange}
+                      >
+                        <SelectTrigger className="h-11 text-sm border-border/60 hover:border-border focus:border-primary">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableQuarters.map(quarter => (
+                            <SelectItem 
+                              key={quarter.value} 
+                              value={quarter.value.toString()}
+                              disabled={quarter.disabled}
+                            >
+                              Q{quarter.value}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                 
+                </div>
+              </div>
+
+             
+            </div>
+          </div>
+        </div>
+         {/* Executive Summary Dashboard */}
+         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           <Card className="bg-primary text-primary-foreground border-0 shadow-lg">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
@@ -832,152 +971,6 @@ const IndicatorsReport = () => {
           </Card>
         </div>
 
-
-        {/* Enterprise Reporting Configuration */}
-        <div className="bg-card border border-border rounded-lg shadow-sm">
-          <div className="px-6 py-4 border-b border-border">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center">
-                  <Target className="h-4 w-4 text-muted-foreground" />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground">Reporting Configuration</h3>
-                  <p className="text-xs text-muted-foreground">Configure reporting parameters</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <Clock className="h-3 w-3" />
-                <span>Q{selectedQuarter} {selectedYear}</span>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Period Selection - Minimalist */}
-              <div className="space-y-3">
-                <Label className="text-xs font-medium text-foreground uppercase tracking-wide">
-                  Reporting Period
-                  {isViewer && (
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      <EyeOff className="h-3 w-3 inline mr-1" />
-                      Configurable
-                    </span>
-                  )}
-                </Label>
-                <div className="flex gap-2">
-                  <Select 
-                    value={selectedYear.toString()} 
-                    onValueChange={handleYearChange}
-                  >
-                    <SelectTrigger className="h-9 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableYears.map(year => (
-                        <SelectItem key={year} value={year.toString()}>
-                          {year}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  
-                  <Select 
-                    value={selectedQuarter.toString()} 
-                    onValueChange={handleQuarterChange}
-                  >
-                    <SelectTrigger className="h-9 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableQuarters.map(quarter => (
-                        <SelectItem 
-                          key={quarter.value} 
-                          value={quarter.value.toString()}
-                          disabled={quarter.disabled}
-                        >
-                          Q{quarter.value}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {dateRange.startDate} - {dateRange.endDate}
-                  {isViewer && ' (View-only access)'}
-                </div>
-              </div>
-
-              {/* Site Selection - Minimalist */}
-              <div className="space-y-3">
-                <Label className="text-xs font-medium text-foreground uppercase tracking-wide">
-                  Site Scope
-                  {isViewer && (
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      <EyeOff className="h-3 w-3 inline mr-1" />
-                      Configurable
-                    </span>
-                  )}
-                </Label>
-                <SiteFilter
-                  sites={sites}
-                  selectedSite={selectedSite}
-                  onSiteChange={setSelectedSite}
-                  disabled={sitesLoading}
-                  showAllOption={false}
-                  variant="minimal"
-                  className="w-full"
-                />
-                {selectedSite && (
-                  <div className="text-xs text-muted-foreground">
-                    {selectedSite.name} ({selectedSite.code})
-                    {isViewer && ' (View-only access)'}
-                  </div>
-                )}
-              </div>
-
-              {/* Quick Actions - Minimalist */}
-              <div className="space-y-3">
-                <Label className="text-xs font-medium text-foreground uppercase tracking-wide">
-                  Actions
-                  {isViewer && (
-                    <span className="ml-2 text-xs text-muted-foreground">
-                      <EyeOff className="h-3 w-3 inline mr-1" />
-                      View & Export
-                    </span>
-                  )}
-                </Label>
-                <div className="flex gap-2">
-                  <Button 
-                    onClick={handleRefresh} 
-                    disabled={loading} 
-                    variant="outline" 
-                    size="sm" 
-                    className="h-9 text-xs border-border hover:bg-accent"
-                  >
-                    <RefreshCw className={`h-3 w-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
-                    Refresh
-                  </Button>
-                  <Button 
-                    onClick={exportToCSV} 
-                    variant="outline" 
-                    size="sm" 
-                    className="h-9 text-xs border-border hover:bg-accent"
-                  >
-                    <Download className="h-3 w-3 mr-1" />
-                    Export
-                  </Button>
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {indicators.length} indicators loaded
-                  {isViewer && ' (View-only mode)'}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Error Message */}
         {error && (
           <Card className="border-destructive bg-destructive/10 shadow-lg">
@@ -991,82 +984,23 @@ const IndicatorsReport = () => {
         )}
 
         {/* Main Indicators Table */}
-        <div className="bg-card border border-border rounded-lg">
-          <div className="px-6 py-4 border-b border-border">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-foreground">Performance Indicators</h2>
-              <span className="text-xs text-muted-foreground">{indicators.length} indicators</span>
-            </div>
+        <div className="bg-card rounded-lg ">
+   
+           
           </div>
           <div className="p-0">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <div className="px-3 sm:px-6 pt-4">
-                <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 bg-muted h-auto">
-                  {categories.map((category) => {
-                    const filteredCount = getFilteredIndicators(category.id).length;
-                    return (
-                      <TabsTrigger 
-                        key={category.id} 
-                        value={category.id} 
-                        className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 data-[state=active]:bg-card data-[state=active]:shadow-sm p-2 sm:p-3 text-xs sm:text-sm"
-                      >
-                        {category.icon}
-                        <span className="truncate">{category.name}</span>
-                        <Badge variant="secondary" className="text-xs px-1.5 py-0.5">
-                          {filteredCount}
-                        </Badge>
-                      </TabsTrigger>
-                    );
-                  })}
-                </TabsList>
-              </div>
 
-              {/* All Indicators Tab */}
-              <TabsContent value="all" className="p-3 sm:p-6 space-y-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold text-foreground">All Indicators</h3>
-                  <Badge variant="outline" className="text-sm">
-                    {getFilteredIndicators('all').length} indicators
-                  </Badge>
-                </div>
-                <IndicatorsTable 
-                  indicators={getFilteredIndicators('all')} 
-                  loading={loading} 
-                  onIndicatorClick={handleIndicatorClick}
-                  selectedSite={selectedSite}
-                  selectedYear={selectedYear}
-                  selectedQuarter={selectedQuarter}
-                  isViewer={isViewer}
-                />
-              </TabsContent>
-
-              {/* Category Tabs */}
-              {categories.slice(1).map((category) => {
-                const filteredIndicators = getFilteredIndicators(category.id);
-                return (
-                  <TabsContent key={category.id} value={category.id} className="p-3 sm:p-6 space-y-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center gap-2">
-                        {category.icon}
-                        <h3 className="text-lg font-semibold text-foreground">{category.name} Indicators</h3>
-                      </div>
-                      <Badge variant="outline" className="text-sm">
-                        {filteredIndicators.length} indicators
-                      </Badge>
-                    </div>
-                    <IndicatorsTable 
-                      indicators={filteredIndicators} 
-                      loading={loading} 
-                      onIndicatorClick={handleIndicatorClick}
-                      selectedSite={selectedSite}
-                      selectedYear={selectedYear}
-                      selectedQuarter={selectedQuarter}
-                      isViewer={isViewer}
-                    />
-                  </TabsContent>
-                );
-              })}
-            </Tabs>
+            
+              <IndicatorsTable 
+                indicators={indicators} 
+                loading={loading} 
+                onIndicatorClick={handleIndicatorClick}
+                selectedSite={selectedSite}
+                selectedYear={selectedYear}
+                selectedQuarter={selectedQuarter}
+                isViewer={isViewer}
+              />
+       
           </div>
         </div>
 
@@ -1086,10 +1020,13 @@ const IndicatorsReport = () => {
           onPageChange={handlePageChange}
           currentFilters={currentFilters}
           selectedSite={selectedSite}
+          dateRange={dateRange}
           error={detailsError}
+          isSampleData={isSampleData}
+          sampleDataInfo={sampleDataInfo}
         />
       </div>
-    </div>
+    
   );
 };
 
@@ -1140,6 +1077,39 @@ const getOperationalDistrict = (site) => {
   const districtName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : siteName;
   
   return `OD ${districtCode}. ${districtName}`;
+};
+
+// Function to get bilingual indicator names (Khmer/English)
+const getDisplayIndicatorName = (backendName) => {
+  const nameMap = {
+    '1. Active ART patients in previous quarter': '1. ចំនួនអ្នកជំងឺ ART សកម្មដល់ចុងត្រីមាសមុន (Number of active ART patients in previous quarter)',
+    '2. Active Pre-ART patients in previous quarter': '2. ចំនួនអ្នកជំងឺ Pre-ART សកម្មដល់ចុងត្រីមាសមុន (Number of active Pre-ART patients in previous quarter)',
+    '3. Newly Enrolled': '3. ចំនួនអ្នកជំងឺចុះឈ្មោះថ្មី (Number of newly enrolled patients)',
+    '4. Re-tested positive': '4. ចំនួនអ្នកជំងឺដែលវិជ្ជមានពីតេស្តបញ្ជាក់ (Number of patient re-tested positive)',
+    '5. Newly Initiated': '5. ចំនួនអ្នកជំងឺចាប់ផ្តើមព្យាបាលដោយ ARV ថ្មី (Number of newly initiated ART)',
+    '5.1.1. New ART started: Same day': '5.1.1. ក្នុងថ្ងៃតែមួយ (Same day – 0 day)',
+    '5.1.2. New ART started: 1-7 days': '5.1.2. ពី ១ ទៅ ៧ ថ្ងៃ (1–7 days)',
+    '5.1.3. New ART started: >7 days': '5.1.3. ច្រើនជាង ៧ ថ្ងៃ (>7 days)',
+    '5.2. New ART started with TLD': '5.2. ចំនួនអ្នកជំងឹចាប់ផ្តើមព្យាបាលថ្មីដោយ TDF+3TC+DTG (Number of new ART started with TLD)',
+    '6. Transfer-in patients': '6. ចំនួនអ្នកជំងឺដែលបានបញ្ជូនចូល (Number of transfer-in patients)',
+    '7. Lost and Return': '7. ចំនួនអ្នកជំងឺដែលបានបោះបង់ហើយត្រឡប់មកវិញ (Number of Lost-Return patients)',
+    '7.1. In the same ART site': '7.1. នៅក្នុងសេវា ART តែមួយ (In the same ART site)',
+    '7.2. From other ART site': '7.2. មកពីសេវា ART ផ្សេង (From other ART site)',
+    '8.1. Dead': '8.1. ចំនួនអ្នកជំងឺដែលបានស្លាប់ (Dead)',
+    '8.2. Lost to follow up (LTFU)': '8.2. ចំនួនអ្នកជំងឺដែលបានបោះបង់ (Lost to follow up – LTFU)',
+    '8.3. Transfer-out': '8.3. ចំនួនអ្នកជំងឺដែលបានបញ្ជូនចេញ (Transfer-out)',
+    '9. Active Pre-ART': '9. ចំនួនអ្នកជំងឺ Pre-ART សកម្មដល់ចុងត្រីមាសនេះ (Number of active Pre-ART patients in this quarter)',
+    '10. Active ART patients in this quarter': '10. ចំនួនអ្នកជំងឺ ART សកម្មដល់ចុងត្រីមាសនេះ (Number of active ART patients in this quarter)',
+    '10.1. Eligible MMD': '10.1. ចំនួនអ្នកជំងឺដែលសមស្របសំរាប់ការផ្តល់ថ្នាំរយៈពេលវែង (Eligible for Multi Month Dispensing – MMD)',
+    '10.2. MMD': '10.2. ចំនួនអ្នកជំងឺកំពុងទទួលថ្នាំរយៈពេលវែង (Number of patients received MMD)',
+    '10.3. TLD': '10.3. ចំនួនអ្នកជំងឺកំពុងទទួលការព្យាបាលដោយ TLD (Number of patients received TLD)',
+    '10.4. TPT Start': '10.4. ចំនួនអ្នកជំងឺដែលបានចាប់ផ្តើមការបង្ការជំងឺរបេង (Number of patients started TPT)',
+    '10.5. TPT Complete': '10.5. ចំនួនអ្នកជំងឺដែលបានបញ្ចប់ការបង្ការជំងឺរបេង (Number of patients completed TPT)',
+    '10.6. Eligible for VL test': '10.6. ចំនួនអ្នកជំងឺដែលសមស្របធ្វើតេស្ត Viral Load (Eligible for Viral Load test)',
+    '10.7. VL tested in 12M': '10.7. ចំនួនអ្នកជំងឺធ្វើតេស្ត Viral Load ក្នុងរយៈពេល ១២ ខែចុងក្រោយ (Receive VL test in last 12 months)',
+    '10.8. VL suppression': '10.8. ចំនួនអ្នកជំងឺដែលមានលទ្ធផល VL ចុងក្រោយតិចជាង 1000 copies (Last VL is suppressed)'
+  };
+  return nameMap[backendName] || backendName;
 };
 
 // Indicators Table Component
@@ -1350,15 +1320,13 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
     <div className="space-y-4 sm:space-y-6">
       {/* Report Header */}
        {/* Report Header - Bilingual Format */}
-       <div className="bg-card border border-border rounded-lg shadow-sm p-6 mb-6">
+       <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
           {/* Main Title */}
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-foreground mb-2">
               របាយការណ៍ស្តីពីការព្យាបាលអ្នកជំងឺអេដស៍ Quarterly Report on ART
             </h1>
-            <p className="text-sm text-muted-foreground">
-              (orgUnit : {selectedSite ? `${selectedSite.code}. ${selectedSite.name}` : 'All Sites'})
-            </p>
+          
           </div>
 
           {/* Report Parameters Table */}
@@ -1370,13 +1338,13 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     ឈ្មោះមន្ទីរពេទ្យបង្អែក (Facility):
                   </td>
                   <td className="px-4 py-3 text-foreground border-r border-border w-1/4">
-                    {selectedSite ? `${selectedSite.code}. ${selectedSite.name}` : 'All Sites'}
+                    {selectedSite ? selectedSite.name : 'All Facilities'}
                   </td>
                   <td className="px-4 py-3 font-semibold text-foreground border-r border-border w-1/4">
-                    លេខកូដ (Facility code):
+                    ឈ្មោះឯកសារ (File Name):
                   </td>
                   <td className="px-4 py-3 text-foreground w-1/4">
-                    {selectedSite ? selectedSite.code : 'All'}
+                    {selectedSite ? (selectedSite.fileName || selectedSite.file_name || selectedSite.code) : 'All Facilities'}
                   </td>
                 </tr>
                 <tr className="border-b border-border">
@@ -1384,7 +1352,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     ឈ្មោះស្រុកប្រតិបត្តិ (Operational District):
                   </td>
                   <td className="px-4 py-3 text-foreground border-r border-border">
-                    {selectedSite ? getOperationalDistrict(selectedSite) : 'All Districts'}
+                    {selectedSite ? getOperationalDistrict(selectedSite) : 'All Operational Districts'}
                   </td>
                   <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
                     ខេត្ត-ក្រុង (Province):
@@ -1404,31 +1372,14 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     ត្រីមាសទី (Quarter):
                   </td>
                   <td className="px-4 py-3 text-foreground">
-                    Q{selectedQuarter}
+                    Quarter {selectedQuarter}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* Status Indicators */}
-          <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-            <div className="flex items-center gap-4">
-              {isViewer && (
-                <Badge variant="secondary" className="text-xs">
-                  <EyeOff className="h-3 w-3 mr-1" />
-                  View Only
-                </Badge>
-              )}
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                <span>Live Data</span>
-              </div>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              Generated: {new Date().toLocaleDateString('en-GB')} at {new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
-            </div>
-          </div>
+       
         </div>
 
       {/* Indicators Table - Matching the image layout */}
@@ -1479,7 +1430,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                         onClick={() => onIndicatorClick && onIndicatorClick(indicator)}
                         title="Click to view all patients for this indicator"
                       >
-                        {indicator.Indicator}
+                        {getDisplayIndicatorName(indicator.Indicator)}
                       </div>
                       {indicator.error && (
                         <Badge variant="destructive" className="mt-1 text-xs">
@@ -1602,7 +1553,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
         <div className="text-right text-muted-foreground">
           <p className="text-xs sm:text-sm">
             This report contains {indicators.length} indicator{indicators.length !== 1 ? 's' : ''} 
-            {' '}with a total of {indicators.reduce((sum, ind) => sum + (ind.TOTAL || 0), 0).toLocaleString()} records.
+            {' '}with a total of {indicators.reduce((sum, ind) => sum + (ind.TOTAL || 0), 0).toLocaleString()} patient records.
           </p>
           <p className="text-xs mt-2 text-muted-foreground">
             Data accuracy and completeness may vary by indicator. Please verify critical decisions with source data.

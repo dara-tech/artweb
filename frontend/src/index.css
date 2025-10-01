@@ -888,7 +888,7 @@
   }
   
   .badge-female {
-    background-color: hsl(var(--secondary)) !important;
+    background-color: hsl(330 80% 70%) !important; /* Pink color */
     color: white !important;
   }
   
@@ -1319,6 +1319,13 @@
     color: white !important;
   }
   
+  .badge.bg-pink-500,
+  .badge.bg-pink-600,
+  .badge.bg-pink-400 {
+    background-color: hsl(330 80% 70%) !important; /* Pink color for female badges */
+    color: white !important;
+  }
+  
   /* Override any inline styles or hardcoded colors */
   .badge[style*="background"] {
     background-image: none !important;
@@ -1389,7 +1396,11 @@
   .dark .badge-destructive,
   .dark .badge-info,
   .dark .badge-male,
-  .dark .badge-female,
+  .dark .badge-female {
+    background-color: hsl(330 80% 70%) !important; /* Pink color for dark mode */
+    color: white !important;
+  }
+  
   .dark .badge-nationality,
   .dark .badge-adult,
   .dark .badge-child,
@@ -1642,5 +1653,254 @@
   .gradient-critical {
     background: linear-gradient(135deg, hsl(var(--status-critical)), hsl(var(--patient-lost))) !important;
     color: white !important;
+  }
+  
+  /* Green checkmark/tick styles */
+  .tick-green {
+    color: hsl(var(--success)) !important;
+    font-weight: 600 !important;
+  }
+  
+  .tick-green-bg {
+    background-color: hsl(var(--success)) !important;
+    color: white !important;
+    border-radius: 50%;
+    padding: 2px 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  .tick-green-outline {
+    color: hsl(var(--success)) !important;
+    border: 1px solid hsl(var(--success)) !important;
+    background-color: transparent !important;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  
+  /* ===========================================
+     BEAUTIFUL TOAST ANIMATIONS
+     =========================================== */
+  
+  /* Toast entrance animations */
+  @keyframes toast-slide-in-right {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes toast-slide-in-top {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  @keyframes toast-slide-in-bottom {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Toast exit animations */
+  @keyframes toast-slide-out-right {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes toast-slide-out-top {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+  }
+  
+  @keyframes toast-slide-out-bottom {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+  }
+  
+  /* Toast fade animations */
+  @keyframes toast-fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes toast-fade-out {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+  
+  /* Toast bounce animation */
+  @keyframes toast-bounce-in {
+    0% {
+      transform: scale(0.3);
+      opacity: 0;
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    70% {
+      transform: scale(0.9);
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+  
+  /* Toast shake animation for errors */
+  @keyframes toast-shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+      transform: translateX(-2px);
+    }
+    20%, 40%, 60%, 80% {
+      transform: translateX(2px);
+    }
+  }
+  
+  /* Toast pulse animation for warnings */
+  @keyframes toast-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.8;
+    }
+  }
+  
+  /* Apply animations to toast classes */
+  .toast-enter {
+    animation: toast-slide-in-right 0.3s ease-out;
+  }
+  
+  .toast-enter-top {
+    animation: toast-slide-in-top 0.3s ease-out;
+  }
+  
+  .toast-enter-bottom {
+    animation: toast-slide-in-bottom 0.3s ease-out;
+  }
+  
+  .toast-exit {
+    animation: toast-slide-out-right 0.2s ease-in;
+  }
+  
+  .toast-exit-top {
+    animation: toast-slide-out-top 0.2s ease-in;
+  }
+  
+  .toast-exit-bottom {
+    animation: toast-slide-out-bottom 0.2s ease-in;
+  }
+  
+  .toast-fade-enter {
+    animation: toast-fade-in 0.3s ease-out;
+  }
+  
+  .toast-fade-exit {
+    animation: toast-fade-out 0.2s ease-in;
+  }
+  
+  .toast-bounce-enter {
+    animation: toast-bounce-in 0.5s ease-out;
+  }
+  
+  .toast-shake {
+    animation: toast-shake 0.5s ease-in-out;
+  }
+  
+  .toast-pulse {
+    animation: toast-pulse 2s ease-in-out infinite;
+  }
+  
+  /* Toast hover effects */
+  .toast-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease-in-out;
+  }
+  
+  /* Toast progress bar animation */
+  @keyframes toast-progress {
+    from {
+      width: 100%;
+    }
+    to {
+      width: 0%;
+    }
+  }
+  
+  .toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: toast-progress 5s linear forwards;
+  }
+  
+  /* Toast glow effects */
+  .toast-glow-success {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+  }
+  
+  .toast-glow-error {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+  }
+  
+  .toast-glow-warning {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+  }
+  
+  .toast-glow-info {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
   }
 }

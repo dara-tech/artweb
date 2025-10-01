@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Button, Input, Badge, Card, CardContent, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Checkbox, Skeleton } from "@/components/ui";
 import { 
   Search, 
-  X, 
   ChevronLeft, 
   ChevronRight,
   Users,
@@ -15,6 +14,7 @@ import {
 } from 'lucide-react';
 import { formatDateForTable } from '@/utils/dateFormatter';
 import { getCorrectPatientType, getDemographicBreakdown } from '@/utils/ageCalculator';
+import { reportingApi } from '@/services/reportingApi';
 
 const IndicatorDetailsModal = ({
   isOpen,
@@ -30,28 +30,21 @@ const IndicatorDetailsModal = ({
   onClearSearch,
   onPageChange,
   currentFilters = {},
-  error = null
+  error = null,
+  isSampleData = false,
+  sampleDataInfo = null,
+  selectedSite = null,
+  dateRange = null
 }) => {
   // Provide default pagination object with safe access
   const safePagination = pagination && typeof pagination === 'object' ? pagination : { page: 1, totalPages: 1, totalCount: 0, hasPrev: false, hasNext: false };
-  const [viewMode, setViewMode] = useState('table') // 'table' or 'card'
   const [sortField, setSortField] = useState('clinicid')
   const [sortDirection, setSortDirection] = useState('asc')
-  const [selectedRecords, setSelectedRecords] = useState([])
   const [itemsPerPage, setItemsPerPage] = useState(20)
   const itemsPerPageOptions = [10, 20, 50, 100]
 
   if (!isOpen) return null;
 
-  // Debug logging - only when modal opens with data
-  if (isOpen && indicatorDetails.length > 0) {
-    console.log('🔍 Modal loaded with', indicatorDetails.length, 'records');
-    console.log('📊 Modal pagination:', pagination);
-    console.log('📊 Safe pagination:', safePagination);
-    console.log('📊 Total count from safePagination:', safePagination?.totalCount);
-    console.log('📊 Sample record:', indicatorDetails[0]);
-    console.log('📊 Available fields:', Object.keys(indicatorDetails[0] || {}));
-  }
 
   // Skeleton loading component for table rows
   const SkeletonRow = () => (
@@ -82,9 +75,9 @@ const IndicatorDetailsModal = ({
     ];
 
     const vlColumns = [
-      { key: 'LastVLDate', label: 'Last VL Date', type: 'date' },
-      { key: 'LastVLLoad', label: 'Last VL Load', type: 'number' },
-      { key: 'StatusVL', label: 'VL Status', type: 'badge' }
+      { key: 'LastVLDate', label: 'Last VL Date', type: 'date', altKey: 'DateResult' },
+      { key: 'LastVLLoad', label: 'Last VL Load', type: 'number', altKey: 'HIVLoad' },
+      { key: 'StatusVL', label: 'VL Status', type: 'badge', altKey: 'vlresultstatus' }
     ];
 
     const tptColumns = [
@@ -173,7 +166,11 @@ const IndicatorDetailsModal = ({
     corrected_patient_type: getCorrectPatientType(record),
     // Handle both old and new field names
     sex_display: record.sex_display || (record.Sex === 1 ? 'Male' : record.Sex === 0 ? 'Female' : 'Unknown'),
-    patient_type: record.patient_type || getCorrectPatientType(record)
+    patient_type: record.patient_type || getCorrectPatientType(record),
+    // Handle VL field name variations (10.6 uses LastVLDate/LastVLLoad/StatusVL, 10.7 uses DateResult/HIVLoad/vlresultstatus)
+    LastVLDate: record.LastVLDate || record.DateResult,
+    LastVLLoad: record.LastVLLoad || record.HIVLoad,
+    StatusVL: record.StatusVL || record.vlresultstatus
   }));
 
   // Sorting functionality
@@ -197,39 +194,35 @@ const IndicatorDetailsModal = ({
     }
   }
 
-  const handleSelectRecord = (recordId) => {
-    setSelectedRecords(prev => 
-      prev.includes(recordId) 
-        ? prev.filter(id => id !== recordId)
-        : [...prev, recordId]
-    )
-  }
-
-  const handleSelectAll = () => {
-    if (selectedRecords.length === processedRecords.length) {
-      setSelectedRecords([])
-    } else {
-      setSelectedRecords(processedRecords.map(r => r.clinicid))
-    }
-  }
-
-  const exportRecords = async () => {
-    if (indicatorDetails.length === 0) return;
+  // Comprehensive CSV export function that fetches ALL records
+  const exportAllRecords = async () => {
+    if (!selectedIndicator) return;
     
     // Show loading state
     const button = document.querySelector('[data-export-button]');
     const originalContent = button?.innerHTML;
     if (button) {
-      button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Loading...';
+      button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Preparing export...';
       button.disabled = true;
     }
     
     try {
-      // Use the existing API endpoint with a high limit to get all records
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+      const getApiUrl = () => {
+        const hostname = window.location.hostname
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+          return 'http://localhost:3001'
+        } else {
+          return `http://${hostname}:3001`
+        }
+      }
+      const API_BASE_URL = import.meta.env.VITE_API_URL || getApiUrl();
       const token = localStorage.getItem('token');
       
-      // Map indicator names to their corresponding SQL file names (same as in dashboard)
+      if (button) {
+        button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Fetching all records...';
+      }
+      
+      // Map indicator names to their corresponding SQL file names
       const indicatorMap = {
         '1. Active ART patients in previous quarter': '01_active_art_previous',
         '2. Active Pre-ART patients in previous quarter': '02_active_pre_art_previous',
@@ -257,89 +250,212 @@ const IndicatorDetailsModal = ({
         '10.8. VL suppression': '10.8_vl_suppression'
       };
 
-      const indicatorKey = indicatorMap[selectedIndicator?.Indicator] || selectedIndicator?.Indicator;
+      // Use the same indicator key as the UI (without _details suffix)
+      const indicatorKey = indicatorMap[selectedIndicator.Indicator] || selectedIndicator.Indicator;
       
-      const params = new URLSearchParams({
-        limit: safePagination?.totalCount || 10000,
-        page: 1,
-        search: searchTerm || ''
-      });
+      // Use the same date range as the UI to ensure consistency
+      const currentDateRange = dateRange || {
+        startDate: '2025-01-01',
+        endDate: '2025-03-31',
+        previousEndDate: '2024-12-31'
+      };
       
-      const response = await fetch(`${API_BASE_URL}/indicators-optimized/${indicatorKey}/details?${params}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      console.log('📅 Using date range from UI:', currentDateRange);
       
-      if (!response.ok) {
-        throw new Error('Failed to fetch all records');
+      // Build filter parameters for ALL records
+      const baseParams = {
+        ...currentDateRange,
+        search: searchTerm || '',
+        _t: Date.now() // Cache busting
+      };
+
+      // Add current filters if they exist
+      if (currentFilters.gender) {
+        baseParams.gender = currentFilters.gender;
+      }
+      if (currentFilters.ageGroup) {
+        baseParams.ageGroup = currentFilters.ageGroup;
       }
       
-      const data = await response.json();
-      const allRecords = data.data || indicatorDetails;
+      console.log('📊 Exporting ALL records for:', selectedIndicator.Indicator);
+      console.log('📊 Filter parameters:', baseParams);
       
-      // Use dynamic headers based on column config
-      const headers = columnConfig.map(col => col.label);
+      // Fetch ALL records using optimized chunked approach
+      let allRecords = [];
+      let totalCount = 0;
+      let page = 1;
+      let limit = 5000; // Start with 5k chunks for better performance
+      let hasMore = true;
+      let consecutiveEmptyPages = 0;
       
-      // Convert data to CSV format
-      const csvContent = [
-        headers.join(','),
-        ...allRecords.map(record => 
-          columnConfig.map(col => {
-            const value = record[col.key] || (col.altKey ? record[col.altKey] : null);
-            let displayValue = value || 'N/A';
-            
-            if (col.type === 'date' && value) {
-              displayValue = new Date(value).toLocaleDateString();
+      try {
+        while (hasMore) {
+          if (button) {
+            button.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Page ${page}...`;
+          }
+          
+          const filterParams = {
+            ...baseParams,
+            page,
+            limit,
+            useCache: 'false' // Disable cache to get fresh data
+          };
+          
+          console.log(`📊 Fetching page ${page} with limit ${limit}...`);
+          
+      // Always use site-specific API since "All Sites" is disabled
+      if (!selectedSite) {
+        throw new Error('No site selected. Please select a site to export data.');
+      }
+      
+      const apiUrl = `${API_BASE_URL}/api/site-indicators/sites/${selectedSite.code}/indicators/${indicatorKey}/details?${new URLSearchParams(filterParams)}`;
+      console.log(`📊 Using site-specific API for site: ${selectedSite.code}`);
+          
+          const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
             }
-            
-            // Escape CSV values properly
-            return `"${String(displayValue).replace(/"/g, '""')}"`;
-          }).join(','))
-      ].join('\n');
+          });
+          
+          if (!response.ok) {
+            throw new Error(`Failed to fetch records: ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          if (!data.success) {
+            throw new Error('API returned error: ' + (data.error || data.message));
+          }
+          
+          const pageRecords = data.data || [];
+          
+          // Track total count from first response
+          if (page === 1) {
+            totalCount = data.pagination?.totalCount || 0;
+            console.log('📊 Total records available:', totalCount.toLocaleString());
+          }
+          
+          // Handle empty pages
+          if (pageRecords.length === 0) {
+            consecutiveEmptyPages++;
+            if (consecutiveEmptyPages >= 3) {
+              console.log('⚠️ Multiple empty pages, stopping fetch');
+              break;
+            }
+          } else {
+            consecutiveEmptyPages = 0;
+            allRecords = [...allRecords, ...pageRecords];
+          }
+          
+          console.log(`✅ Page ${page}: ${pageRecords.length} records (Total: ${allRecords.length.toLocaleString()})`);
+          
+          // Update progress with better calculation
+          if (button && totalCount > 0) {
+            const progress = Math.min(100, Math.round((allRecords.length / totalCount) * 100));
+            button.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>${progress}% (${allRecords.length.toLocaleString()}/${totalCount.toLocaleString()})`;
+          } else if (button) {
+            button.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>${allRecords.length.toLocaleString()} records`;
+          }
+          
+          // Check if there are more pages
+          hasMore = data.pagination?.hasNext || false;
+          page++;
+          
+          // Dynamic limit adjustment for very large datasets
+          if (page > 20 && limit > 2000) {
+            limit = 2000; // Reduce chunk size for very large datasets
+            console.log('📉 Reduced chunk size to 2000 for large dataset');
+          }
+          
+          // Safety limit for truly large datasets
+          if (page > 200) {
+            console.warn('⚠️ Reached safety limit of 200 pages');
+            break;
+          }
+          
+          // Add small delay to prevent overwhelming the server
+          if (page % 10 === 0) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+        
+        console.log('✅ Successfully fetched ALL records:', allRecords.length);
+        
+      } catch (fetchError) {
+        console.error('❌ Failed to fetch records:', fetchError);
+        throw new Error('Failed to fetch all records: ' + fetchError.message);
+      }
+      
+      console.log('✅ Fetched ALL records:', allRecords.length);
+      
+      if (button) {
+        button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Generating CSV...';
+      }
+      
+      // Process records for export (same as display processing)
+      const processedRecords = allRecords.map(record => ({
+        ...record,
+        corrected_patient_type: getCorrectPatientType(record),
+        sex_display: record.sex_display || (record.Sex === 1 ? 'Male' : record.Sex === 0 ? 'Female' : 'Unknown'),
+        patient_type: record.patient_type || getCorrectPatientType(record),
+        LastVLDate: record.LastVLDate || record.DateResult,
+        LastVLLoad: record.LastVLLoad || record.HIVLoad,
+        StatusVL: record.StatusVL || record.vlresultstatus
+      }));
+      
+      // Create CSV content - ONLY the data records
+      const csvData = [];
+      
+      // Add column headers only
+      const headers = columnConfig.map(col => col.label);
+      csvData.push(headers);
+      
+      // Add all records
+      processedRecords.forEach(record => {
+        const row = columnConfig.map(col => {
+          const value = record[col.key] || (col.altKey ? record[col.altKey] : null);
+          let displayValue = value || 'N/A';
+          
+          if (col.type === 'date' && value) {
+            displayValue = new Date(value).toLocaleDateString();
+          }
+          
+          return displayValue;
+        });
+        csvData.push(row);
+      });
+      
+      // Convert to CSV
+      const csvContent = csvData.map(row => 
+        row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
+      ).join('\n');
       
       // Create and download CSV file
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement('a');
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', `${selectedIndicator?.Indicator?.replace(/[^a-zA-Z0-9]/g, '_')}-all-records.csv`);
+      const fileName = `HIV_Indicator_${selectedIndicator.Indicator.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+      link.setAttribute('download', fileName);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
+      console.log('✅ CSV Export completed:', {
+        fileName,
+        totalRecords: processedRecords.length,
+        fileSize: `${(blob.size / 1024).toFixed(2)} KB`
+      });
+      
+      // Show success message
+      alert(`✅ Export Complete!\n\n📊 Indicator: ${selectedIndicator.Indicator}\n📋 Total Records: ${processedRecords.length.toLocaleString()}\n📁 File: ${fileName}\n\nClean data export with only patient records (no summary data).`);
       
     } catch (error) {
       console.error('Export failed:', error);
-      // Fallback to current page data
-      const headers = columnConfig.map(col => col.label);
-      
-      const csvContent = [
-        headers.join(','),
-        ...processedRecords.map(record => 
-          columnConfig.map(col => {
-            const value = record[col.key] || (col.altKey ? record[col.altKey] : null);
-            let displayValue = value || 'N/A';
-            
-            if (col.type === 'date' && value) {
-              displayValue = new Date(value).toLocaleDateString();
-            }
-            
-            // Escape CSV values properly
-            return `"${String(displayValue).replace(/"/g, '""')}"`;
-          }).join(','))
-      ].join('\n');
-      
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
-      const url = URL.createObjectURL(blob);
-      link.setAttribute('href', url);
-      link.setAttribute('download', `${selectedIndicator?.Indicator?.replace(/[^a-zA-Z0-9]/g, '_')}-records.csv`);
-      link.style.visibility = 'hidden';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      alert(`❌ Export Failed: ${error.message}\n\nPlease try again or contact support if the issue persists.`);
     } finally {
       // Restore button state
       if (button) {
@@ -359,31 +475,34 @@ const IndicatorDetailsModal = ({
                 <FileText className="h-4 w-4 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                {detailsLoading ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-5 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                ) : (
-                  <>
-                    <DialogTitle className="text-base sm:text-xl font-semibold text-foreground leading-tight">
-                      {selectedIndicator?.Indicator}
-                      {currentFilters.gender && currentFilters.ageGroup && (
-                        <span className="block text-sm font-normal text-primary mt-1">
-                          {currentFilters.gender === 'male' ? 'Male' : 'Female'} patients aged {currentFilters.ageGroup === '0-14' ? '0-14' : '15+'} years
-                        </span>
-                      )}
-                    </DialogTitle>
-                    <DialogDescription className="text-xs sm:text-base text-muted-foreground mt-1">
-                      {processedRecords.length.toLocaleString()} of {(safePagination?.totalCount || 0).toLocaleString()} records
-                      {currentFilters.gender && currentFilters.ageGroup && (
-                        <span className="block text-xs text-primary">
-                          Filtered by: {currentFilters.gender} • {currentFilters.ageGroup}
-                        </span>
-                      )}
-                    </DialogDescription>
-                  </>
-                )}
+                 <DialogTitle className="text-base sm:text-xl font-semibold text-foreground leading-tight">
+                   {detailsLoading ? (
+                     <Skeleton className="h-5 w-3/4" />
+                   ) : (
+                     <>
+                       {selectedIndicator?.Indicator}
+                       {currentFilters.gender && currentFilters.ageGroup && (
+                         <span className="block text-sm font-normal text-primary mt-1">
+                           {currentFilters.gender === 'male' ? 'Male' : 'Female'} patients aged {currentFilters.ageGroup === '0-14' ? '0-14' : '15+'} years
+                         </span>
+                       )}
+                     </>
+                   )}
+                 </DialogTitle>
+                 <DialogDescription className="text-xs sm:text-base text-muted-foreground mt-1">
+                   {detailsLoading ? (
+                     <span className="inline-block h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
+                   ) : (
+                     <>
+                       {processedRecords.length.toLocaleString()} of {(safePagination?.totalCount || 0).toLocaleString()} records
+                       {currentFilters.gender && currentFilters.ageGroup && (
+                         <span className="block text-xs text-primary">
+                           Filtered by: {currentFilters.gender} • {currentFilters.ageGroup}
+                         </span>
+                       )}
+                     </>
+                   )}
+                 </DialogDescription>
               </div>
             </div>
            
@@ -429,22 +548,37 @@ const IndicatorDetailsModal = ({
                         </SelectContent>
                       </Select>
                       <Button 
-                        onClick={exportRecords} 
+                        onClick={exportAllRecords} 
                         variant="outline"
                         size="sm"
                         className="h-9 whitespace-nowrap"
                         data-export-button
-                        disabled={indicatorDetails.length === 0}
+                        disabled={!selectedIndicator}
                       >
                         <Download className="h-4 w-4 mr-1" />
-                        CSV
+                        Export All
                       </Button>
                     </>
                   )}
                 </div>
               </div>
         </DialogHeader> 
-
+        
+        {/* Sample Data Warning */}
+        {isSampleData && sampleDataInfo && (
+          <div className="mx-4 mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+            <div className="flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <div className="text-sm">
+                <p className="font-medium text-amber-800">Sample Data Display</p>
+                <p className="text-amber-700 mt-1">
+                  {sampleDataInfo.message} This shows patients from site {sampleDataInfo.sampleSite} as an example.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="flex-1 overflow-hidden flex flex-col">
           <div className="flex-1 overflow-auto">
             <div className="p-4 ">
@@ -553,7 +687,7 @@ const IndicatorDetailsModal = ({
                                             ? 'badge-secondary'
                                             : 'badge-muted'
                                           : column.key === 'StatusVL'
-                                          ? displayValue === 'DO VL' 
+                                          ? displayValue === 'DO VL' || displayValue === 'Do_VL_in_12M'
                                             ? 'badge-warning'
                                             : displayValue === 'VL-Suppression'
                                             ? 'badge-success'

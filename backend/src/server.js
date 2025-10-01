@@ -11,13 +11,6 @@ require('dotenv').config();
 const { sequelize, testConnection } = require('./config/database');
 const { siteDatabaseManager, testConnections } = require('./config/siteDatabase');
 const authRoutes = require('./routes/auth');
-const adultPatientRoutes = require('./routes/adultPatients');
-const childPatientRoutes = require('./routes/childPatients');
-const infantPatientRoutes = require('./routes/infantPatients');
-const adultVisitRoutes = require('./routes/adultVisits');
-const adultArvDrugRoutes = require('./routes/adultArvDrugs');
-const childVisitRoutes = require('./routes/childVisits');
-const infantVisitRoutes = require('./routes/infantVisits');
 const lookupRoutes = require('./routes/lookups');
 const sitesRoutes = require('./routes/sites');
 const siteManagementRoutes = require('./routes/site-management');
@@ -25,16 +18,7 @@ const siteOperationsRoutes = require('./routes/site-operations');
 const siteIndicatorsRoutes = require('./routes/site-indicators');
 const performanceRoutes = require('./routes/performance');
 const dataImportExportRoutes = require('./routes/data-import-export');
-const cleanupRoutes = require('./routes/cleanup');
-const simpleCleanupRoutes = require('./routes/simple-cleanup');
-const fullCleanupRoutes = require('./routes/full-cleanup');
-const completeCleanupRoutes = require('./routes/complete-cleanup');
-const updateSitesRoutes = require('./routes/update-sites');
-const userManagementRoutes = require('./routes/user-management');
-const roleManagementRoutes = require('./routes/role-management');
-const indicatorsRoutes = require('./routes/indicators');
 const optimizedIndicatorsRoutes = require('./routes/optimized-indicators');
-const siteSwitchingRoutes = require('./routes/siteSwitching');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -113,13 +97,6 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/auth', authRoutes);
-app.use('/api/patients/adult', adultPatientRoutes);
-app.use('/api/patients/child', childPatientRoutes);
-app.use('/api/patients/infant', infantPatientRoutes);
-app.use('/api/visits/adult', adultVisitRoutes);
-app.use('/api', adultArvDrugRoutes);
-app.use('/api/visits/child', childVisitRoutes);
-app.use('/api/visits/infant', infantVisitRoutes);
 app.use('/api/lookups', lookupRoutes);
 app.use('/api/sites', sitesRoutes);
 app.use('/api/site-management', siteManagementRoutes);
@@ -128,15 +105,6 @@ app.use('/api/site-indicators', siteIndicatorsRoutes);
 app.use('/api/performance', performanceRoutes);
 app.use('/api/indicators-optimized', optimizedIndicatorsRoutes);
 app.use('/api/data', dataImportExportRoutes);
-app.use('/api/cleanup', cleanupRoutes);
-app.use('/api/simple-cleanup', simpleCleanupRoutes);
-app.use('/api/full-cleanup', fullCleanupRoutes);
-app.use('/api/complete-cleanup', completeCleanupRoutes);
-app.use('/api/update-sites', updateSitesRoutes);
-app.use('/api/user-management', userManagementRoutes);
-app.use('/api/roles', roleManagementRoutes);
-app.use('/api/indicators', indicatorsRoutes);
-app.use('/api/site-switching', siteSwitchingRoutes);
 
 // Make io available to routes
 app.set('io', io);
