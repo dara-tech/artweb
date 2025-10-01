@@ -19,6 +19,12 @@ const siteIndicatorsRoutes = require('./routes/site-indicators');
 const performanceRoutes = require('./routes/performance');
 const dataImportExportRoutes = require('./routes/data-import-export');
 const optimizedIndicatorsRoutes = require('./routes/optimized-indicators');
+const adultPatientRoutes = require('./routes/adultPatients');
+const childPatientRoutes = require('./routes/childPatients');
+const infantPatientRoutes = require('./routes/infantPatients');
+const adultVisitRoutes = require('./routes/adultVisits');
+const childVisitRoutes = require('./routes/childVisits');
+const infantVisitRoutes = require('./routes/infantVisits');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -105,6 +111,12 @@ app.use('/api/site-indicators', siteIndicatorsRoutes);
 app.use('/api/performance', performanceRoutes);
 app.use('/api/indicators-optimized', optimizedIndicatorsRoutes);
 app.use('/api/data', dataImportExportRoutes);
+app.use('/api/patients/adult', adultPatientRoutes);
+app.use('/api/patients/child', childPatientRoutes);
+app.use('/api/patients/infant', infantPatientRoutes);
+app.use('/api/visits/adult', adultVisitRoutes);
+app.use('/api/visits/child', childVisitRoutes);
+app.use('/api/visits/infant', infantVisitRoutes);
 
 // Make io available to routes
 app.set('io', io);
