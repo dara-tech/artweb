@@ -1,8 +1,9 @@
 -- =====================================================
 -- 10.5 TPT COMPLETE DETAILS
--- Generated: 2025-10-02T09:11:21.877Z
+-- Generated: 2025-10-02T12:01:55.095Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -153,3 +154,4 @@ LEFT JOIN tbltptdrug tp ON tp.clinicid = v.clinicid
 WHERE v.id = 1 AND e.status IS NULL AND a.ART IS NOT NULL
   AND tp.tptstatus = 'TPT Complete'
 ORDER BY v.DatVisit DESC, i.clinicid;
+

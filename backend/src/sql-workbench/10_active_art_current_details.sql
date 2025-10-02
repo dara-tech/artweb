@@ -1,8 +1,9 @@
 -- =====================================================
 -- 10 ACTIVE ART CURRENT DETAILS
--- Generated: 2025-10-02T09:11:21.886Z
+-- Generated: 2025-10-02T12:01:55.099Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -139,3 +140,4 @@ LEFT JOIN tblart a ON a.clinicid = v.clinicid
 LEFT JOIN tblexit e ON v.clinicid = e.clinicid
 WHERE v.id = 1 AND e.status IS NULL AND a.ART IS NOT NULL
 ORDER BY v.DatVisit DESC, i.clinicid;
+

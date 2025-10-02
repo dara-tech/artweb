@@ -1,8 +1,9 @@
 -- =====================================================
 -- 08.3 TRANSFER OUT DETAILS
--- Generated: 2025-10-02T09:11:21.866Z
+-- Generated: 2025-10-02T12:01:55.092Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -77,3 +78,4 @@ WHERE
     s.Da BETWEEN @StartDate AND @EndDate 
     AND s.Status = @transfer_out_code
 ORDER BY transfer_date DESC, clinicid;
+

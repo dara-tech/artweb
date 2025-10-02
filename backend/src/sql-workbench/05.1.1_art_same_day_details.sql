@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05.1.1 ART SAME DAY DETAILS
--- Generated: 2025-10-02T09:11:21.858Z
+-- Generated: 2025-10-02T12:01:55.088Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -79,3 +80,4 @@ WHERE
     art.DaArt BETWEEN @StartDate AND @EndDate
     AND DATEDIFF(art.DaArt, p.DafirstVisit) = 0
 ORDER BY DaArt DESC, ClinicID;
+

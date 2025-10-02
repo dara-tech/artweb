@@ -1,8 +1,9 @@
 -- =====================================================
 -- 10.5 TPT COMPLETE
--- Generated: 2025-10-02T09:11:21.877Z
+-- Generated: 2025-10-02T12:01:55.095Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -275,3 +276,4 @@ select
     count(*) as TOTAL
 from tblactive
 where ART is not null and tptstatus = 'TPT Complete';
+

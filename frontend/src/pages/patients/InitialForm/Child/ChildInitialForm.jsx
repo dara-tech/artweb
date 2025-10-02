@@ -17,6 +17,7 @@ function ChildInitialForm() {
   const [activeTab, setActiveTab] = useState("list")
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
+  const [loading, setLoading] = useState(false)
   
   const [dropdownOptions, setDropdownOptions] = useState({
     sites: [],
@@ -31,6 +32,12 @@ function ChildInitialForm() {
   })
   const [dropdownsLoaded, setDropdownsLoaded] = useState(false)
 
+  // Load patients list function
+  const loadPatientsList = () => {
+    // This function would typically refresh the patient list
+    // For now, we'll just log that it was called
+    console.log('Loading patients list...')
+  }
 
   // Form data matching VB.NET frmChildIn fields
   const [formData, setFormData] = useState({

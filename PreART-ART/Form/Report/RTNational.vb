@@ -573,7 +573,7 @@ ll:
         'Dim CmdAhcv As New MySqlCommand("SELECT   tblavmain.ClinicID, tblavmain.CrAGResult, tbltempoi.Sex FROM  tblavmain RIGHT OUTER JOIN  tbltempoi ON tblavmain.ClinicID = tbltempoi.ClinicID WHERE     (tblavmain.DatVisit BETWEEN '" & Format(Sdate, "yyyy-MM-dd") & "' AND '" & Format(Edate, "yyyy-MM-dd") & "')  AND  (tblavmain.CrAGResult IN (0, 1)) ORDER BY tblavmain.DatVisit", Cnndb)
         'Rdr = CmdAhcv.ExecuteReader
         'While Rdr.Read
-        '    Select Case CDec(Rdr.GetValue(1).ToString)
+        '    Select Case CDec(Rdr.GetValue(1).ToString
         '        Case 0
         '            Select Case Val(Rdr.GetValue(2).ToString)
         '                Case 1

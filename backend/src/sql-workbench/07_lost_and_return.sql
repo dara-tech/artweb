@@ -1,8 +1,9 @@
 -- =====================================================
 -- 07 LOST AND RETURN
--- Generated: 2025-10-02T09:11:21.863Z
+-- Generated: 2025-10-02T12:01:55.091Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -43,3 +44,4 @@ FROM (
       AND p.DafirstVisit BETWEEN @StartDate AND @EndDate
     GROUP BY p.Sex, art.ART
 ) as PatientList;
+

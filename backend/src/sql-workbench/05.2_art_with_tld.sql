@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05.2 ART WITH TLD
--- Generated: 2025-10-02T09:11:21.860Z
+-- Generated: 2025-10-02T12:01:55.089Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -14,10 +15,8 @@ SET @EndDate = '2025-06-30';               -- End date (YYYY-MM-DD) - Q2 2025
 -- Clinical parameters
 SET @tld_regimen_formula = '3TC + DTG + TDF'; -- TLD regimen formula
 
--- =====================================================
 -- MAIN QUERY
 -- =====================================================
-
 -- Indicator 5.2: New ART started with TLD
 SELECT
     '5.2. New ART started with TLD' AS Indicator,
@@ -37,3 +36,4 @@ FROM (
     WHERE art.DaArt BETWEEN @StartDate AND @EndDate
     AND v.Vid IN (SELECT Vid FROM (SELECT Vid, GROUP_CONCAT(DrugName ORDER BY DrugName SEPARATOR ' + ') as regimen FROM tblcvarvdrug WHERE Status <> 1 AND Status <> -1 GROUP BY Vid) rg WHERE rg.regimen = @tld_regimen_formula)
 ) AS PatientList;
+

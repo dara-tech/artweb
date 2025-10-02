@@ -1,8 +1,9 @@
 -- =====================================================
 -- 06 TRANSFER IN
--- Generated: 2025-10-02T09:11:21.862Z
+-- Generated: 2025-10-02T12:01:55.091Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -44,3 +45,4 @@ FROM (
     AND p.ClinicIDold IS NOT NULL AND p.ClinicIDold <> ''
     AND p.SiteNameold IS NOT NULL AND p.SiteNameold <> ''
 ) as PatientList;
+

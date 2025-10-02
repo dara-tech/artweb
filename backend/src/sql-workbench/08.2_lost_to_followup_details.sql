@@ -1,8 +1,9 @@
 -- =====================================================
 -- 08.2 LOST TO FOLLOWUP DETAILS
--- Generated: 2025-10-02T09:11:21.864Z
+-- Generated: 2025-10-02T12:01:55.092Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -73,3 +74,4 @@ JOIN tblcvpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE s.Da BETWEEN @StartDate AND @EndDate 
     AND s.Status = @lost_code
 ORDER BY ltf_date DESC, clinicid;
+

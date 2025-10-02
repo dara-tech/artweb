@@ -8,7 +8,6 @@ import { Loader2, Building2, CheckCircle, AlertCircle } from 'lucide-react';
 const SiteSelector = ({ 
   onSiteChange, 
   showCurrentSite = true, 
-  variant = 'default',
   className = '' 
 }) => {
   const {
@@ -16,9 +15,7 @@ const SiteSelector = ({
     availableSites,
     loading,
     error,
-    switchToSite,
-    validateSite,
-    isSiteSelected
+    switchToSite
   } = useSiteSwitching();
 
   const [selectedSite, setSelectedSite] = useState('');

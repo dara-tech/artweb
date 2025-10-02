@@ -13,7 +13,6 @@ import {
   Download
 } from "lucide-react"
 import { useAuth } from '../../contexts/AuthContext'
-import { useSite } from '../../contexts/SiteContext'
 import { ThemeToggle } from '../ui/theme-toggle'
 import Sidebar from './Sidebar'
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator } from "@/components/ui/dropdown-menu"
@@ -22,11 +21,9 @@ import { Settings } from "lucide-react"
 const AdvancedLayout = ({ children }) => {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [isFullFrame, setIsFullFrame] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isDownloading, setIsDownloading] = useState(false)
   const { user, logout } = useAuth()
-  const { isMultiSite } = useSite()
 
   // Check if user is a viewer
   const isViewer = user?.role === 'viewer'
@@ -159,7 +156,6 @@ const AdvancedLayout = ({ children }) => {
       )
       
       setIsFullscreen(isCurrentlyFullscreen)
-      setIsFullFrame(isCurrentlyFullscreen)
       
       // Close mobile menu when entering fullscreen
       if (isCurrentlyFullscreen) {
@@ -190,10 +186,10 @@ const AdvancedLayout = ({ children }) => {
       document.removeEventListener('MSFullscreenChange', handleFullscreenChange)
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [isFullscreen])
+  }, [isFullscreen, toggleFullFrame])
 
   return (
-    <div className={`min-h-screen bg-background ${isFullscreen ? 'app-mode' : ''}`}>
+    <div className={`min-h-screen bg-background transition-all duration-300 ${isFullscreen ? 'app-mode' : ''}`}>
       <div className={`flex h-screen ${isViewer ? 'flex-col' : ''}`}>
         {/* Sidebar - Hidden for viewers */}
         {!isViewer && (
@@ -208,140 +204,144 @@ const AdvancedLayout = ({ children }) => {
         {/* Main Content Area */}
         <div className={`flex-1 flex flex-col overflow-hidden ${isViewer ? 'w-full' : ''}`}>
           {/* Top Header */}
-          <header className={`bg-card border-b border-border px-4 py-3 backdrop-blur-sm ${
-            isFullscreen ? 'border-primary bg-primary/10' : ''
+          <header className={`bg-card/95 backdrop-blur-md border-b border-border/50 px-4 py-3 shadow-sm ${
+            isFullscreen ? 'border-primary/30 bg-primary/5' : ''
           }`}>
             <div className="flex items-center justify-between">
-              {/* Left side */}
+              {/* Left Section */}
               <div className="flex items-center space-x-4">
-                {/* App Mode Indicator */}
+                {/* App Mode Status Indicator */}
                 {isFullscreen && (
-                  <div className="flex items-center space-x-2 px-2 py-1 status-active rounded-md text-xs font-medium">
+                  <div className="flex items-center space-x-2 px-3 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-xs font-medium text-primary">
                     <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-                    App Mode
+                    <span>App Mode</span>
                   </div>
                 )}
                 
+                {/* Mobile Menu Toggle */}
                 {!isViewer && (
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => setIsMobileOpen(true)}
-                    className="lg:hidden hover:bg-accent"
+                    className="lg:hidden hover:bg-accent/80 rounded-lg transition-all duration-200"
                   >
                     <Menu className="w-5 h-5 text-muted-foreground" />
                   </Button>
                 )}
                 
+                {/* Search Bar */}
                 <div className="hidden md:block">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <div className="relative group">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 transition-colors group-focus-within:text-primary" />
                     <Input
                       placeholder="Search patients, reports..."
-                      className="pl-10 w-64 bg-muted/30 focus:bg-background transition-colors"
+                      className="pl-10 w-72 bg-muted/40 border-0 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all duration-200 rounded-lg"
                     />
                   </div>
                 </div>
-                
               </div>
 
-              {/* Right side */}
-              <div className="flex items-center space-x-3">
-                {/* Full Frame Toggle - App Mode */}
+              {/* Right Section */}
+              <div className="flex items-center space-x-2">
+                {/* Fullscreen Toggle */}
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={toggleFullFrame}
-                  className={`hover:bg-accent transition-colors ${
-                    isFullscreen ? 'status-active' : ''
+                  className={`hover:bg-accent/80 transition-all duration-200 rounded-lg ${
+                    isFullscreen ? 'bg-primary/10 text-primary border border-primary/20' : ''
                   }`}
-                  title={
-                    isFullscreen 
-                      ? "Exit App Mode (F11)" 
-                      : "Enter App Mode - Hide Browser UI (F11)"
-                  }
+                  title={isFullscreen ? "Exit App Mode (F11)" : "Enter App Mode (F11)"}
                   disabled={!isFullscreenSupported()}
                 >
                   {isFullscreen ? (
-                    <Minimize2 className="w-5 h-5" />
+                    <Minimize2 className="w-4 h-4" />
                   ) : (
-                    <Maximize2 className="w-5 h-5" />
+                    <Maximize2 className="w-4 h-4" />
                   )}
                 </Button>
+
                 {/* Theme Toggle */}
                 <ThemeToggle />
-                {/* User Menu */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      className="flex items-center space-x-3 px-2 py-1.5 h-auto hover:bg-accent transition-colors"
-                    >
-                      <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full flex items-center justify-center shadow-sm ring-1 ring-border">
-                        <User className="w-4 h-4 text-primary" />
-                      </div>
-                      <div className="hidden md:block text-left">
-                        <p className="text-sm font-medium text-foreground">{user?.fullName || 'User'}</p>
-                        <p className="text-xs text-muted-foreground">{user?.role || 'Administrator'}</p>
-                      </div>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                      <User className="mr-2 h-4 w-4" />
-                      <span>Profile</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Settings className="mr-2 h-4 w-4" />
-                      <span>Settings</span>
-                    </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={handleLogout} className="text-destructive focus:text-destructive">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      <span>Log out</span>
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
 
-             
-
-                {/* Action buttons for viewers */}
+                {/* Viewer Actions */}
                 {isViewer && (
-                  <>
+                  <div className="flex items-center space-x-2 ml-2 pl-2 border-l border-border/50">
                     <Button 
                       variant="outline" 
                       size="sm" 
                       onClick={downloadAllScripts}
                       disabled={isDownloading}
-                      className="hover:bg-primary/10 hover:text-primary"
-                      title="Download All Analysis Scripts"
+                      className="hover:bg-primary/10 hover:text-primary hover:border-primary/30 transition-all duration-200 rounded-lg"
+                      title="Download Analysis Scripts"
                     >
                       {isDownloading ? (
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent"></div>
                       ) : (
-                        <>
-                          <Download className="w-5 h-5 text-muted-foreground" />
-                          <span>Download</span>
-                        </>
+                        <Download className="w-4 h-4" />
                       )}
+                      <span className="ml-2 hidden sm:inline">Download Scripts</span>
                     </Button>
                     <Button 
                       variant="ghost" 
                       size="sm" 
                       onClick={handleLogout}
-                      className="hover:bg-destructive/10 hover:text-destructive"
-                      title="Logout"
+                      className="hover:bg-destructive/10 hover:text-destructive transition-all duration-200 rounded-lg"
+                      title="Sign Out"
                     >
-                      <LogOut className="w-5 h-5 text-muted-foreground" />
+                      <LogOut className="w-4 h-4" />
                     </Button>
-                  </>
+                  </div>
+                )}
+
+                {/* User Profile Menu */}
+                {!isViewer && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button 
+                        variant="ghost" 
+                        className="flex items-center space-x-3 px-3 py-2 h-auto hover:bg-accent/80 transition-all duration-200 rounded-lg ml-2"
+                      >
+                        <div className="w-8 h-8 bg-gradient-to-br from-primary/20 to-primary/40 rounded-full flex items-center justify-center shadow-sm ring-1 ring-border/50">
+                          <User className="w-4 h-4 text-primary" />
+                        </div>
+                        <div className="hidden lg:block text-left">
+                          <p className="text-sm font-medium text-foreground leading-tight">{user?.fullName || 'User'}</p>
+                          <p className="text-xs text-muted-foreground capitalize">{user?.role || 'Administrator'}</p>
+                        </div>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-56 shadow-lg border-border/50">
+                      <DropdownMenuLabel className="font-medium">
+                        <div className="flex flex-col space-y-1">
+                          <span>{user?.fullName || 'User'}</span>
+                          <span className="text-xs text-muted-foreground font-normal">{user?.email}</span>
+                        </div>
+                      </DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem className="hover:bg-accent/80 transition-colors cursor-pointer">
+                        <User className="mr-3 h-4 w-4" />
+                        <span>Profile Settings</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="hover:bg-accent/80 transition-colors cursor-pointer">
+                        <Settings className="mr-3 h-4 w-4" />
+                        <span>Preferences</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem 
+                        onClick={handleLogout} 
+                        className="text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
+                      >
+                        <LogOut className="mr-3 h-4 w-4" />
+                        <span>Sign Out</span>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 )}
               </div>
             </div>
           </header>
-
 
           {/* Main Content */}
           <main className="flex-1 overflow-y-auto bg-background">

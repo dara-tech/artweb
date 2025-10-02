@@ -1,8 +1,9 @@
 -- =====================================================
 -- 07 LOST AND RETURN DETAILS
--- Generated: 2025-10-02T09:11:21.863Z
+-- Generated: 2025-10-02T12:01:55.091Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -77,3 +78,4 @@ WHERE p.LClinicID IS NOT NULL
 GROUP BY p.Sex, art.ART
 
 ORDER BY DafirstVisit DESC, clinicid;
+

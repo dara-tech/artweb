@@ -1,8 +1,9 @@
 -- =====================================================
 -- 01 ACTIVE ART PREVIOUS
--- Generated: 2025-10-02T09:11:21.851Z
+-- Generated: 2025-10-02T12:01:55.086Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -132,3 +133,4 @@ SELECT
     IFNULL(SUM(CASE WHEN typepatients = '15+' AND Sex = 1 THEN 1 ELSE 0 END), 0) AS Male_over_14,
     IFNULL(SUM(CASE WHEN typepatients = '15+' AND Sex = 0 THEN 1 ELSE 0 END), 0) AS Female_over_14
 FROM tblactive;
+

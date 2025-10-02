@@ -19,6 +19,12 @@ function InfantInitialForm() {
   const [searchTerm, setSearchTerm] = useState('')
   const [activeTab, setActiveTab] = useState('list')
   
+  // Load patients list function
+  const loadPatientsList = () => {
+    // This function would typically refresh the patient list
+    // For now, we'll just log that it was called
+    console.log('Loading patients list...')
+  }
   
   // Form data state
   const [formData, setFormData] = useState({

@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05.1.3 ART OVER 7 DAYS DETAILS
--- Generated: 2025-10-02T09:11:21.859Z
+-- Generated: 2025-10-02T12:01:55.089Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -77,3 +78,4 @@ JOIN tblcart art ON p.ClinicID = art.ClinicID
 WHERE art.DaArt BETWEEN @StartDate AND @EndDate
     AND DATEDIFF(art.DaArt, p.DafirstVisit) > 7
 ORDER BY DaArt DESC, ClinicID;
+

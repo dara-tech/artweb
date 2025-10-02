@@ -1,8 +1,9 @@
 -- =====================================================
 -- 09 ACTIVE PRE ART
--- Generated: 2025-10-02T09:11:21.867Z
+-- Generated: 2025-10-02T12:01:55.092Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -173,3 +174,4 @@ select '9. Active Pre-ART' as Indicator,
        count(*) as TOTAL
 from tblactive
 where ART is null;
+

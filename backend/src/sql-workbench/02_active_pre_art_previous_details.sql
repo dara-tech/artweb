@@ -1,8 +1,9 @@
 -- =====================================================
 -- 02 ACTIVE PRE ART PREVIOUS DETAILS
--- Generated: 2025-10-02T09:11:21.856Z
+-- Generated: 2025-10-02T12:01:55.087Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -10,7 +11,6 @@
 -- Date parameters (Quarterly period)
 SET @PreviousEndDate = '2025-03-31';       -- Previous period end date
 
--- =====================================================
 -- MAIN QUERY
 -- =====================================================
 -- Indicator 2: Active Pre-ART patients in previous quarter - Detailed Records

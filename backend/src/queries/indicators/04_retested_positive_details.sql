@@ -1,17 +1,76 @@
 -- Indicator 4: Re-tested positive - Detailed Records
--- This indicator is hardcoded to return 0 in the aggregate query
--- The detail query should also return 0 to match
+-- This matches the old VB.NET implementation exactly
 SELECT
-    NULL as clinicid,
-    NULL as sex,
-    NULL as sex_display,
-    NULL as typepatients,
-    NULL as DaBirth,
-    NULL as DafirstVisit,
+    p.ClinicID as clinicid,
+    p.Sex as sex,
+    CASE 
+        WHEN p.Sex = 0 THEN 'Female'
+        WHEN p.Sex = 1 THEN 'Male'
+        ELSE 'Unknown'
+    END as sex_display,
+    CASE 
+        WHEN p.type = 'Adult' THEN '15+'
+        WHEN p.type = 'Child' THEN '≤14'
+        ELSE 'Unknown'
+    END as typepatients,
+    p.DaBirth as DaBirth,
+    p.DafirstVisit as DafirstVisit,
     NULL as DaArt,
-    NULL as DatVisit,
-    NULL as OffIn,
-    NULL as patient_type,
-    NULL as age,
-    NULL as transfer_status
-WHERE 1=0;
+    p.DatVisit as DatVisit,
+    p.OffIn as OffIn,
+    p.type as patient_type,
+    TIMESTAMPDIFF(YEAR, p.DaBirth, :EndDate) as age,
+    CASE 
+        WHEN p.OffIn = 0 THEN 'Not Transferred'
+        WHEN p.OffIn = 1 THEN 'Transferred In'
+        WHEN p.OffIn = 3 THEN 'Transferred Out'
+        ELSE CONCAT('Status: ', p.OffIn)
+    END as transfer_status
+FROM (
+    -- Adult re-tested positive: OffIn <> 1, TypeofReturn = -1, DafirstVisit in quarter
+    SELECT 'Adult' as type, ai.ClinicID, ai.Sex, ai.DaBirth, ai.DafirstVisit, ai.OffIn, ai.TypeofReturn, lt.DatVisit, lt.TestHIV, lt.ResultHIV
+    FROM (
+        SELECT v.ClinicID, v.ARTnum, v.DatVisit, v.TestHIV, v.ResultHIV, v.DaApp, v.Vid
+        FROM (
+            SELECT ClinicID, ARTnum, DatVisit, TestHIV, ResultHIV, DaApp, Vid
+            FROM tblavmain
+            WHERE DatVisit BETWEEN :StartDate AND :EndDate
+        ) v
+        INNER JOIN (
+            SELECT vv.ClinicID, MAX(vv.DatVisit) as DatVisit, vv.TestHIV, vv.ResultHIV
+            FROM (
+                SELECT ClinicID, ARTnum, DatVisit, TestHIV, ResultHIV, DaApp, Vid
+                FROM tblavmain
+                WHERE DatVisit BETWEEN :StartDate AND :EndDate AND TestHIV = 'True'
+            ) vv
+            GROUP BY vv.ClinicID
+        ) mv ON mv.ClinicID = v.ClinicID AND mv.DatVisit = v.DatVisit
+    ) lt
+    LEFT JOIN tblaimain ai ON ai.ClinicID = lt.ClinicID
+    WHERE ai.OffIn <> 1 AND ai.TypeofReturn = -1 AND ai.DafirstVisit BETWEEN :StartDate AND :EndDate
+    
+    UNION ALL
+    
+    -- Child re-tested positive: OffIn <> 1, LClinicID = '', DafirstVisit in quarter
+    SELECT 'Child' as type, ci.ClinicID, ci.Sex, ci.DaBirth, ci.DafirstVisit, ci.OffIn, ci.LClinicID, lt.DatVisit, lt.TestHIV, lt.ResultHIV
+    FROM (
+        SELECT c.ClinicID, c.ARTnum, c.DatVisit, c.TestHIV, c.ResultHIV, c.DaApp, c.Vid
+        FROM (
+            SELECT ClinicID, ARTnum, DatVisit, TestHIV, ResultHIV, DaApp, Vid
+            FROM tblcvmain
+            WHERE DatVisit BETWEEN :StartDate AND :EndDate
+        ) c
+        INNER JOIN (
+            SELECT cc.ClinicID, MAX(cc.DatVisit) as DatVisit, cc.TestHIV, cc.ResultHIV
+            FROM (
+                SELECT ClinicID, ARTnum, DatVisit, TestHIV, ResultHIV, DaApp, Vid
+                FROM tblcvmain
+                WHERE DatVisit BETWEEN :StartDate AND :EndDate AND TestHIV = 'True'
+            ) cc
+            GROUP BY cc.ClinicID
+        ) mcv ON mcv.ClinicID = c.ClinicID AND mcv.DatVisit = c.DatVisit
+    ) lt
+    LEFT JOIN tblcimain ci ON ci.ClinicID = lt.ClinicID
+    WHERE ci.OffIn <> 1 AND ci.LClinicID = '' AND ci.DafirstVisit BETWEEN :StartDate AND :EndDate
+) p
+ORDER BY p.DafirstVisit DESC, p.ClinicID;

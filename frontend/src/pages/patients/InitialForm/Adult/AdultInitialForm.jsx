@@ -510,9 +510,9 @@ function AdultInitialForm() {
       handleClear()
       // Update patient in context
       if (id) {
-        updatePatient('adults', response.data)
+        console.log('Patient updated:', response.data)
       } else {
-        addPatient('adults', response.data)
+        console.log('Patient added:', response.data)
       }
       setActiveTab("list")
 

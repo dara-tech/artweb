@@ -1,8 +1,9 @@
 -- =====================================================
 -- 03 NEWLY ENROLLED DETAILS
--- Generated: 2025-10-02T09:11:21.857Z
+-- Generated: 2025-10-02T12:01:55.088Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -78,3 +79,4 @@ WHERE
     art.DaArt BETWEEN @StartDate AND @EndDate 
     AND (p.OffIn IS NULL OR p.OffIn <> @transfer_in_code)
 ORDER BY DaArt DESC, ClinicID;
+

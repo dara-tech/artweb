@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05.1.3 ART OVER 7 DAYS
--- Generated: 2025-10-02T09:11:21.859Z
+-- Generated: 2025-10-02T12:01:55.089Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -31,3 +32,4 @@ FROM (
     -- Children
     SELECT 'Child' as type, IF(p.Sex=0, "Female", "Male") as Sex FROM tblcimain p JOIN tblcart art ON p.ClinicID = art.ClinicID WHERE art.DaArt BETWEEN @StartDate AND @EndDate AND DATEDIFF(art.DaArt, p.DafirstVisit) > 7
 ) as PatientList;
+

@@ -63,7 +63,7 @@ const SmartForm = ({
         }));
       }
     }
-  }, [formData.birthDate, formData.visitDate]);
+  }, [formData.birthDate, formData.visitDate, formData.ageUnit]);
 
   // Determine patient status based on age
   useEffect(() => {
@@ -77,7 +77,7 @@ const SmartForm = ({
         statusReason: statusData.reason
       }));
     }
-  }, [formData.age]);
+  }, [formData.age, formData.ageUnit]);
 
   // Calculate next appointment
   useEffect(() => {
@@ -89,7 +89,7 @@ const SmartForm = ({
         nextAppointment
       }));
     }
-  }, [formData.age, formData.visitDate]);
+  }, [formData.age, formData.visitDate, formData.ageUnit]);
 
   // Set contextual help and required fields
   useEffect(() => {
@@ -182,7 +182,6 @@ const SmartForm = ({
     e.preventDefault();
     
     // Validate all fields
-    const allErrors = {};
     Object.keys(formData).forEach(field => {
       validateField(field, formData[field]);
     });

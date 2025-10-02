@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05.2 ART WITH TLD DETAILS
--- Generated: 2025-10-02T09:11:21.861Z
+-- Generated: 2025-10-02T12:01:55.090Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -14,10 +15,8 @@ SET @EndDate = '2025-06-30';               -- End date (YYYY-MM-DD) - Q2 2025
 -- Clinical parameters
 SET @tld_regimen_formula = '3TC + DTG + TDF'; -- TLD regimen formula
 
--- =====================================================
 -- MAIN QUERY
 -- =====================================================
-
 -- Indicator 5.2: New ART started with TLD - Detailed Records (matching aggregate logic)
 SELECT
     '5.2' as step,
@@ -97,3 +96,4 @@ JOIN (
 WHERE art.DaArt BETWEEN @StartDate AND @EndDate
     AND rg.regimen = @tld_regimen_formula
 ORDER BY DaArt DESC, ClinicID;
+

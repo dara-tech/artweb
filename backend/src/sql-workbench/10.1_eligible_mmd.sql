@@ -1,8 +1,9 @@
 -- =====================================================
 -- 10.1 ELIGIBLE MMD
--- Generated: 2025-10-02T09:11:21.869Z
+-- Generated: 2025-10-02T12:01:55.092Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -180,3 +181,4 @@ select '10.1. Eligible MMD' as Indicator,
        count(*) as TOTAL
 from tblactive
 where ART is not null and Startartstatus = '>6M';
+

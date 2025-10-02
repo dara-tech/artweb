@@ -1,8 +1,9 @@
 -- =====================================================
 -- 10.2 MMD
--- Generated: 2025-10-02T09:11:21.872Z
+-- Generated: 2025-10-02T12:01:55.093Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -289,3 +290,4 @@ FROM tblactive
 WHERE ART IS NOT NULL
     AND Startartstatus = '>6M' 
     AND MMDStatus = 'MMD';
+

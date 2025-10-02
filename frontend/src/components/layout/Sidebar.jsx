@@ -27,11 +27,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
   const { user, logout, loading } = useAuth()
   const [expandedMenus, setExpandedMenus] = useState({})
 
-  // Don't render sidebar until user data is loaded
-  if (loading || !user) {
-    return null
-  }
-
   // Memoized user role check for performance
   const isViewer = useMemo(() => user?.role === 'viewer', [user?.role])
   const isAdmin = useMemo(() => 
@@ -39,24 +34,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     [user?.role]
   )
 
-  // Hide sidebar completely for viewers
-  if (isViewer) {
-    return null
-  }
-
-  const handleLogout = () => {
-    logout()
-  }
-
-  const toggleMenu = (menuName) => {
-    setExpandedMenus(prev => ({
-      ...prev,
-      [menuName]: !prev[menuName]
-    }))
-  }
-
   // Memoized navigation items for better performance
   const navigationItems = useMemo(() => {
+    if (!user || isViewer) return []
     const items = []
 
     // Dashboard - hide for viewers
@@ -184,6 +164,27 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
 
     return items
   }, [isViewer, isAdmin, location.pathname])
+
+  // Don't render sidebar until user data is loaded
+  if (loading || !user) {
+    return null
+  }
+
+  // Hide sidebar completely for viewers
+  if (isViewer) {
+    return null
+  }
+
+  const handleLogout = () => {
+    logout()
+  }
+
+  const toggleMenu = (menuName) => {
+    setExpandedMenus(prev => ({
+      ...prev,
+      [menuName]: !prev[menuName]
+    }))
+  }
 
   const handleNavigation = (href, item) => {
     // For viewers, if they click on Analytics & Reports, navigate directly to indicators

@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05 NEWLY INITIATED
--- Generated: 2025-10-02T09:11:21.862Z
+-- Generated: 2025-10-02T12:01:55.090Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -46,3 +47,4 @@ FROM (
         art.DaArt BETWEEN @StartDate AND @EndDate 
         AND (p.OffIn IS NULL OR p.OffIn <> @transfer_in_code)
 ) AS PatientList;
+

@@ -1,8 +1,9 @@
 -- =====================================================
 -- 08.1 DEAD DETAILS
--- Generated: 2025-10-02T09:11:21.864Z
+-- Generated: 2025-10-02T12:01:55.091Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -73,3 +74,4 @@ JOIN tblcvpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE s.Da BETWEEN @StartDate AND @EndDate 
     AND s.Status = @dead_code
 ORDER BY death_date DESC, clinicid;
+

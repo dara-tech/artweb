@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05.1.2 ART 1 7 DAYS DETAILS
--- Generated: 2025-10-02T09:11:21.858Z
+-- Generated: 2025-10-02T12:01:55.089Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -75,3 +76,4 @@ JOIN tblcvmain v ON p.ClinicID = v.ClinicID AND v.DatVisit = art.DaArt
 WHERE art.DaArt BETWEEN @StartDate AND @EndDate
     AND DATEDIFF(art.DaArt, p.DafirstVisit) BETWEEN 1 AND 7
 ORDER BY DaArt DESC, ClinicID;
+

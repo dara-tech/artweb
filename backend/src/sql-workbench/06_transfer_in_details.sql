@@ -1,8 +1,9 @@
 -- =====================================================
 -- 06 TRANSFER IN DETAILS
--- Generated: 2025-10-02T09:11:21.863Z
+-- Generated: 2025-10-02T12:01:55.091Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -86,3 +87,4 @@ WHERE
     AND p.ClinicIDold IS NOT NULL AND p.ClinicIDold <> ''
     AND p.SiteNameold IS NOT NULL AND p.SiteNameold <> ''
 ORDER BY DaArt DESC, ClinicID;
+

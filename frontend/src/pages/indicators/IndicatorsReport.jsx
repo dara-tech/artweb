@@ -127,9 +127,22 @@ const IndicatorsReport = () => {
     
     const q = quarterDates[quarter];
     
-    // Previous quarter end date
-    const prevQuarter = quarter === 1 ? 4 : quarter - 1;
-    const prevQ = quarterDates[prevQuarter];
+    // Previous quarter end date - fix year calculation
+    let prevYear = year;
+    let prevQuarter = quarter - 1;
+    
+    if (quarter === 1) {
+      // Q1 -> previous is Q4 of previous year
+      prevYear = year - 1;
+      prevQuarter = 4;
+    }
+    
+    const prevQ = {
+      1: { start: `${prevYear}-01-01`, end: `${prevYear}-03-31` },
+      2: { start: `${prevYear}-04-01`, end: `${prevYear}-06-30` },
+      3: { start: `${prevYear}-07-01`, end: `${prevYear}-09-30` },
+      4: { start: `${prevYear}-10-01`, end: `${prevYear}-12-31` }
+    }[prevQuarter];
     
     return {
       startDate: q.start,
@@ -1624,19 +1637,18 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
     return (
       <div className="space-y-4 sm:space-y-6">
         {/* Report Header Skeleton - Bilingual Format */}
-        <div className="bg-card border border-border rounded-lg shadow-sm p-6 mb-6">
+        <div className="bg-card  shadow-sm p-6 mb-6">
           <div className="animate-pulse">
             {/* Main Title Skeleton */}
             <div className="text-center mb-6">
               <div className="h-8 bg-muted rounded w-3/4 mx-auto mb-2"></div>
-              <div className="h-4 bg-muted rounded w-1/2 mx-auto"></div>
             </div>
 
             {/* Report Parameters Table Skeleton */}
-            <div className="border border-border rounded-lg overflow-hidden">
+            <div className="border border-border  overflow-hidden">
               <table className="w-full">
                 <tbody>
-                  {/* Row 1: Facility Name, Facility Code */}
+                  {/* Row 1: Facility Name, File Name */}
                   <tr className="border-b border-border">
                     <td className="px-4 py-3 w-1/4 border-r border-border">
                       <div className="h-4 bg-muted rounded w-3/4"></div>
@@ -1684,31 +1696,17 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                 </tbody>
               </table>
             </div>
-
-            {/* Status Indicators Skeleton */}
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-              <div className="flex items-center gap-4">
-                <div className="h-6 bg-muted rounded w-20"></div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-muted rounded-full"></div>
-                  <div className="h-4 bg-muted rounded w-16"></div>
-                </div>
-              </div>
-              <div className="h-4 bg-muted rounded w-32"></div>
-            </div>
           </div>
         </div>
 
-        {/* Table Skeleton */}
-        <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+        {/* Indicators Table Skeleton */}
+        <div className="bg-card border border-border  shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               {/* Table Header Skeleton */}
               <thead className="bg-muted border-b-2 border-border">
                 <tr>
-                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-12 border-r border-border">
-                    <div className="h-4 bg-muted rounded w-4 mx-auto"></div>
-                  </th>
+                
                   <th className="px-4 py-4 text-right text-sm font-bold text-foreground border-r border-border">
                     <div className="h-4 bg-muted rounded w-32"></div>
                   </th>
@@ -1729,7 +1727,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
 
               {/* Table Body Skeleton */}
               <tbody className="bg-card divide-y divide-border">
-                {[...Array(3)].map((_, i) => (
+                {[...Array(5)].map((_, i) => (
                   <React.Fragment key={i}>
                     {/* Indicator Header Row Skeleton */}
                     <tr className="border-b border-border">
@@ -1793,10 +1791,12 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
         </div>
 
         {/* Report Footer Skeleton */}
-        <div className="bg-muted border border-border rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
+        <div className="bg-muted border border-border  p-4 sm:p-6 mt-6 sm:mt-8">
           <div className="animate-pulse">
-            <div className="h-4 bg-muted rounded w-3/4 ml-auto"></div>
-            <div className="h-3 bg-muted rounded w-1/2 ml-auto mt-2"></div>
+            <div className="text-right text-muted-foreground">
+              <div className="h-4 bg-muted rounded w-3/4 ml-auto"></div>
+              <div className="h-3 bg-muted rounded w-1/2 ml-auto mt-2"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1826,7 +1826,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
     <div className="space-y-4 sm:space-y-6">
       {/* Report Header */}
        {/* Report Header - Bilingual Format */}
-       <div className="bg-card rounded-lg shadow-sm p-6 mb-6">
+       <div className="bg-card shadow-sm p-6 mb-6">
           {/* Main Title */}
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold text-foreground mb-2">
@@ -1836,7 +1836,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
           </div>
 
           {/* Report Parameters Table */}
-          <div className="border border-border rounded-lg overflow-hidden">
+          <div className="border border-border overflow-hidden">
             <table className="w-full">
               <tbody>
                 <tr className="border-b border-border">
@@ -1889,15 +1889,13 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
         </div>
 
       {/* Indicators Table - Matching the image layout */}
-      <div className="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+      <div className="bg-card border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             {/* Table Header */}
             <thead className="bg-muted border-b-2 border-border">
               <tr>
-                <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-12 border-r border-border">
-                  #
-                </th>
+               
                 <th className="px-4 py-4 text-right text-sm font-bold text-foreground border-r border-border">
                   សុចនាករ Indicator
                 </th>
@@ -1925,9 +1923,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     className="border-b border-border"
                   >
                     {/* Row Number */}
-                    <td className="px-3 py-4 text-right text-sm font-medium text-muted-foreground border-r border-border" rowSpan="3">
-                      {index + 1}
-                    </td>
+                  
 
                     {/* Indicator Name - spans 3 rows */}
                     <td className="px-4 py-4 text-sm text-foreground align-middle text-left border-r border-border" rowSpan="3">

@@ -1,8 +1,9 @@
 -- =====================================================
 -- 05.1.1 ART SAME DAY
--- Generated: 2025-10-02T09:11:21.857Z
+-- Generated: 2025-10-02T12:01:55.088Z
 -- =====================================================
 
+-- =====================================================
 -- =====================================================
 -- PARAMETER SETUP
 -- Set these parameters before running this query
@@ -28,3 +29,4 @@ FROM (
     -- Children
     SELECT 'Child' as type, IF(p.Sex=0, "Female", "Male") as Sex FROM tblcimain p JOIN tblcart art ON p.ClinicID = art.ClinicID WHERE art.DaArt BETWEEN @StartDate AND @EndDate AND DATEDIFF(art.DaArt, p.DafirstVisit) = 0
 ) as PatientList;
+
