@@ -1,0 +1,25 @@
+-- =====================================================
+-- 04 RETESTED POSITIVE DETAILS
+-- Generated: 2025-10-02T09:11:21.857Z
+-- =====================================================
+
+-- =====================================================
+-- MAIN QUERY
+-- =====================================================
+-- Indicator 4: Re-tested positive - Detailed Records
+-- This indicator is hardcoded to return 0 in the aggregate query
+-- The detail query should also return 0 to match
+SELECT
+    NULL as clinicid,
+    NULL as sex,
+    NULL as sex_display,
+    NULL as typepatients,
+    NULL as DaBirth,
+    NULL as DafirstVisit,
+    NULL as DaArt,
+    NULL as DatVisit,
+    NULL as OffIn,
+    NULL as patient_type,
+    NULL as age,
+    NULL as transfer_status
+WHERE 1=0;

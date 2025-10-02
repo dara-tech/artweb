@@ -6,7 +6,6 @@ import {
   AlertCircle
 } from 'lucide-react';
 import api from "../../../services/api";
-import { useToast } from "@/hooks/useToast";
 
 // Import the Import component
 import ImportTab from './ImportTab';
@@ -14,7 +13,6 @@ import ImportTab from './ImportTab';
 const DataImportExport = () => {
   const [sites, setSites] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     console.log('🔍 DataImportExport useEffect triggered');
@@ -30,26 +28,11 @@ const DataImportExport = () => {
       if (response.data.success) {
         console.log('Sites loaded:', response.data.sites.length);
         setSites(response.data.sites);
-        toast({
-          variant: "success",
-          title: "Sites Loaded",
-          description: `Successfully loaded ${response.data.sites.length} sites.`,
-        });
       } else {
         console.error('API returned error:', response.data.message);
-        toast({
-          variant: "destructive",
-          title: "Error",
-          description: response.data.message || 'Failed to fetch sites',
-        });
       }
     } catch (error) {
       console.error('Error fetching sites:', error);
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: 'Failed to fetch sites: ' + error.message,
-      });
     }
   };
 
@@ -74,7 +57,6 @@ const DataImportExport = () => {
           sites={sites}
           loading={loading}
           setLoading={setLoading}
-          toast={toast}
         />
       </div>
     </div>

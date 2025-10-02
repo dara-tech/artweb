@@ -139,7 +139,9 @@ class SiteOptimizedIndicators {
     };
 
     Object.entries(replacements).forEach(([placeholder, value]) => {
-      processedQuery = processedQuery.replace(new RegExp(placeholder, 'g'), value);
+      // Escape special regex characters in the placeholder
+      const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      processedQuery = processedQuery.replace(new RegExp(escapedPlaceholder, 'g'), value);
     });
 
     return processedQuery;

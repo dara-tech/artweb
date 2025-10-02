@@ -21,11 +21,11 @@ const sequelize = new Sequelize({
   }
 });
 
-// Test parameters (using correct SQL parameter names and current date range)
+// Test parameters (using correct SQL parameter names and Q2 2025 date range)
 const TEST_PARAMS = {
-  StartDate: '2025-03-31',
+  StartDate: '2025-04-01',
   EndDate: '2025-06-30',
-  PreviousEndDate: '2025-06-30',
+  PreviousEndDate: '2025-03-31',
   SiteCode: siteCode,
   lost_code: 0,
   dead_code: 1,

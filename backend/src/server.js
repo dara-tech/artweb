@@ -25,6 +25,7 @@ const infantPatientRoutes = require('./routes/infantPatients');
 const adultVisitRoutes = require('./routes/adultVisits');
 const childVisitRoutes = require('./routes/childVisits');
 const infantVisitRoutes = require('./routes/infantVisits');
+const scriptDownloadRoutes = require('./routes/script-download');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -117,6 +118,7 @@ app.use('/api/patients/infant', infantPatientRoutes);
 app.use('/api/visits/adult', adultVisitRoutes);
 app.use('/api/visits/child', childVisitRoutes);
 app.use('/api/visits/infant', infantVisitRoutes);
+app.use('/api/scripts', scriptDownloadRoutes);
 
 // Make io available to routes
 app.set('io', io);

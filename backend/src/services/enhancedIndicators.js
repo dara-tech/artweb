@@ -105,10 +105,12 @@ class EnhancedIndicatorsService {
       const value = params[key];
       
       if (value !== null && value !== undefined) {
+        // Escape special regex characters in the placeholder
+        const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         if (typeof value === 'string') {
-          processedQuery = processedQuery.replace(new RegExp(placeholder, 'g'), `'${value}'`);
+          processedQuery = processedQuery.replace(new RegExp(escapedPlaceholder, 'g'), `'${value}'`);
         } else {
-          processedQuery = processedQuery.replace(new RegExp(placeholder, 'g'), value);
+          processedQuery = processedQuery.replace(new RegExp(escapedPlaceholder, 'g'), value);
         }
       }
     });

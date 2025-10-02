@@ -19,7 +19,6 @@ import RoleManagement from './pages/RoleManagement'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
 import IndicatorsDashboard from './pages/indicators/IndicatorsDashboard'
 import AdvancedLayout from './components/layout/AdvancedLayout'
-import { Toaster } from './components/ui'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -180,6 +179,7 @@ function App() {
           {/* Indicators - Accessible to all authenticated users */}
           <Route path="/indicators" element={<IndicatorsReport />} />
           
+          
           {/* Indicators Dashboard - Not accessible to viewers */}
           <Route path="/indicators/dashboard" element={
             <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
@@ -190,7 +190,6 @@ function App() {
           <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
         </Routes>
       </AdvancedLayout>
-      <Toaster />
     </SiteProvider>
   )
 }
