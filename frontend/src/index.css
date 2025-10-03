@@ -6,27 +6,48 @@
        EXPERT HEALTHCARE DESIGN SYSTEM
        =========================================== */
     
-    /* === CORE COLOR PALETTE === */
-    /* Primary Brand Colors */
+    /* === MODERN GRADIENT COLOR PALETTE === */
+    /* Primary Brand Colors with Modern Gradients */
     --primary: 215 85% 65%;                    /* Medical Blue - Trust & Professionalism */
     --primary-foreground: 0 0% 100%;           /* White text on primary */
     --primary-hover: 215 85% 60%;              /* Slightly darker for hover */
     --primary-light: 215 85% 95%;              /* Very light for backgrounds */
     --primary-dark: 215 85% 35%;               /* Dark for text on light backgrounds */
     
-    /* Secondary Brand Colors */
+    /* Modern Primary Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(215 85% 65%), hsl(215 85% 45%));
+    --gradient-primary-subtle: linear-gradient(135deg, hsl(215 85% 95%), hsl(215 85% 85%));
+    --gradient-primary-strong: linear-gradient(135deg, hsl(215 85% 55%), hsl(215 85% 35%));
+    --gradient-primary-radial: radial-gradient(circle, hsl(215 85% 65%), hsl(215 85% 45%));
+    --gradient-primary-conic: conic-gradient(from 0deg, hsl(215 85% 65%), hsl(215 85% 45%), hsl(215 85% 65%));
+    
+    /* Secondary Brand Colors with Modern Gradients */
     --secondary: 170 65% 55%;                  /* Medical Teal - Complementary */
     --secondary-foreground: 0 0% 100%;         /* White text on secondary */
     --secondary-hover: 170 65% 50%;            /* Slightly darker for hover */
     --secondary-light: 170 65% 95%;            /* Very light for backgrounds */
     --secondary-dark: 170 65% 30%;             /* Dark for text on light backgrounds */
     
-    /* Semantic Colors */
+    /* Modern Secondary Gradients */
+    --gradient-secondary: linear-gradient(135deg, hsl(170 65% 55%), hsl(170 65% 35%));
+    --gradient-secondary-subtle: linear-gradient(135deg, hsl(170 65% 95%), hsl(170 65% 85%));
+    --gradient-secondary-strong: linear-gradient(135deg, hsl(170 65% 45%), hsl(170 65% 25%));
+    --gradient-secondary-radial: radial-gradient(circle, hsl(170 65% 55%), hsl(170 65% 35%));
+    --gradient-secondary-conic: conic-gradient(from 0deg, hsl(170 65% 55%), hsl(170 65% 35%), hsl(170 65% 55%));
+    
+    /* Semantic Colors with Modern Gradients */
     --success: 140 75% 55%;                    /* Medical Green - Success states */
     --success-foreground: 0 0% 100%;           /* White text on success */
     --success-hover: 140 75% 50%;              /* Slightly darker for hover */
     --success-light: 140 75% 95%;              /* Very light for backgrounds */
     --success-dark: 140 75% 30%;               /* Dark for text on light backgrounds */
+    
+    /* Modern Success Gradients */
+    --gradient-success: linear-gradient(135deg, hsl(140 75% 55%), hsl(140 75% 35%));
+    --gradient-success-subtle: linear-gradient(135deg, hsl(140 75% 95%), hsl(140 75% 85%));
+    --gradient-success-strong: linear-gradient(135deg, hsl(140 75% 45%), hsl(140 75% 25%));
+    --gradient-success-radial: radial-gradient(circle, hsl(140 75% 55%), hsl(140 75% 35%));
+    --gradient-success-conic: conic-gradient(from 0deg, hsl(140 75% 55%), hsl(140 75% 35%), hsl(140 75% 55%));
     
     --warning: 35 90% 65%;                     /* Medical Amber - Warning states */
     --warning-foreground: 0 0% 100%;           /* White text on warning */
@@ -34,17 +55,38 @@
     --warning-light: 35 90% 95%;               /* Very light for backgrounds */
     --warning-dark: 35 90% 30%;                /* Dark for text on light backgrounds */
     
+    /* Modern Warning Gradients */
+    --gradient-warning: linear-gradient(135deg, hsl(35 90% 65%), hsl(35 90% 45%));
+    --gradient-warning-subtle: linear-gradient(135deg, hsl(35 90% 95%), hsl(35 90% 85%));
+    --gradient-warning-strong: linear-gradient(135deg, hsl(35 90% 55%), hsl(35 90% 35%));
+    --gradient-warning-radial: radial-gradient(circle, hsl(35 90% 65%), hsl(35 90% 45%));
+    --gradient-warning-conic: conic-gradient(from 0deg, hsl(35 90% 65%), hsl(35 90% 45%), hsl(35 90% 65%));
+    
     --destructive: 8 80% 70%;                  /* Medical Red - Error/Critical states */
     --destructive-foreground: 0 0% 100%;       /* White text on destructive */
     --destructive-hover: 8 80% 65%;            /* Slightly darker for hover */
     --destructive-light: 8 80% 95%;            /* Very light for backgrounds */
     --destructive-dark: 8 80% 30%;             /* Dark for text on light backgrounds */
     
+    /* Modern Destructive Gradients */
+    --gradient-destructive: linear-gradient(135deg, hsl(8 80% 70%), hsl(8 80% 50%));
+    --gradient-destructive-subtle: linear-gradient(135deg, hsl(8 80% 95%), hsl(8 80% 85%));
+    --gradient-destructive-strong: linear-gradient(135deg, hsl(8 80% 60%), hsl(8 80% 40%));
+    --gradient-destructive-radial: radial-gradient(circle, hsl(8 80% 70%), hsl(8 80% 50%));
+    --gradient-destructive-conic: conic-gradient(from 0deg, hsl(8 80% 70%), hsl(8 80% 50%), hsl(8 80% 70%));
+    
     --info: 215 85% 65%;                       /* Medical Blue - Info states */
     --info-foreground: 0 0% 100%;              /* White text on info */
     --info-hover: 215 85% 60%;                 /* Slightly darker for hover */
     --info-light: 215 85% 95%;                 /* Very light for backgrounds */
     --info-dark: 215 85% 30%;                  /* Dark for text on light backgrounds */
+    
+    /* Modern Info Gradients */
+    --gradient-info: linear-gradient(135deg, hsl(215 85% 65%), hsl(215 85% 45%));
+    --gradient-info-subtle: linear-gradient(135deg, hsl(215 85% 95%), hsl(215 85% 85%));
+    --gradient-info-strong: linear-gradient(135deg, hsl(215 85% 55%), hsl(215 85% 35%));
+    --gradient-info-radial: radial-gradient(circle, hsl(215 85% 65%), hsl(215 85% 45%));
+    --gradient-info-conic: conic-gradient(from 0deg, hsl(215 85% 65%), hsl(215 85% 45%), hsl(215 85% 65%));
     
     /* === NEUTRAL SCALE === */
     --background: 0 0% 100%;                   /* Pure white background */
@@ -206,11 +248,29 @@
 
 /* Healthcare-Specific Utility Classes */
 @layer utilities {
-  /* Clean Medical Status Badges */
+  /* Modern Gradient Medical Status Badges */
   .status-active {
-    background: linear-gradient(135deg, rgb(34 197 94), rgb(22 163 74));
-    color: white;
-    box-shadow: 0 1px 3px rgb(34 197 94 / 0.2);
+    background: var(--gradient-success) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px hsl(140 75% 55% / 0.3), 0 2px 4px hsl(140 75% 35% / 0.2);
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .status-active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .status-active:hover::before {
+    left: 100%;
   }
   
   .dark .status-active {
@@ -220,9 +280,27 @@
   }
   
   .status-warning {
-    background: linear-gradient(135deg, rgb(251 146 60), rgb(234 88 12));
-    color: white;
-    box-shadow: 0 1px 3px rgb(251 146 60 / 0.2);
+    background: var(--gradient-warning) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px hsl(35 90% 65% / 0.3), 0 2px 4px hsl(35 90% 45% / 0.2);
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .status-warning::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .status-warning:hover::before {
+    left: 100%;
   }
   
   .dark .status-warning {
@@ -232,9 +310,27 @@
   }
   
   .status-critical {
-    background: linear-gradient(135deg, rgb(239 68 68), rgb(220 38 38));
-    color: white;
-    box-shadow: 0 1px 3px rgb(239 68 68 / 0.2);
+    background: var(--gradient-destructive) !important;
+    color: white !important;
+    box-shadow: 0 4px 12px hsl(8 80% 70% / 0.3), 0 2px 4px hsl(8 80% 50% / 0.2);
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .status-critical::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .status-critical:hover::before {
+    left: 100%;
   }
   
   .dark .status-critical {
@@ -397,13 +493,13 @@
     box-shadow: 0 2px 6px rgb(239 68 68 / 0.25);
   }
   
-  /* Clean Healthcare Card Styles */
+  /* Modern Gradient Healthcare Card Styles */
   .medical-card {
     background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--card) / 0.98));
     border: 1px solid hsl(var(--border));
     border-radius: 0.75rem;
-    box-shadow: 0 2px 4px -1px rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
   }
@@ -414,15 +510,15 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    height: 3px;
+    background: var(--gradient-primary);
     opacity: 0;
-    transition: opacity 0.2s ease;
+    transition: opacity 0.3s ease;
   }
   
   .medical-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -1px rgb(0 0 0 / 0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px -4px rgb(0 0 0 / 0.12), 0 4px 8px -2px rgb(0 0 0 / 0.08);
   }
   
   .medical-card:hover::before {
@@ -657,26 +753,66 @@
   }
   
   .btn-primary {
-    background-color: hsl(var(--primary)) !important;
+    background: var(--gradient-primary) !important;
     color: hsl(var(--primary-foreground)) !important;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    box-shadow: 0 4px 12px hsl(215 85% 65% / 0.3), 0 2px 4px hsl(215 85% 45% / 0.2);
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .btn-primary:hover::before {
+    left: 100%;
   }
   
   .btn-primary:hover {
-    background-color: hsl(var(--primary-hover)) !important;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px hsl(215 85% 65% / 0.4), 0 4px 8px hsl(215 85% 45% / 0.3);
   }
   
+  
   .btn-secondary {
-    background-color: hsl(var(--secondary)) !important;
+    background: var(--gradient-secondary) !important;
     color: hsl(var(--secondary-foreground)) !important;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    box-shadow: 0 4px 12px hsl(170 65% 55% / 0.3), 0 2px 4px hsl(170 65% 35% / 0.2);
+    border: none !important;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+  
+  .btn-secondary:hover::before {
+    left: 100%;
   }
   
   .btn-secondary:hover {
-    background-color: hsl(var(--secondary-hover)) !important;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px hsl(170 65% 55% / 0.4), 0 4px 8px hsl(170 65% 35% / 0.3);
   }
+  
   
   .btn-success {
     background-color: hsl(var(--success)) !important;
@@ -1049,6 +1185,81 @@
     .grid-responsive {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
+  }
+  
+  /* === MODERN GRADIENT UTILITIES === */
+  .bg-gradient-primary { background: var(--gradient-primary) !important; }
+  .bg-gradient-primary-subtle { background: var(--gradient-primary-subtle) !important; }
+  .bg-gradient-primary-strong { background: var(--gradient-primary-strong) !important; }
+  .bg-gradient-primary-radial { background: var(--gradient-primary-radial) !important; }
+  .bg-gradient-primary-conic { background: var(--gradient-primary-conic) !important; }
+  
+  .bg-gradient-secondary { background: var(--gradient-secondary) !important; }
+  .bg-gradient-secondary-subtle { background: var(--gradient-secondary-subtle) !important; }
+  .bg-gradient-secondary-strong { background: var(--gradient-secondary-strong) !important; }
+  .bg-gradient-secondary-radial { background: var(--gradient-secondary-radial) !important; }
+  .bg-gradient-secondary-conic { background: var(--gradient-secondary-conic) !important; }
+  
+  .bg-gradient-success { background: var(--gradient-success) !important; }
+  .bg-gradient-success-subtle { background: var(--gradient-success-subtle) !important; }
+  .bg-gradient-success-strong { background: var(--gradient-success-strong) !important; }
+  .bg-gradient-success-radial { background: var(--gradient-success-radial) !important; }
+  .bg-gradient-success-conic { background: var(--gradient-success-conic) !important; }
+  
+  .bg-gradient-warning { background: var(--gradient-warning) !important; }
+  .bg-gradient-warning-subtle { background: var(--gradient-warning-subtle) !important; }
+  .bg-gradient-warning-strong { background: var(--gradient-warning-strong) !important; }
+  .bg-gradient-warning-radial { background: var(--gradient-warning-radial) !important; }
+  .bg-gradient-warning-conic { background: var(--gradient-warning-conic) !important; }
+  
+  .bg-gradient-destructive { background: var(--gradient-destructive) !important; }
+  .bg-gradient-destructive-subtle { background: var(--gradient-destructive-subtle) !important; }
+  .bg-gradient-destructive-strong { background: var(--gradient-destructive-strong) !important; }
+  .bg-gradient-destructive-radial { background: var(--gradient-destructive-radial) !important; }
+  .bg-gradient-destructive-conic { background: var(--gradient-destructive-conic) !important; }
+  
+  .bg-gradient-info { background: var(--gradient-info) !important; }
+  .bg-gradient-info-subtle { background: var(--gradient-info-subtle) !important; }
+  .bg-gradient-info-strong { background: var(--gradient-info-strong) !important; }
+  .bg-gradient-info-radial { background: var(--gradient-info-radial) !important; }
+  .bg-gradient-info-conic { background: var(--gradient-info-conic) !important; }
+  
+  /* Multi-color Modern Gradients */
+  .bg-gradient-rainbow {
+    background: linear-gradient(135deg, 
+      hsl(215 85% 65%), 
+      hsl(170 65% 55%), 
+      hsl(140 75% 55%), 
+      hsl(35 90% 65%), 
+      hsl(8 80% 70%)
+    ) !important;
+  }
+  
+  .bg-gradient-medical {
+    background: linear-gradient(135deg, 
+      hsl(215 85% 65%), 
+      hsl(140 75% 55%), 
+      hsl(170 65% 55%)
+    ) !important;
+  }
+  
+  .bg-gradient-glass {
+    background: linear-gradient(135deg, 
+      hsl(0 0% 100% / 0.8), 
+      hsl(0 0% 100% / 0.6)
+    ) !important;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid hsl(0 0% 100% / 0.2);
+  }
+  
+  .bg-gradient-neon {
+    background: linear-gradient(135deg, 
+      hsl(215 85% 70%), 
+      hsl(170 65% 60%),
+      hsl(140 75% 60%)
+    ) !important;
+    box-shadow: 0 0 20px hsl(215 85% 65% / 0.3);
   }
   
   /* === ANIMATION UTILITIES === */
