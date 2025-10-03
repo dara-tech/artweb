@@ -26,6 +26,8 @@ const adultVisitRoutes = require('./routes/adultVisits');
 const childVisitRoutes = require('./routes/childVisits');
 const infantVisitRoutes = require('./routes/infantVisits');
 const scriptDownloadRoutes = require('./routes/script-download');
+const roleManagementRoutes = require('./routes/role-management');
+const importRoutes = require('./routes/import');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -93,23 +95,12 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Health check endpoints
+// Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV 
-  });
-});
-
-// Railway health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV,
-    uptime: process.uptime(),
-    memory: process.memoryUsage()
   });
 });
 
@@ -130,6 +121,8 @@ app.use('/api/visits/adult', adultVisitRoutes);
 app.use('/api/visits/child', childVisitRoutes);
 app.use('/api/visits/infant', infantVisitRoutes);
 app.use('/api/scripts', scriptDownloadRoutes);
+app.use('/api/roles', roleManagementRoutes);
+app.use('/api/import', importRoutes);
 
 // Make io available to routes
 app.set('io', io);

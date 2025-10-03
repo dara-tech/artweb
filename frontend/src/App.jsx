@@ -16,6 +16,7 @@ import InfantVisitForm from './pages/patients/VisitForm/Infant/InfantVisitForm'
 import InfantVisitList from './pages/patients/VisitForm/Infant/InfantVisitList'
 import DataManagement from './pages/DataManagement'
 import RoleManagement from './pages/RoleManagement'
+import ImportDataPage from './pages/ImportDataPage'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
 import IndicatorsDashboard from './pages/indicators/IndicatorsDashboard'
 import AdvancedLayout from './components/layout/AdvancedLayout'
@@ -173,6 +174,13 @@ function App() {
           <Route path="/role-management" element={
             <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
               <RoleManagement />
+            </ProtectedRoute>
+          } />
+          
+          {/* Import Data - Only for super_admin and admin */}
+          <Route path="/import-data" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <ImportDataPage />
             </ProtectedRoute>
           } />
           

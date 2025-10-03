@@ -119,9 +119,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
         },
         {
           name: 'Import Data',
-          href: '/data-management',
+          href: '/import-data',
           icon: Upload,
-          current: location.pathname.startsWith('/data-management'),
+          current: location.pathname.startsWith('/import-data'),
           category: 'data'
         }
       )
