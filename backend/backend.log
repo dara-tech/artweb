@@ -1,0 +1,380 @@
+
+> preart-backend@1.0.0 dev
+> nodemon src/server.js
+
+[33m[nodemon] 3.1.10[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node src/server.js`[39m
+✅ Loaded: 01_active_art_previous
+✅ Loaded: 02_active_pre_art_previous
+✅ Loaded: 03_newly_enrolled
+✅ Loaded: 04_retested_positive
+✅ Loaded: 05_newly_initiated
+✅ Loaded: 05.1.1_art_same_day
+✅ Loaded: 05.1.2_art_1_7_days
+✅ Loaded: 05.1.3_art_over_7_days
+✅ Loaded: 05.2_art_with_tld
+✅ Loaded: 06_transfer_in
+✅ Loaded: 07_lost_and_return
+✅ Loaded: 08.1_dead
+✅ Loaded: 08.2_lost_to_followup
+✅ Loaded: 08.3_transfer_out
+✅ Loaded: 09_active_pre_art
+✅ Loaded: 10_active_art_current
+✅ Loaded: 10.1_eligible_mmd
+✅ Loaded: 10.2_mmd
+✅ Loaded: 10.3_tld
+✅ Loaded: 10.4_tpt_start
+✅ Loaded: 10.5_tpt_complete
+✅ Loaded: 10.6_eligible_vl_test
+✅ Loaded: 10.7_vl_tested_12m
+✅ Loaded: 10.8_vl_suppression
+📊 Loaded 24 aggregate indicator queries into memory
+✅ Loaded: 01_active_art_previous_details
+✅ Loaded: 02_active_pre_art_previous_details
+✅ Loaded: 03_newly_enrolled_details
+✅ Loaded: 04_retested_positive_details
+✅ Loaded: 05_newly_initiated_details
+✅ Loaded: 05.1.1_art_same_day_details
+✅ Loaded: 05.1.2_art_1_7_days_details
+✅ Loaded: 05.1.3_art_over_7_days_details
+✅ Loaded: 05.2_art_with_tld_details
+✅ Loaded: 06_transfer_in_details
+✅ Loaded: 07_lost_and_return_details
+✅ Loaded: 08.1_dead_details
+✅ Loaded: 08.2_lost_to_followup_details
+✅ Loaded: 08.3_transfer_out_details
+✅ Loaded: 09_active_pre_art_details
+✅ Loaded: 10_active_art_current_details
+✅ Loaded: 10.1_eligible_mmd_details
+✅ Loaded: 10.2_mmd_details
+✅ Loaded: 10.3_tld_details
+✅ Loaded: 10.4_tpt_start_details
+✅ Loaded: 10.5_tpt_complete_details
+✅ Loaded: 10.6_eligible_vl_test_details
+✅ Loaded: 10.7_vl_tested_12m_details
+✅ Loaded: 10.8_vl_suppression_details
+📊 Loaded 48 detail indicator queries into memory
+node:internal/modules/cjs/loader:1215
+  throw err;
+  ^
+
+Error: Cannot find module './enhanced-conflict-resolution'
+Require stack:
+- /Users/cheolsovandara/Documents/D/Developments/2026/artweb/artweb/backend/src/routes/data-import-export.js
+- /Users/cheolsovandara/Documents/D/Developments/2026/artweb/artweb/backend/src/server.js
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1212:15)
+    at Module._load (node:internal/modules/cjs/loader:1043:27)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Object.<anonymous> (/Users/cheolsovandara/Documents/D/Developments/2026/artweb/artweb/backend/src/routes/data-import-export.js:8:38)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/cheolsovandara/Documents/D/Developments/2026/artweb/artweb/backend/src/routes/data-import-export.js',
+    '/Users/cheolsovandara/Documents/D/Developments/2026/artweb/artweb/backend/src/server.js'
+  ]
+}
+
+Node.js v20.19.1
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+✅ Loaded: 01_active_art_previous
+✅ Loaded: 02_active_pre_art_previous
+✅ Loaded: 03_newly_enrolled
+✅ Loaded: 04_retested_positive
+✅ Loaded: 05_newly_initiated
+✅ Loaded: 05.1.1_art_same_day
+✅ Loaded: 05.1.2_art_1_7_days
+✅ Loaded: 05.1.3_art_over_7_days
+✅ Loaded: 05.2_art_with_tld
+✅ Loaded: 06_transfer_in
+✅ Loaded: 07_lost_and_return
+✅ Loaded: 08.1_dead
+✅ Loaded: 08.2_lost_to_followup
+✅ Loaded: 08.3_transfer_out
+✅ Loaded: 09_active_pre_art
+✅ Loaded: 10_active_art_current
+✅ Loaded: 10.1_eligible_mmd
+✅ Loaded: 10.2_mmd
+✅ Loaded: 10.3_tld
+✅ Loaded: 10.4_tpt_start
+✅ Loaded: 10.5_tpt_complete
+✅ Loaded: 10.6_eligible_vl_test
+✅ Loaded: 10.7_vl_tested_12m
+✅ Loaded: 10.8_vl_suppression
+📊 Loaded 24 aggregate indicator queries into memory
+✅ Loaded: 01_active_art_previous_details
+✅ Loaded: 02_active_pre_art_previous_details
+✅ Loaded: 03_newly_enrolled_details
+✅ Loaded: 04_retested_positive_details
+✅ Loaded: 05_newly_initiated_details
+✅ Loaded: 05.1.1_art_same_day_details
+✅ Loaded: 05.1.2_art_1_7_days_details
+✅ Loaded: 05.1.3_art_over_7_days_details
+✅ Loaded: 05.2_art_with_tld_details
+✅ Loaded: 06_transfer_in_details
+✅ Loaded: 07_lost_and_return_details
+✅ Loaded: 08.1_dead_details
+✅ Loaded: 08.2_lost_to_followup_details
+✅ Loaded: 08.3_transfer_out_details
+✅ Loaded: 09_active_pre_art_details
+✅ Loaded: 10_active_art_current_details
+✅ Loaded: 10.1_eligible_mmd_details
+✅ Loaded: 10.2_mmd_details
+✅ Loaded: 10.3_tld_details
+✅ Loaded: 10.4_tpt_start_details
+✅ Loaded: 10.5_tpt_complete_details
+✅ Loaded: 10.6_eligible_vl_test_details
+✅ Loaded: 10.7_vl_tested_12m_details
+✅ Loaded: 10.8_vl_suppression_details
+📊 Loaded 48 detail indicator queries into memory
+✅ Loaded: 01_active_art_previous
+✅ Loaded: 02_active_pre_art_previous
+✅ Loaded: 03_newly_enrolled
+✅ Loaded: 04_retested_positive
+✅ Loaded: 05_newly_initiated
+✅ Loaded: 05.1.1_art_same_day
+✅ Loaded: 05.1.2_art_1_7_days
+✅ Loaded: 05.1.3_art_over_7_days
+✅ Loaded: 05.2_art_with_tld
+✅ Loaded: 06_transfer_in
+✅ Loaded: 07_lost_and_return
+✅ Loaded: 08.1_dead
+✅ Loaded: 08.2_lost_to_followup
+✅ Loaded: 08.3_transfer_out
+✅ Loaded: 09_active_pre_art
+✅ Loaded: 10_active_art_current
+✅ Loaded: 10.1_eligible_mmd
+✅ Loaded: 10.2_mmd
+✅ Loaded: 10.3_tld
+✅ Loaded: 10.4_tpt_start
+✅ Loaded: 10.5_tpt_complete
+✅ Loaded: 10.6_eligible_vl_test
+✅ Loaded: 10.7_vl_tested_12m
+✅ Loaded: 10.8_vl_suppression
+📊 Loaded 24 aggregate indicator queries into memory
+✅ Loaded: 01_active_art_previous_details
+✅ Loaded: 02_active_pre_art_previous_details
+✅ Loaded: 03_newly_enrolled_details
+✅ Loaded: 04_retested_positive_details
+✅ Loaded: 05_newly_initiated_details
+✅ Loaded: 05.1.1_art_same_day_details
+✅ Loaded: 05.1.2_art_1_7_days_details
+✅ Loaded: 05.1.3_art_over_7_days_details
+✅ Loaded: 05.2_art_with_tld_details
+✅ Loaded: 06_transfer_in_details
+✅ Loaded: 07_lost_and_return_details
+✅ Loaded: 08.1_dead_details
+✅ Loaded: 08.2_lost_to_followup_details
+✅ Loaded: 08.3_transfer_out_details
+✅ Loaded: 09_active_pre_art_details
+✅ Loaded: 10_active_art_current_details
+✅ Loaded: 10.1_eligible_mmd_details
+✅ Loaded: 10.2_mmd_details
+✅ Loaded: 10.3_tld_details
+✅ Loaded: 10.4_tpt_start_details
+✅ Loaded: 10.5_tpt_complete_details
+✅ Loaded: 10.6_eligible_vl_test_details
+✅ Loaded: 10.7_vl_tested_12m_details
+✅ Loaded: 10.8_vl_suppression_details
+📊 Loaded 48 detail indicator queries into memory
+Executing (default): SELECT 1+1 AS result
+✅ Database connection established successfully.
+🧪 Testing database connections...
+Executing (default): SELECT 1+1 AS result
+✅ Registry database connection: OK
+Executing (default): SELECT * FROM sites WHERE status = 1 ORDER BY code
+Executing (default): SELECT * FROM sites WHERE code = '0201' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Maung Russey RH (0201)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0201 (Maung Russey RH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '0202' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Battambang PH (0202)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0202 (Battambang PH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '0301' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Kampong Cham PH (0301)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0301 (Kampong Cham PH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '0306' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Chamkar Leu RH (0306)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0306 (Chamkar Leu RH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '1209' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Chhuk Sor (1209)
+Executing (default): SELECT 1+1 AS result
+✅ Site 1209 (Chhuk Sor) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '1801' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Preah Sihanouk PH (1801)
+Executing (default): SELECT 1+1 AS result
+✅ Site 1801 (Preah Sihanouk PH) connection: OK
+🎉 All database connections tested successfully!
+🚀 Server running on port 3001
+📊 Environment: development
+🔗 Health check: http://localhost:3001/health
+Daily backup scheduled for 2:00 AM (Phnom Penh time)
+Weekly backup scheduled for Sunday 3:00 AM (Phnom Penh time)
+Monthly backup scheduled for 1st of month 4:00 AM (Phnom Penh time)
+Backup scheduler started
+📅 Backup scheduler started
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node src/server.js`[39m
+✅ Loaded: 01_active_art_previous
+✅ Loaded: 02_active_pre_art_previous
+✅ Loaded: 03_newly_enrolled
+✅ Loaded: 04_retested_positive
+✅ Loaded: 05_newly_initiated
+✅ Loaded: 05.1.1_art_same_day
+✅ Loaded: 05.1.2_art_1_7_days
+✅ Loaded: 05.1.3_art_over_7_days
+✅ Loaded: 05.2_art_with_tld
+✅ Loaded: 06_transfer_in
+✅ Loaded: 07_lost_and_return
+✅ Loaded: 08.1_dead
+✅ Loaded: 08.2_lost_to_followup
+✅ Loaded: 08.3_transfer_out
+✅ Loaded: 09_active_pre_art
+✅ Loaded: 10_active_art_current
+✅ Loaded: 10.1_eligible_mmd
+✅ Loaded: 10.2_mmd
+✅ Loaded: 10.3_tld
+✅ Loaded: 10.4_tpt_start
+✅ Loaded: 10.5_tpt_complete
+✅ Loaded: 10.6_eligible_vl_test
+✅ Loaded: 10.7_vl_tested_12m
+✅ Loaded: 10.8_vl_suppression
+📊 Loaded 24 aggregate indicator queries into memory
+✅ Loaded: 01_active_art_previous_details
+✅ Loaded: 02_active_pre_art_previous_details
+✅ Loaded: 03_newly_enrolled_details
+✅ Loaded: 04_retested_positive_details
+✅ Loaded: 05_newly_initiated_details
+✅ Loaded: 05.1.1_art_same_day_details
+✅ Loaded: 05.1.2_art_1_7_days_details
+✅ Loaded: 05.1.3_art_over_7_days_details
+✅ Loaded: 05.2_art_with_tld_details
+✅ Loaded: 06_transfer_in_details
+✅ Loaded: 07_lost_and_return_details
+✅ Loaded: 08.1_dead_details
+✅ Loaded: 08.2_lost_to_followup_details
+✅ Loaded: 08.3_transfer_out_details
+✅ Loaded: 09_active_pre_art_details
+✅ Loaded: 10_active_art_current_details
+✅ Loaded: 10.1_eligible_mmd_details
+✅ Loaded: 10.2_mmd_details
+✅ Loaded: 10.3_tld_details
+✅ Loaded: 10.4_tpt_start_details
+✅ Loaded: 10.5_tpt_complete_details
+✅ Loaded: 10.6_eligible_vl_test_details
+✅ Loaded: 10.7_vl_tested_12m_details
+✅ Loaded: 10.8_vl_suppression_details
+📊 Loaded 48 detail indicator queries into memory
+✅ Loaded: 01_active_art_previous
+✅ Loaded: 02_active_pre_art_previous
+✅ Loaded: 03_newly_enrolled
+✅ Loaded: 04_retested_positive
+✅ Loaded: 05_newly_initiated
+✅ Loaded: 05.1.1_art_same_day
+✅ Loaded: 05.1.2_art_1_7_days
+✅ Loaded: 05.1.3_art_over_7_days
+✅ Loaded: 05.2_art_with_tld
+✅ Loaded: 06_transfer_in
+✅ Loaded: 07_lost_and_return
+✅ Loaded: 08.1_dead
+✅ Loaded: 08.2_lost_to_followup
+✅ Loaded: 08.3_transfer_out
+✅ Loaded: 09_active_pre_art
+✅ Loaded: 10_active_art_current
+✅ Loaded: 10.1_eligible_mmd
+✅ Loaded: 10.2_mmd
+✅ Loaded: 10.3_tld
+✅ Loaded: 10.4_tpt_start
+✅ Loaded: 10.5_tpt_complete
+✅ Loaded: 10.6_eligible_vl_test
+✅ Loaded: 10.7_vl_tested_12m
+✅ Loaded: 10.8_vl_suppression
+📊 Loaded 24 aggregate indicator queries into memory
+✅ Loaded: 01_active_art_previous_details
+✅ Loaded: 02_active_pre_art_previous_details
+✅ Loaded: 03_newly_enrolled_details
+✅ Loaded: 04_retested_positive_details
+✅ Loaded: 05_newly_initiated_details
+✅ Loaded: 05.1.1_art_same_day_details
+✅ Loaded: 05.1.2_art_1_7_days_details
+✅ Loaded: 05.1.3_art_over_7_days_details
+✅ Loaded: 05.2_art_with_tld_details
+✅ Loaded: 06_transfer_in_details
+✅ Loaded: 07_lost_and_return_details
+✅ Loaded: 08.1_dead_details
+✅ Loaded: 08.2_lost_to_followup_details
+✅ Loaded: 08.3_transfer_out_details
+✅ Loaded: 09_active_pre_art_details
+✅ Loaded: 10_active_art_current_details
+✅ Loaded: 10.1_eligible_mmd_details
+✅ Loaded: 10.2_mmd_details
+✅ Loaded: 10.3_tld_details
+✅ Loaded: 10.4_tpt_start_details
+✅ Loaded: 10.5_tpt_complete_details
+✅ Loaded: 10.6_eligible_vl_test_details
+✅ Loaded: 10.7_vl_tested_12m_details
+✅ Loaded: 10.8_vl_suppression_details
+📊 Loaded 48 detail indicator queries into memory
+Executing (default): SELECT 1+1 AS result
+✅ Database connection established successfully.
+🧪 Testing database connections...
+Executing (default): SELECT 1+1 AS result
+✅ Registry database connection: OK
+Executing (default): SELECT * FROM sites WHERE status = 1 ORDER BY code
+Executing (default): SELECT * FROM sites WHERE code = '0201' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Maung Russey RH (0201)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0201 (Maung Russey RH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '0202' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Battambang PH (0202)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0202 (Battambang PH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '0301' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Kampong Cham PH (0301)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0301 (Kampong Cham PH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '0306' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Chamkar Leu RH (0306)
+Executing (default): SELECT 1+1 AS result
+✅ Site 0306 (Chamkar Leu RH) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '1209' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Chhuk Sor (1209)
+Executing (default): SELECT 1+1 AS result
+✅ Site 1209 (Chhuk Sor) connection: OK
+Executing (default): SELECT * FROM sites WHERE code = '1801' AND status = 1
+Executing (default): SELECT 1+1 AS result
+✅ Connected to site database: Preah Sihanouk PH (1801)
+Executing (default): SELECT 1+1 AS result
+✅ Site 1801 (Preah Sihanouk PH) connection: OK
+🎉 All database connections tested successfully!
+🚀 Server running on port 3001
+📊 Environment: development
+🔗 Health check: http://localhost:3001/health
+Daily backup scheduled for 2:00 AM (Phnom Penh time)
+Weekly backup scheduled for Sunday 3:00 AM (Phnom Penh time)
+Monthly backup scheduled for 1st of month 4:00 AM (Phnom Penh time)
+Backup scheduler started
+📅 Backup scheduler started
