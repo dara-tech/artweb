@@ -491,6 +491,14 @@ All databases use the preart_ naming convention by default.
 
 **⚠️ Important**: If you get the error `Table 'preart_sites_registry.tblartsite' doesn't exist`, run the table creation command above.
 
+#### **6. Verify Installation**
+```bash
+# Run the comprehensive installation test
+./test-installation.sh
+```
+
+This script will test all components and verify everything is working correctly.
+
 ### **Project Structure**
 
 ```
