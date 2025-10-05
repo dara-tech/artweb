@@ -123,11 +123,30 @@ class DatabaseMigrator {
         await this.connection.query(`USE \`${newDb}\``);
         await this.connection.query(createTable[0]['Create Table']);
         
-        // Copy data
-        await this.connection.query(`
-          INSERT INTO \`${newDb}\`.\`${tableName}\` 
-          SELECT * FROM \`${oldDb}\`.\`${tableName}\`
-        `);
+        // Get column information to handle generated columns
+        const [columns] = await this.connection.query(`
+          SELECT COLUMN_NAME, EXTRA, GENERATION_EXPRESSION
+          FROM information_schema.COLUMNS 
+          WHERE TABLE_SCHEMA = ? AND TABLE_NAME = ?
+          ORDER BY ORDINAL_POSITION
+        `, [oldDb, tableName]);
+        
+        // Filter out generated columns for data copy
+        const dataColumns = columns
+          .filter(col => !col.EXTRA.includes('GENERATED'))
+          .map(col => col.COLUMN_NAME);
+        
+        if (dataColumns.length > 0) {
+          const columnList = dataColumns.map(col => `\`${col}\``).join(', ');
+          
+          // Copy data (excluding generated columns)
+          await this.connection.query(`
+            INSERT INTO \`${newDb}\`.\`${tableName}\` (${columnList})
+            SELECT ${columnList} FROM \`${oldDb}\`.\`${tableName}\`
+          `);
+        } else {
+          console.log(`   ⚠️  Skipping data copy for table ${tableName} (no non-generated columns)`);
+        }
         
         console.log(`   ✅ Copied table: ${tableName}`);
       }
