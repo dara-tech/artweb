@@ -466,9 +466,21 @@ npm run dev
 ```bash
 # Create registry database
 mysql -u root -p
-CREATE DATABASE art_sites_registry;
+CREATE DATABASE preart_sites_registry;
+EXIT;
 
-# Run migration scripts
+# Create the tblartsite table (required by legacy routes)
+mysql -u root -p preart_sites_registry -e "
+CREATE TABLE IF NOT EXISTS tblartsite (
+  Sid varchar(10) NOT NULL,
+  SiteName varchar(100) NOT NULL,
+  Status tinyint(1) NOT NULL DEFAULT 1,
+  PRIMARY KEY (Sid),
+  KEY idx_status (Status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+"
+
+# Run setup scripts
 cd backend
 node scripts/setup-user-table.js
 node scripts/populate-sites.js
@@ -476,6 +488,8 @@ node scripts/populate-sites.js
 
 #### **5. Database Setup Complete**
 All databases use the preart_ naming convention by default.
+
+**⚠️ Important**: If you get the error `Table 'preart_sites_registry.tblartsite' doesn't exist`, run the table creation command above.
 
 ### **Project Structure**
 
@@ -586,6 +600,11 @@ VITE_APP_NAME=PreART Medical Management System
 - `Site not found`: Verify site code
 - `Patient not found`: Check patient ID
 - `Validation failed`: Check required fields
+
+#### **Database Errors**
+- `Table 'preart_sites_registry.tblartsite' doesn't exist`: Run the table creation command in the installation section
+- `Unknown database 'preart_sites_registry'`: Create the database first
+- `Access denied for user`: Check database credentials in .env file
 
 ---
 
