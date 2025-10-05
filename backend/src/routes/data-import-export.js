@@ -446,7 +446,7 @@ router.get('/databases', authenticateToken, async (req, res) => {
       const dbList = databases
         .map(db => db.Database)
         .filter(db => !['information_schema', 'performance_schema', 'mysql', 'sys', 'preart'].includes(db))
-        .filter(db => db.startsWith('art_')) // Only show imported ART databases
+        .filter(db => db.startsWith('preart_')) // Only show imported PreART databases
         .map(dbName => ({
           name: dbName,
           type: 'imported',
@@ -495,7 +495,7 @@ router.post('/import', authenticateToken, upload.single('sqlFile'), async (req, 
     // Generate database name (MySQL doesn't allow hyphens)
     const timestamp = new Date().toISOString().replace(/[:.-]/g, '_').split('T')[0];
     const siteCode = targetSiteCode || 'import';
-    const databaseName = `art_${siteCode}_${timestamp}`;
+    const databaseName = `preart_${siteCode}_${timestamp}`;
     
     console.log(`📊 Target database: ${databaseName}`);
 
@@ -894,7 +894,7 @@ router.post('/aggregate', authenticateToken, async (req, res) => {
             const [tables] = await sourceConnection.execute('SHOW TABLES');
             
             // Extract site code from database name (e.g., preart_2101_2025_09_09 -> 2101)
-            const siteCode = dbName.match(/art_(\d+)_/)?.[1] || 'unknown';
+            const siteCode = dbName.match(/preart_(\d+)_/)?.[1] || 'unknown';
             let dbRecords = 0;
             let processedTables = 0;
             let skippedTables = 0;
@@ -1247,7 +1247,7 @@ router.post('/aggregate/preview', authenticateToken, async (req, res) => {
         }
         
         // Extract site code from database name
-        const siteCode = dbName.match(/art_(\d+)_/)?.[1] || 'unknown';
+        const siteCode = dbName.match(/preart_(\d+)_/)?.[1] || 'unknown';
         
         previewData.databases.push({
           name: dbName,
