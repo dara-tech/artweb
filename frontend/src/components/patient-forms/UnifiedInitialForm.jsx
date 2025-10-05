@@ -11,7 +11,7 @@ import MinimalisticPatientList from './MinimalisticPatientList'
  */
 function UnifiedInitialForm({ 
   patientType, // 'adult', 'child', 'infant'
-  apiEndpoint, // '/api/patients/adult', '/api/patients/child', '/api/patients/infant'
+  apiEndpoint, // '/apiv1/patients/adult', '/apiv1/patients/child', '/apiv1/patients/infant'
   formFields, // Patient-specific form field definitions
   validationRules, // Patient-specific validation rules
   PatientListComponent, // Patient-specific list component
@@ -69,9 +69,9 @@ function UnifiedInitialForm({
   const loadDropdownData = async () => {
     try {
       const [sites, drugs, clinics] = await Promise.all([
-        api.get('/api/lookups/sites-registry'),
-        api.get('/api/lookups/drugs'),
-        api.get('/api/lookups/clinics')
+        api.get('/apiv1/lookups/sites-registry'),
+        api.get('/apiv1/lookups/drugs'),
+        api.get('/apiv1/lookups/clinics')
       ])
 
       setDropdownOptions({

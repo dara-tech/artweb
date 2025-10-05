@@ -120,7 +120,7 @@ function InfantInitialForm() {
   const selectPatient = async (patient) => {
     try {
       setLoading(true)
-      const response = await api.get(`/api/patients/infant/${patient.clinicId}`)
+      const response = await api.get(`/apiv1/patients/infant/${patient.clinicId}`)
       const data = response.data
       
       setFormData({
@@ -198,17 +198,17 @@ function InfantInitialForm() {
   const loadDropdownData = async () => {
     try {
       const [sitesRes, vcctSitesRes, provincesRes, hospitalsRes, drugsRes, clinicsRes, reasonsRes, allergiesRes, nationalitiesRes, targetGroupsRes, drugTreatmentsRes] = await Promise.all([
-        api.get('/api/lookups/sites'),
-        api.get('/api/lookups/vcct-sites'),
-        api.get('/api/lookups/provinces'),
-        api.get('/api/lookups/hospitals'),
-        api.get('/api/lookups/drugs'),
-        api.get('/api/lookups/clinics'),
-        api.get('/api/lookups/reasons'),
-        api.get('/api/lookups/allergies'),
-        api.get('/api/lookups/nationalities'),
-        api.get('/api/lookups/target-groups'),
-        api.get('/api/lookups/drug-treatments')
+        api.get('/apiv1/lookups/sites'),
+        api.get('/apiv1/lookups/vcct-sites'),
+        api.get('/apiv1/lookups/provinces'),
+        api.get('/apiv1/lookups/hospitals'),
+        api.get('/apiv1/lookups/drugs'),
+        api.get('/apiv1/lookups/clinics'),
+        api.get('/apiv1/lookups/reasons'),
+        api.get('/apiv1/lookups/allergies'),
+        api.get('/apiv1/lookups/nationalities'),
+        api.get('/apiv1/lookups/target-groups'),
+        api.get('/apiv1/lookups/drug-treatments')
       ])
       
       setDropdownOptions({
@@ -288,9 +288,9 @@ function InfantInitialForm() {
       }
       
       if (id) {
-        await api.put(`/api/patients/infant/${id}`, payload)
+        await api.put(`/apiv1/patients/infant/${id}`, payload)
       } else {
-        await api.post('/api/patients/infant', payload)
+        await api.post('/apiv1/patients/infant', payload)
       }
       
       await loadPatientsList()
@@ -404,7 +404,7 @@ function InfantInitialForm() {
     if (window.confirm('Are you sure you want to delete this patient?')) {
       try {
         setLoading(true)
-        await api.delete(`/api/patients/infant/${id}`)
+        await api.delete(`/apiv1/patients/infant/${id}`)
         await loadPatientsList()
         setSelectedPatient(null)
         navigate('/patients/infant')

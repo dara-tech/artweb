@@ -262,7 +262,7 @@ function AdultVisitForm() {
           // Load patient data to get age, gender, etc.
           if (clinicId) {
             try {
-              const patientResponse = await api.get(`/api/patients/adult/${clinicId}`);
+              const patientResponse = await api.get(`/apiv1/patients/adult/${clinicId}`);
               if (patientResponse.data) {
                 console.log('Patient data loaded:', patientResponse.data);
                 setFormData(prev => ({
@@ -313,10 +313,10 @@ function AdultVisitForm() {
 
       if (visitId) {
         // Update existing visit
-        await api.put(`/api/visits/adult/${visitId}`, payload);
+        await api.put(`/apiv1/visits/adult/${visitId}`, payload);
       } else {
         // Create new visit
-        await api.post('/api/visits/adult', payload);
+        await api.post('/apiv1/visits/adult', payload);
       }
       
       alert(isDraft ? 'Visit saved as draft!' : 'Visit saved successfully!');

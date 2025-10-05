@@ -105,24 +105,24 @@ app.get('/health', (req, res) => {
 });
 
 // API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/lookups', lookupRoutes);
-app.use('/api/sites', sitesRoutes);
-app.use('/api/site-management', siteManagementRoutes);
-app.use('/api/site-operations', siteOperationsRoutes);
-app.use('/api/site-indicators', siteIndicatorsRoutes);
-app.use('/api/performance', performanceRoutes);
-app.use('/api/indicators-optimized', optimizedIndicatorsRoutes);
-app.use('/api/data', dataImportExportRoutes);
-app.use('/api/patients/adult', adultPatientRoutes);
-app.use('/api/patients/child', childPatientRoutes);
-app.use('/api/patients/infant', infantPatientRoutes);
-app.use('/api/visits/adult', adultVisitRoutes);
-app.use('/api/visits/child', childVisitRoutes);
-app.use('/api/visits/infant', infantVisitRoutes);
-app.use('/api/scripts', scriptDownloadRoutes);
-app.use('/api/roles', roleManagementRoutes);
-app.use('/api/import', importRoutes);
+app.use('/apiv1/auth', authRoutes);
+app.use('/apiv1/lookups', lookupRoutes);
+app.use('/apiv1/sites', sitesRoutes);
+app.use('/apiv1/site-management', siteManagementRoutes);
+app.use('/apiv1/site-operations', siteOperationsRoutes);
+app.use('/apiv1/site-indicators', siteIndicatorsRoutes);
+app.use('/apiv1/performance', performanceRoutes);
+app.use('/apiv1/indicators-optimized', optimizedIndicatorsRoutes);
+app.use('/apiv1/data', dataImportExportRoutes);
+app.use('/apiv1/patients/adult', adultPatientRoutes);
+app.use('/apiv1/patients/child', childPatientRoutes);
+app.use('/apiv1/patients/infant', infantPatientRoutes);
+app.use('/apiv1/visits/adult', adultVisitRoutes);
+app.use('/apiv1/visits/child', childVisitRoutes);
+app.use('/apiv1/visits/infant', infantVisitRoutes);
+app.use('/apiv1/scripts', scriptDownloadRoutes);
+app.use('/apiv1/roles', roleManagementRoutes);
+app.use('/apiv1/import', importRoutes);
 
 // Make io available to routes
 app.set('io', io);

@@ -22,7 +22,7 @@ const DataImportExport = () => {
   const fetchSites = async () => {
     try {
       console.log('🔍 Fetching sites...');
-      const response = await api.get('/api/sites');
+      const response = await api.get('/apiv1/sites');
       console.log('Response data:', response.data);
       
       if (response.data.success) {

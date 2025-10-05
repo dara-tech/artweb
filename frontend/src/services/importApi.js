@@ -23,7 +23,7 @@ export const importApi = {
   // Import SQL file
   importSqlFile: async (formData, onProgress) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/import/sql`, {
+      const response = await fetch(`${API_BASE_URL}/apiv1/import/sql`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: formData
@@ -45,7 +45,7 @@ export const importApi = {
   // Get import history
   getImportHistory: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/import/history`, {
+      const response = await fetch(`${API_BASE_URL}/apiv1/import/history`, {
         headers: getAuthHeaders()
       });
 
@@ -63,7 +63,7 @@ export const importApi = {
   // Validate SQL file before import
   validateSqlFile: async (formData) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/import/validate`, {
+      const response = await fetch(`${API_BASE_URL}/apiv1/import/validate`, {
         method: 'POST',
         headers: getAuthHeaders(),
         body: formData
@@ -84,7 +84,7 @@ export const importApi = {
   // Get available sites for import
   getAvailableSites: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/import/sites`, {
+      const response = await fetch(`${API_BASE_URL}/apiv1/import/sites`, {
         headers: getAuthHeaders()
       });
 

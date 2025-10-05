@@ -15,7 +15,7 @@ export const reportingApi = {
       queryParams.siteCode = siteCode
     }
     
-    const response = await api.get('/api/indicators-optimized/all', { params: queryParams })
+    const response = await api.get('/apiv1/indicators-optimized/all', { params: queryParams })
     return response.data
   },
 
@@ -33,7 +33,7 @@ export const reportingApi = {
       queryParams.siteCode = siteCode
     }
     
-    const response = await api.get(`/api/indicators-optimized/${indicatorId}`, { params: queryParams })
+    const response = await api.get(`/apiv1/indicators-optimized/${indicatorId}`, { params: queryParams })
     return response.data
   },
 
@@ -77,13 +77,13 @@ export const reportingApi = {
     // For "All Sites", aggregate data from all available sites
     if (siteCode) {
       // Specific site selected - use site-specific endpoint
-      const endpoint = `/api/site-indicators/sites/${siteCode}/indicators/${indicatorId}/details`
+      const endpoint = `/apiv1/site-indicators/sites/${siteCode}/indicators/${indicatorId}/details`
       const response = await api.get(endpoint, { params: queryParams })
       return response.data
     } else {
       // "All Sites" selected - try general endpoint first
       try {
-        const generalEndpoint = `/api/indicators-optimized/${indicatorId}/details`
+        const generalEndpoint = `/apiv1/indicators-optimized/${indicatorId}/details`
         const response = await api.get(generalEndpoint, { params: queryParams })
         return response.data
       } catch (error) {
@@ -92,7 +92,7 @@ export const reportingApi = {
         
         try {
           // Get list of all sites first
-          const sitesResponse = await api.get('/api/lookups/sites-registry')
+          const sitesResponse = await api.get('/apiv1/lookups/sites-registry')
           const sites = sitesResponse.data || []
           
           if (sites.length === 0) {
@@ -101,7 +101,7 @@ export const reportingApi = {
           
           // Fetch data from all sites in parallel
           const sitePromises = sites.map(site => 
-            api.get(`/api/site-indicators/sites/${site.code}/indicators/${indicatorId}/details`, { 
+            api.get(`/apiv1/site-indicators/sites/${site.code}/indicators/${indicatorId}/details`, { 
               params: queryParams 
             }).catch(err => {
               console.warn(`Failed to fetch data from site ${site.code}:`, err.message)
@@ -156,7 +156,7 @@ export const reportingApi = {
         } catch (aggregationError) {
           console.error('Failed to aggregate data from all sites:', aggregationError)
           // Final fallback to site 0201
-          const fallbackEndpoint = `/api/site-indicators/sites/0201/indicators/${indicatorId}/details`
+          const fallbackEndpoint = `/apiv1/site-indicators/sites/0201/indicators/${indicatorId}/details`
           const response = await api.get(fallbackEndpoint, { params: queryParams })
           
           return {

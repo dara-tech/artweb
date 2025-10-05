@@ -308,7 +308,7 @@ const IndicatorDetailsModal = ({
         throw new Error('No site selected. Please select a site to export data.');
       }
       
-      const apiUrl = `${API_BASE_URL}/api/site-indicators/sites/${selectedSite.code}/indicators/${indicatorKey}/details?${new URLSearchParams(filterParams)}`;
+      const apiUrl = `${API_BASE_URL}/apiv1/site-indicators/sites/${selectedSite.code}/indicators/${indicatorKey}/details?${new URLSearchParams(filterParams)}`;
       console.log(`📊 Using site-specific API for site: ${selectedSite.code}`);
           
           const response = await fetch(apiUrl, {

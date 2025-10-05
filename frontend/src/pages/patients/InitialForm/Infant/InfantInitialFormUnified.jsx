@@ -12,7 +12,7 @@ function InfantInitialFormUnified() {
   return (
     <UnifiedInitialForm
       patientType="infant"
-      apiEndpoint="/api/patients/infant"
+      apiEndpoint="/apiv1/patients/infant"
       formFields={infantPatientConfig}
       validationRules={infantPatientConfig.validationRules}
       PatientInformationComponent={InfantPatientInformation}

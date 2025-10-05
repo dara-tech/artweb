@@ -51,7 +51,7 @@ const AdvancedLayout = ({ children }) => {
       
       console.log('Downloading scripts from:', apiUrl)
       console.log('Current hostname:', window.location.hostname)
-      console.log('Full URL:', `${apiUrl}/api/scripts/scripts/download-all`)
+      console.log('Full URL:', `${apiUrl}/apiv1/scripts/scripts/download-all`)
       
       // Test the API URL first
       try {
@@ -61,7 +61,7 @@ const AdvancedLayout = ({ children }) => {
         console.error('Health check failed:', testError)
       }
       
-      const response = await fetch(`${apiUrl}/api/scripts/scripts/download-all`, {
+      const response = await fetch(`${apiUrl}/apiv1/scripts/scripts/download-all`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

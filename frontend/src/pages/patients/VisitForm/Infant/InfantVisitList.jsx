@@ -28,7 +28,7 @@ function InfantVisitList() {
   // Load lookup data
   const loadLookupData = async () => {
     try {
-      const nationalitiesRes = await api.get('/api/lookups/nationalities');
+      const nationalitiesRes = await api.get('/apiv1/lookups/nationalities');
       setNationalities(nationalitiesRes.data || []);
     } catch (error) {
       console.error('Error loading lookup data:', error);
@@ -81,7 +81,7 @@ function InfantVisitList() {
         params.append('nationality', nationalityFilter);
       }
       
-      const response = await api.get(`/api/visits/infant?${params.toString()}`);
+      const response = await api.get(`/apiv1/visits/infant?${params.toString()}`);
       const visitData = response.data.visits || [];
       setVisits(visitData);
       setTotalVisits(response.data.total || 0);
@@ -100,7 +100,7 @@ function InfantVisitList() {
   // Load sites
   const loadSites = async () => {
     try {
-      const response = await api.get('/api/lookups/sites-registry');
+      const response = await api.get('/apiv1/lookups/sites-registry');
       setAvailableSites(response.data || []);
     } catch (error) {
       console.error('Error loading sites:', error);

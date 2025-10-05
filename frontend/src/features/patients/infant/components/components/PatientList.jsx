@@ -31,7 +31,7 @@ function PatientList({
   // Load lookup data
   const loadLookupData = async () => {
     try {
-      const nationalitiesRes = await api.get('/api/lookups/nationalities')
+      const nationalitiesRes = await api.get('/apiv1/lookups/nationalities')
       setNationalities(nationalitiesRes.data || [])
     } catch (error) {
       console.error('Error loading lookup data:', error)
@@ -88,7 +88,7 @@ function PatientList({
       }
       
       
-      const response = await api.get(`/api/patients/infant?${params.toString()}`)
+      const response = await api.get(`/apiv1/patients/infant?${params.toString()}`)
       const patientData = response.data.patients || []
       setPatients(patientData)
       setTotalPatients(response.data.total || 0)
@@ -107,7 +107,7 @@ function PatientList({
   // Load sites
   const loadSites = async () => {
     try {
-      const response = await api.get('/api/lookups/sites-registry')
+      const response = await api.get('/apiv1/lookups/sites-registry')
       setAvailableSites(response.data || [])
     } catch (error) {
       console.error('Error loading sites:', error)

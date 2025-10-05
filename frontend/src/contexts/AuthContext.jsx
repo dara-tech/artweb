@@ -36,7 +36,7 @@ export const AuthProvider = ({ children }) => {
         controller.abort()
       }, 30000) // 30 second timeout
       
-      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
+      const response = await fetch(`${API_BASE_URL}/apiv1/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ export const AuthProvider = ({ children }) => {
       }
       
       const API_BASE_URL = import.meta.env.VITE_API_URL || getApiUrl()
-      const response = await fetch(`${API_BASE_URL}/api/auth/verify`, {
+      const response = await fetch(`${API_BASE_URL}/apiv1/auth/verify`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

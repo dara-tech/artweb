@@ -188,17 +188,17 @@ function AdultInitialForm() {
   const loadDropdownData = async () => {
     try {
       const [sites, vcctSites, drugs, clinics, reasons, allergies, nationalities, targetGroups, provinces, hospitals, drugTreatments] = await Promise.all([
-        api.get('/api/lookups/sites'),
-        api.get('/api/lookups/vcct-sites'),
-        api.get('/api/lookups/drugs'),
-        api.get('/api/lookups/clinics'),
-        api.get('/api/lookups/reasons'),
-        api.get('/api/lookups/allergies'),
-        api.get('/api/lookups/nationalities'),
-        api.get('/api/lookups/target-groups'),
-        api.get('/api/lookups/provinces'),
-        api.get('/api/lookups/hospitals'),
-        api.get('/api/lookups/drug-treatments')
+        api.get('/apiv1/lookups/sites'),
+        api.get('/apiv1/lookups/vcct-sites'),
+        api.get('/apiv1/lookups/drugs'),
+        api.get('/apiv1/lookups/clinics'),
+        api.get('/apiv1/lookups/reasons'),
+        api.get('/apiv1/lookups/allergies'),
+        api.get('/apiv1/lookups/nationalities'),
+        api.get('/apiv1/lookups/target-groups'),
+        api.get('/apiv1/lookups/provinces'),
+        api.get('/apiv1/lookups/hospitals'),
+        api.get('/apiv1/lookups/drug-treatments')
       ])
 
       setDropdownOptions({
@@ -226,7 +226,7 @@ function AdultInitialForm() {
   const loadPatientData = async (clinicId) => {
     try {
       setLoading(true)
-      const response = await api.get(`/api/patients/adult/${clinicId}`)
+      const response = await api.get(`/apiv1/patients/adult/${clinicId}`)
       const data = response.data
       
       setFormData({
@@ -502,9 +502,9 @@ function AdultInitialForm() {
       }
 
       if (id) {
-        await api.put(`/api/patients/adult/${id}`, payload)
+        await api.put(`/apiv1/patients/adult/${id}`, payload)
       } else {
-        await api.post('/api/patients/adult', payload)
+        await api.post('/apiv1/patients/adult', payload)
       }
 
       handleClear()
@@ -532,7 +532,7 @@ function AdultInitialForm() {
         setLoading(true)
         setError('')
         
-        await api.delete(`/api/patients/adult/${id}`)
+        await api.delete(`/apiv1/patients/adult/${id}`)
         
         // Navigate back to list and refresh
         navigate('/patients/adult')

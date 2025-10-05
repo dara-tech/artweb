@@ -49,17 +49,17 @@ export const DropdownProvider = ({ children }) => {
         allergies, nationalities, targetGroups, 
         provinces, hospitals, drugTreatments
       ] = await Promise.all([
-        api.get('/api/lookups/sites'),
-        api.get('/api/lookups/vcct-sites'),
-        api.get('/api/lookups/drugs'),
-        api.get('/api/lookups/clinics'),
-        api.get('/api/lookups/reasons'),
-        api.get('/api/lookups/allergies'),
-        api.get('/api/lookups/nationalities'),
-        api.get('/api/lookups/target-groups'),
-        api.get('/api/lookups/provinces'),
-        api.get('/api/lookups/hospitals'),
-        api.get('/api/lookups/drug-treatments')
+        api.get('/apiv1/lookups/sites'),
+        api.get('/apiv1/lookups/vcct-sites'),
+        api.get('/apiv1/lookups/drugs'),
+        api.get('/apiv1/lookups/clinics'),
+        api.get('/apiv1/lookups/reasons'),
+        api.get('/apiv1/lookups/allergies'),
+        api.get('/apiv1/lookups/nationalities'),
+        api.get('/apiv1/lookups/target-groups'),
+        api.get('/apiv1/lookups/provinces'),
+        api.get('/apiv1/lookups/hospitals'),
+        api.get('/apiv1/lookups/drug-treatments')
       ])
 
       setDropdownData({

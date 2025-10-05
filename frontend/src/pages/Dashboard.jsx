@@ -22,9 +22,9 @@ function Dashboard() {
     try {
       // Load patient counts directly from patient APIs
       const [adultsResponse, childrenResponse, infantsResponse] = await Promise.all([
-        api.get('/api/patients/adult?limit=1'),
-        api.get('/api/patients/child?limit=1'),
-        api.get('/api/patients/infant?limit=1')
+        api.get('/apiv1/patients/adult?limit=1'),
+        api.get('/apiv1/patients/child?limit=1'),
+        api.get('/apiv1/patients/infant?limit=1')
       ])
 
       setStats({
@@ -37,7 +37,7 @@ function Dashboard() {
       console.error('Error loading stats:', error)
       // Fallback to just adult patients if others fail
       try {
-        const adults = await api.get('/api/patients/adult?limit=1')
+        const adults = await api.get('/apiv1/patients/adult?limit=1')
         setStats({
           totalAdults: adults.data.total || 0,
           totalChildren: 0,

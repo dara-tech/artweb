@@ -32,8 +32,8 @@ function MinimalisticPatientList({
   const loadLookupData = async () => {
     try {
       const [nationalitiesRes, targetGroupsRes] = await Promise.all([
-        api.get('/api/lookups/nationalities'),
-        api.get('/api/lookups/target-groups')
+        api.get('/apiv1/lookups/nationalities'),
+        api.get('/apiv1/lookups/target-groups')
       ])
       setNationalities(nationalitiesRes.data || [])
       setTargetGroups(targetGroupsRes.data || [])
@@ -76,7 +76,7 @@ function MinimalisticPatientList({
   // Load sites
   const loadSites = async () => {
     try {
-      const response = await api.get('/api/lookups/sites-registry')
+      const response = await api.get('/apiv1/lookups/sites-registry')
       setAvailableSites(response.data || [])
     } catch (error) {
       console.error('Error loading sites:', error)

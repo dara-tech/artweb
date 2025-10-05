@@ -12,7 +12,7 @@ function AdultInitialFormUnified() {
   return (
     <UnifiedInitialForm
       patientType="adult"
-      apiEndpoint="/api/patients/adult"
+      apiEndpoint="/apiv1/patients/adult"
       formFields={adultPatientConfig}
       validationRules={adultPatientConfig.validationRules}
       PatientInformationComponent={AdultPatientInformation}

@@ -131,17 +131,17 @@ function ChildInitialForm() {
   const loadDropdownData = async () => {
     try {
       const [sites, vcctSites, drugs, clinics, reasons, allergies, nationalities, targetGroups, provinces, hospitals, drugTreatments] = await Promise.all([
-        api.get('/api/lookups/sites'),
-        api.get('/api/lookups/vcct-sites'),
-        api.get('/api/lookups/drugs'),
-        api.get('/api/lookups/clinics'),
-        api.get('/api/lookups/reasons'),
-        api.get('/api/lookups/allergies'),
-        api.get('/api/lookups/nationalities'),
-        api.get('/api/lookups/target-groups'),
-        api.get('/api/lookups/provinces'),
-        api.get('/api/lookups/hospitals'),
-        api.get('/api/lookups/drug-treatments')
+        api.get('/apiv1/lookups/sites'),
+        api.get('/apiv1/lookups/vcct-sites'),
+        api.get('/apiv1/lookups/drugs'),
+        api.get('/apiv1/lookups/clinics'),
+        api.get('/apiv1/lookups/reasons'),
+        api.get('/apiv1/lookups/allergies'),
+        api.get('/apiv1/lookups/nationalities'),
+        api.get('/apiv1/lookups/target-groups'),
+        api.get('/apiv1/lookups/provinces'),
+        api.get('/apiv1/lookups/hospitals'),
+        api.get('/apiv1/lookups/drug-treatments')
       ])
 
       setDropdownOptions({
@@ -166,7 +166,7 @@ function ChildInitialForm() {
 
   const loadPatientData = async (clinicId) => {
     try {
-      const response = await api.get(`/api/patients/child/${clinicId}`)
+      const response = await api.get(`/apiv1/patients/child/${clinicId}`)
       const data = response.data
       
       
@@ -349,9 +349,9 @@ function ChildInitialForm() {
       }
 
       if (id) {
-        await api.put(`/api/patients/child/${id}`, payload)
+        await api.put(`/apiv1/patients/child/${id}`, payload)
       } else {
-        await api.post('/api/patients/child', payload)
+        await api.post('/apiv1/patients/child', payload)
       }
 
       handleClear()
@@ -374,7 +374,7 @@ function ChildInitialForm() {
         setLoading(true)
         setError('')
         
-        await api.delete(`/api/patients/child/${id}`)
+        await api.delete(`/apiv1/patients/child/${id}`)
         
         // Navigate back to list and refresh
         navigate('/patients/child')

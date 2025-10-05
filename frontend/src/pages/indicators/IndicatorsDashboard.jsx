@@ -232,7 +232,7 @@ const IndicatorsDashboard = () => {
       console.log('API request params:', params);
       console.log('Selected site for API:', selectedSite);
       
-      const response = await api.get('/api/indicators-optimized/all', {
+      const response = await api.get('/apiv1/indicators-optimized/all', {
         params
       });
       
@@ -408,7 +408,7 @@ const IndicatorsDashboard = () => {
 
       const indicatorKey = indicatorMap[indicator.Indicator] || indicator.Indicator;
       
-      const response = await api.get(`/api/indicators-optimized/${indicatorKey}/details`, {
+      const response = await api.get(`/apiv1/indicators-optimized/${indicatorKey}/details`, {
         params: {
           ...dateRange,
           page,

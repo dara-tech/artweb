@@ -84,7 +84,7 @@ const ImportTab = ({
         });
       }, 200);
 
-      const response = await api.post('/api/data/import', formData, {
+      const response = await api.post('/apiv1/data/import', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

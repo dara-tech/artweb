@@ -37,7 +37,7 @@ import { useSite } from "../../contexts/SiteContext"
  */
 function UnifiedPatientList({
   patientType, // 'adult', 'child', 'infant'
-  apiEndpoint, // '/api/patients/adult', '/api/patients/child', '/api/patients/infant'
+  apiEndpoint, // '/apiv1/patients/adult', '/apiv1/patients/child', '/apiv1/patients/infant'
   searchTerm,
   setSearchTerm,
   selectPatient,
@@ -170,7 +170,7 @@ function UnifiedPatientList({
   // Load available sites
   const loadAvailableSites = async () => {
     try {
-      const response = await api.get('/api/lookups/sites-registry')
+      const response = await api.get('/apiv1/lookups/sites-registry')
       setAvailableSites(response.data || [])
     } catch (err) {
       console.error('Error loading sites:', err)

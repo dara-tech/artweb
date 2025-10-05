@@ -54,7 +54,7 @@ const RoleManagement = () => {
       const [usersData, rolesData, sitesResponse] = await Promise.all([
         roleApi.getUsers(),
         roleApi.getRoles(),
-        fetch('http://localhost:3001/api/sites', {
+        fetch('http://localhost:3001/apiv1/sites', {
           headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
         })
       ]);

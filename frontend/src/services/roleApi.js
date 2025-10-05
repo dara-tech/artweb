@@ -22,7 +22,7 @@ const getAuthHeaders = () => {
 export const roleApi = {
   // Get all available roles
   getRoles: async () => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/roles`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/roles`, {
       headers: getAuthHeaders()
     });
     return response.json();
@@ -30,7 +30,7 @@ export const roleApi = {
 
   // Get all users with their roles
   getUsers: async () => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/users`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/users`, {
       headers: getAuthHeaders()
     });
     return response.json();
@@ -38,7 +38,7 @@ export const roleApi = {
 
   // Create new user
   createUser: async (userData) => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/users`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/users`, {
       method: 'POST',
       headers: getAuthHeaders(),
       body: JSON.stringify(userData)
@@ -48,7 +48,7 @@ export const roleApi = {
 
   // Update user role
   updateUserRole: async (userId, roleData) => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/users/${userId}/role`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/users/${userId}/role`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify(roleData)
@@ -58,7 +58,7 @@ export const roleApi = {
 
   // Get user permissions
   getPermissions: async () => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/permissions`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/permissions`, {
       headers: getAuthHeaders()
     });
     return response.json();
@@ -66,7 +66,7 @@ export const roleApi = {
 
   // Delete user (super admin only)
   deleteUser: async (userId, confirmDelete = true) => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/users/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/users/${userId}`, {
       method: 'DELETE',
       headers: getAuthHeaders(),
       body: JSON.stringify({ confirmDelete })
@@ -76,7 +76,7 @@ export const roleApi = {
 
   // Change user password
   changePassword: async (userId, newPassword, confirmPassword) => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/users/${userId}/password`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/users/${userId}/password`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ newPassword, confirmPassword })
@@ -86,7 +86,7 @@ export const roleApi = {
 
   // Update user status
   updateUserStatus: async (userId, status) => {
-    const response = await fetch(`${API_BASE_URL}/api/roles/users/${userId}/status`, {
+    const response = await fetch(`${API_BASE_URL}/apiv1/roles/users/${userId}/status`, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: JSON.stringify({ status })

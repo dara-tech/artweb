@@ -34,8 +34,8 @@ function PatientList({
   const loadLookupData = async () => {
     try {
       const [nationalitiesRes, targetGroupsRes] = await Promise.all([
-        api.get('/api/lookups/nationalities'),
-        api.get('/api/lookups/target-groups')
+        api.get('/apiv1/lookups/nationalities'),
+        api.get('/apiv1/lookups/target-groups')
       ])
       setNationalities(nationalitiesRes.data || [])
       setTargetGroups(targetGroupsRes.data || [])
@@ -97,7 +97,7 @@ function PatientList({
         params.append('targetGroup', targetGroupFilter)
       }
       
-      const response = await api.get(`/api/patients/adult?${params.toString()}`)
+      const response = await api.get(`/apiv1/patients/adult?${params.toString()}`)
       const patientData = response.data.patients || []
       setPatients(patientData)
       setTotalPatients(response.data.total || 0)
@@ -116,7 +116,7 @@ function PatientList({
   // Load sites
   const loadSites = async () => {
     try {
-      const response = await api.get('/api/lookups/sites-registry')
+      const response = await api.get('/apiv1/lookups/sites-registry')
       setAvailableSites(response.data || [])
     } catch (error) {
       console.error('Error loading sites:', error)
