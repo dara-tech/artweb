@@ -109,9 +109,9 @@ async function verifySiteSpecificUsage() {
       
       console.log('✅ Available databases:');
       dbNames.forEach(db => {
-        if (db.startsWith('art_') || db === 'art_sites_registry') {
+        if (db.startsWith('preart_') || db === 'preart_sites_registry') {
           console.log(`   - ${db} (site-specific system)`);
-        } else if (db === 'art_aggregate') {
+        } else if (db === 'preart_aggregate') {
           console.log(`   - ${db} (old aggregated system - not used)`);
         } else {
           console.log(`   - ${db}`);

@@ -5,7 +5,7 @@
  * 
  * This script migrates existing databases from the old naming convention
  * (preart_sites_registry, preart_XXXX) to the new naming convention
- * (art_sites_registry, art_XXXX).
+ * (preart_sites_registry, art_XXXX).
  * 
  * IMPORTANT: This script will:
  * 1. Create new databases with art_ prefix
@@ -164,7 +164,7 @@ class DatabaseMigrator {
       
       // Update database_name column in sites table
       await this.connection.query(`
-        UPDATE \`art_sites_registry\`.sites 
+        UPDATE \`preart_sites_registry\`.sites 
         SET database_name = REPLACE(database_name, 'preart_', 'art_')
         WHERE database_name LIKE 'preart_%'
       `);
@@ -194,7 +194,7 @@ class DatabaseMigrator {
       // Check sites table
       const [sites] = await this.connection.query(`
         SELECT code, name, database_name 
-        FROM \`art_sites_registry\`.sites 
+        FROM \`preart_sites_registry\`.sites 
         WHERE status = 1
         ORDER BY code
       `);

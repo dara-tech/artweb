@@ -1,4 +1,4 @@
-# 🏥 ART Medical Management System
+# 🏥 PreART Medical Management System
 ## Complete User & Developer Documentation
 
 ---
@@ -20,32 +20,23 @@
 
 ## 🏥 **System Overview**
 
-The ART Medical Management System is a comprehensive web-based platform for managing HIV/AIDS treatment across multiple health facilities. It provides real-time reporting, patient management, and analytics capabilities for healthcare professionals.
+The PreART Medical Management System is a comprehensive web-based platform for managing HIV/AIDS treatment across multiple health facilities. It provides real-time reporting, patient management, and analytics capabilities for healthcare professionals.
 
 ### **Architecture**
 - **Frontend**: React 18 with Vite, Tailwind CSS, Radix UI
 - **Backend**: Node.js with Express.js, MySQL, Sequelize ORM
 - **Authentication**: JWT-based with role-based access control
-- **Database**: Multi-site architecture with individual databases per facility (art_ prefix)
-- **Migration**: Successfully migrated from preart_ to art_ naming convention
+- **Database**: Multi-site architecture with individual databases per facility (preart_ prefix)
 
 ### **Health Facilities Supported**
-- **0201**: Maung Russey RH (art_0201)
-- **0202**: Battambang PH (art_0202)
-- **0301**: Kampong Cham PH (art_0301)
-- **0306**: Chamkar Leu RH (art_0306)
-- **1209**: Chhuk Sor (art_1209)
-- **1801**: Preah Sihanouk PH (art_1801)
-- **2101**: Takeo PH (art_2101)
-- **2104**: Preykbas (art_2104)
-
-### **🔄 Database Migration Status**
-✅ **Migration Completed Successfully** (January 2025)
-- **From**: `preart_` naming convention
-- **To**: `art_` naming convention
-- **Databases Migrated**: 7 databases
-- **Data Integrity**: 100% preserved
-- **Migration Tools**: Available in `backend/scripts/`
+- **0201**: Maung Russey RH
+- **0202**: Battambang PH  
+- **0301**: Kampong Cham PH
+- **0306**: Chamkar Leu RH
+- **1209**: Chhuk Sor
+- **1801**: Preah Sihanouk PH
+- **2101**: Takeo PH
+- **2104**: Preykbas
 
 ---
 
@@ -362,9 +353,8 @@ Import SQL file and create new site
 
 ## 🗄️ **Database Structure**
 
-### **Registry Database (art_sites_registry)**
+### **Registry Database (preart_sites_registry)**
 Central database for system management
-**Status**: ✅ Active and migrated from preart_sites_registry
 
 #### **Users Table (tbluser)**
 ```sql
@@ -392,9 +382,8 @@ Central database for system management
 - status (Active/Inactive)
 ```
 
-### **Site-Specific Databases (art_XXXX)**
+### **Site-Specific Databases (preart_XXXX)**
 Individual databases for each health facility
-**Status**: ✅ All migrated from preart_XXXX naming convention
 
 #### **Main Patient Table (tblcimain)**
 ```sql
@@ -485,23 +474,8 @@ node scripts/setup-user-table.js
 node scripts/populate-sites.js
 ```
 
-#### **5. Database Migration (if upgrading from preart_ naming)**
-```bash
-# If you have existing databases with preart_ naming, run migration
-cd backend
-node scripts/migrate-database-names.js
-
-# This will:
-# - Create new art_ prefixed databases
-# - Copy all data from old to new databases
-# - Update site registry references
-# - Keep old databases for safety
-```
-
-#### **6. Migration Tools Available**
-- **`migrate-database-names.js`**: Complete migration script
-- **`cleanup-migration.js`**: Cleanup utility for failed migrations
-- **Migration Status**: ✅ Completed successfully (January 2025)
+#### **5. Database Setup Complete**
+All databases use the preart_ naming convention by default.
 
 ### **Project Structure**
 
@@ -552,7 +526,7 @@ npm run lint       # Run linter
 ```env
 DB_HOST=localhost
 DB_PORT=3306
-DB_NAME=art_sites_registry
+DB_NAME=preart_sites_registry
 DB_USER=root
 DB_PASSWORD=your_password
 PORT=3001
@@ -575,20 +549,6 @@ VITE_APP_NAME=PreART Medical Management System
 ## 🔧 **Troubleshooting**
 
 ### **Common Issues**
-
-#### **Database Migration Issues**
-```bash
-# If migration fails, clean up and retry
-cd backend
-node scripts/cleanup-migration.js
-node scripts/migrate-database-names.js
-
-# Check migration status
-mysql -u root -p -e "SHOW DATABASES LIKE 'art_%';"
-
-# Verify site registry
-mysql -u root -p art_sites_registry -e "SELECT * FROM sites;"
-```
 
 #### **Login Problems**
 - **Invalid Credentials**: Check username and password
@@ -650,10 +610,10 @@ mysql -u root -p art_sites_registry -e "SELECT * FROM sites;"
 #### **Database Backup**
 ```bash
 # Backup registry database
-mysqldump -u root -p art_sites_registry > registry_backup.sql
+mysqldump -u root -p preart_sites_registry > registry_backup.sql
 
 # Backup site databases
-mysqldump -u root -p art_0201 > site_0201_backup.sql
+mysqldump -u root -p preart_0201 > site_0201_backup.sql
 ```
 
 #### **File Backup**
@@ -689,11 +649,7 @@ mysqldump -u root -p art_0201 > site_0201_backup.sql
 
 ## 📝 **Changelog**
 
-### **Version 2.1.0** (Current - January 2025)
-- ✅ **Database Migration**: Successfully migrated from preart_ to art_ naming convention
-- ✅ **7 Databases Migrated**: All site and registry databases updated
-- ✅ **Data Integrity**: 100% data preservation during migration
-- ✅ **Migration Tools**: Added comprehensive migration and cleanup scripts
+### **Version 2.0.0** (Current)
 - Complete UI redesign with modern interface
 - Enhanced role-based access control
 - Improved data import/export functionality

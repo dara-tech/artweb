@@ -893,7 +893,7 @@ router.post('/aggregate', authenticateToken, async (req, res) => {
             // Get ALL tables from source database
             const [tables] = await sourceConnection.execute('SHOW TABLES');
             
-            // Extract site code from database name (e.g., art_2101_2025_09_09 -> 2101)
+            // Extract site code from database name (e.g., preart_2101_2025_09_09 -> 2101)
             const siteCode = dbName.match(/art_(\d+)_/)?.[1] || 'unknown';
             let dbRecords = 0;
             let processedTables = 0;

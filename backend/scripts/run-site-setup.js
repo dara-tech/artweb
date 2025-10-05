@@ -73,13 +73,13 @@ async function runSiteSetup() {
     console.log('================================\n');
     
     console.log('📊 What was created:');
-    console.log('   - art_sites_registry: Registry database for site management');
-    console.log('   - art_0201: Maung Russey RH (Battambang)');
-    console.log('   - art_0202: Battambang PH (Battambang)');
-    console.log('   - art_0301: Kampong Cham PH (Kampong Cham)');
-    console.log('   - art_0306: Tbong Khmum RH (Tbong Khmum)');
-    console.log('   - art_1209: Phnom Penh RH (Phnom Penh)');
-    console.log('   - art_1801: Siem Reap RH (Siem Reap)\n');
+    console.log('   - preart_sites_registry: Registry database for site management');
+    console.log('   - preart_0201: Maung Russey RH (Battambang)');
+    console.log('   - preart_0202: Battambang PH (Battambang)');
+    console.log('   - preart_0301: Kampong Cham PH (Kampong Cham)');
+    console.log('   - preart_0306: Tbong Khmum RH (Tbong Khmum)');
+    console.log('   - preart_1209: Phnom Penh RH (Phnom Penh)');
+    console.log('   - preart_1801: Siem Reap RH (Siem Reap)\n');
     
     console.log('🔧 Next steps:');
     console.log('   1. Update your .env file if needed');

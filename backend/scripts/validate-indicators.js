@@ -8,7 +8,7 @@ const siteCode = '0201'; // Test with site 0201 (Battambang PH)
 const sequelize = new Sequelize({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
-  database: `art_${siteCode}`, // Use site-specific database
+  database: `preart_${siteCode}`, // Use site-specific database
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   dialect: 'mysql',
@@ -48,7 +48,7 @@ const INDICATOR_MAP = {
   '4': '04_retested_positive',
   '5': '05_newly_initiated',
   '5.1.1': '05.1.1_art_same_day',
-  '5.1.2': '05.1.2_art_1_7_days',
+  '5.1.2': '05.1.2_preart_1_7_days',
   '5.1.3': '05.1.3_art_over_7_days',
   '5.2': '05.2_art_with_tld',
   '6': '06_transfer_in',

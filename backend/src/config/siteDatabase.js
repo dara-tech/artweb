@@ -34,7 +34,7 @@ const baseConfig = {
 // Registry database for site management
 const registryConfig = {
   ...baseConfig,
-  database: 'art_sites_registry'
+  database: 'preart_sites_registry'
 };
 
 // Create registry connection

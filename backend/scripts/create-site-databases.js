@@ -16,37 +16,37 @@ const execAsync = promisify(exec);
 
 // Site mapping from backup files
 const SITE_MAPPING = {
-  'art_0201_20250925.sql': {
+  'preart_0201_20250925.sql': {
     code: '0201',
     name: 'Maung Russey RH',
     province: 'Battambang',
     type: 'RH'
   },
-  'art_0202_20250925.sql': {
+  'preart_0202_20250925.sql': {
     code: '0202', 
     name: 'Battambang PH',
     province: 'Battambang',
     type: 'PH'
   },
-  'art_0301_20250925.sql': {
+  'preart_0301_20250925.sql': {
     code: '0301',
     name: 'Kampong Cham PH', 
     province: 'Kampong Cham',
     type: 'PH'
   },
-  'art_0306_20250925.sql': {
+  'preart_0306_20250925.sql': {
     code: '0306',
     name: 'Tbong Khmum RH',
     province: 'Tbong Khmum', 
     type: 'RH'
   },
-  'art_1209_20250925.sql': {
+  'preart_1209_20250925.sql': {
     code: '1209',
     name: 'Phnom Penh RH',
     province: 'Phnom Penh',
     type: 'RH'
   },
-  'art_1801_20250925.sql': {
+  'preart_1801_20250925.sql': {
     code: '1801',
     name: 'Siem Reap RH',
     province: 'Siem Reap',
@@ -127,7 +127,7 @@ class SiteDatabaseManager {
 
   async createSiteRegistry() {
     try {
-      const registryDb = 'art_sites_registry';
+      const registryDb = 'preart_sites_registry';
       await this.createDatabase(registryDb);
       
       // Switch to registry database
