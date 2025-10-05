@@ -16,37 +16,37 @@ const execAsync = promisify(exec);
 
 // Site mapping from backup files
 const SITE_MAPPING = {
-  'preart_0201_20250925.sql': {
+  'art_0201_20250925.sql': {
     code: '0201',
     name: 'Maung Russey RH',
     province: 'Battambang',
     type: 'RH'
   },
-  'preart_0202_20250925.sql': {
+  'art_0202_20250925.sql': {
     code: '0202', 
     name: 'Battambang PH',
     province: 'Battambang',
     type: 'PH'
   },
-  'preart_0301_20250925.sql': {
+  'art_0301_20250925.sql': {
     code: '0301',
     name: 'Kampong Cham PH', 
     province: 'Kampong Cham',
     type: 'PH'
   },
-  'preart_0306_20250925.sql': {
+  'art_0306_20250925.sql': {
     code: '0306',
     name: 'Tbong Khmum RH',
     province: 'Tbong Khmum', 
     type: 'RH'
   },
-  'preart_1209_20250925.sql': {
+  'art_1209_20250925.sql': {
     code: '1209',
     name: 'Phnom Penh RH',
     province: 'Phnom Penh',
     type: 'RH'
   },
-  'preart_1801_20250925.sql': {
+  'art_1801_20250925.sql': {
     code: '1801',
     name: 'Siem Reap RH',
     province: 'Siem Reap',
@@ -96,7 +96,7 @@ class SiteDatabaseManager {
   }
 
   async importBackupFile(backupFile, siteInfo) {
-    const dbName = `preart_${siteInfo.code}`;
+    const dbName = `art_${siteInfo.code}`;
     const backupPath = path.join(this.backupsDir, backupFile);
     
     if (!fs.existsSync(backupPath)) {
@@ -127,7 +127,7 @@ class SiteDatabaseManager {
 
   async createSiteRegistry() {
     try {
-      const registryDb = 'preart_sites_registry';
+      const registryDb = 'art_sites_registry';
       await this.createDatabase(registryDb);
       
       // Switch to registry database
@@ -159,7 +159,7 @@ class SiteDatabaseManager {
       
       // Insert site information
       for (const [backupFile, siteInfo] of Object.entries(SITE_MAPPING)) {
-        const dbName = `preart_${siteInfo.code}`;
+        const dbName = `art_${siteInfo.code}`;
         
         const insertSite = `
           INSERT INTO sites (code, name, province, type, database_name, status) 
@@ -236,7 +236,7 @@ class SiteDatabaseManager {
       
       const results = [];
       for (const [backupFile, siteInfo] of Object.entries(SITE_MAPPING)) {
-        const dbName = `preart_${siteInfo.code}`;
+        const dbName = `art_${siteInfo.code}`;
         
         console.log(`\n📍 Processing site: ${siteInfo.name} (${siteInfo.code})`);
         

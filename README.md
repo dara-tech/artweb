@@ -26,7 +26,7 @@ The PreART Medical Management System is a comprehensive web-based platform for m
 - **Frontend**: React 18 with Vite, Tailwind CSS, Radix UI
 - **Backend**: Node.js with Express.js, MySQL, Sequelize ORM
 - **Authentication**: JWT-based with role-based access control
-- **Database**: Multi-site architecture with individual databases per facility
+- **Database**: Multi-site architecture with individual databases per facility (art_ prefix)
 
 ### **Health Facilities Supported**
 - **0201**: Maung Russey RH
@@ -353,7 +353,7 @@ Import SQL file and create new site
 
 ## 🗄️ **Database Structure**
 
-### **Registry Database (preart_sites_registry)**
+### **Registry Database (art_sites_registry)**
 Central database for system management
 
 #### **Users Table (tbluser)**
@@ -382,7 +382,7 @@ Central database for system management
 - status (Active/Inactive)
 ```
 
-### **Site-Specific Databases (preart_XXXX)**
+### **Site-Specific Databases (art_XXXX)**
 Individual databases for each health facility
 
 #### **Main Patient Table (tblcimain)**
@@ -466,12 +466,25 @@ npm run dev
 ```bash
 # Create registry database
 mysql -u root -p
-CREATE DATABASE preart_sites_registry;
+CREATE DATABASE art_sites_registry;
 
 # Run migration scripts
 cd backend
 node scripts/setup-user-table.js
 node scripts/populate-sites.js
+```
+
+#### **5. Database Migration (if upgrading from preart_ naming)**
+```bash
+# If you have existing databases with preart_ naming, run migration
+cd backend
+node scripts/migrate-database-names.js
+
+# This will:
+# - Create new art_ prefixed databases
+# - Copy all data from old to new databases
+# - Update site registry references
+# - Keep old databases for safety
 ```
 
 ### **Project Structure**
@@ -523,7 +536,7 @@ npm run lint       # Run linter
 ```env
 DB_HOST=localhost
 DB_PORT=3306
-DB_NAME=preart_sites_registry
+DB_NAME=art_sites_registry
 DB_USER=root
 DB_PASSWORD=your_password
 PORT=3001
@@ -607,10 +620,10 @@ VITE_APP_NAME=PreART Medical Management System
 #### **Database Backup**
 ```bash
 # Backup registry database
-mysqldump -u root -p preart_sites_registry > registry_backup.sql
+mysqldump -u root -p art_sites_registry > registry_backup.sql
 
 # Backup site databases
-mysqldump -u root -p preart_0201 > site_0201_backup.sql
+mysqldump -u root -p art_0201 > site_0201_backup.sql
 ```
 
 #### **File Backup**

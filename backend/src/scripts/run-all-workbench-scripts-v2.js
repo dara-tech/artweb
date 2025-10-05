@@ -7,7 +7,7 @@ const DB_CONFIG = {
   host: 'localhost',
   user: 'root',
   password: 'password123',
-  database: 'preart_0201'
+  database: 'art_0201'
 };
 
 async function runScript(filePath) {

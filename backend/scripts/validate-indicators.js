@@ -8,7 +8,7 @@ const siteCode = '0201'; // Test with site 0201 (Battambang PH)
 const sequelize = new Sequelize({
   host: process.env.DB_HOST || 'localhost',
   port: process.env.DB_PORT || 3306,
-  database: `preart_${siteCode}`, // Use site-specific database
+  database: `art_${siteCode}`, // Use site-specific database
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   dialect: 'mysql',

@@ -2,7 +2,7 @@
 
 /**
  * Setup User Table in Registry Database
- * Creates the tbluser table in preart_sites_registry database
+ * Creates the tbluser table in art_sites_registry database
  */
 
 const mysql = require('mysql2/promise');
@@ -20,16 +20,16 @@ async function setupUserTable() {
       port: process.env.DB_PORT || 3306,
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD || 'password123',
-      database: 'preart_sites_registry'
+      database: 'art_sites_registry'
     });
     
-    console.log('✅ Connected to preart_sites_registry database');
+    console.log('✅ Connected to art_sites_registry database');
     
     // Check if tbluser table already exists
     const [tables] = await connection.execute(`
       SELECT TABLE_NAME 
       FROM information_schema.TABLES 
-      WHERE TABLE_SCHEMA = 'preart_sites_registry' 
+      WHERE TABLE_SCHEMA = 'art_sites_registry' 
       AND TABLE_NAME = 'tbluser'
     `);
     

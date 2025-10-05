@@ -13,7 +13,7 @@ const dbConfig = {
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || 'password123',
-  database: 'preart_sites_registry'
+  database: 'art_sites_registry'
 };
 
 async function addRoleSystem() {
@@ -25,13 +25,13 @@ async function addRoleSystem() {
   try {
     // Connect to the registry database
     connection = await mysql.createConnection(dbConfig);
-    console.log('✅ Connected to preart_sites_registry database');
+    console.log('✅ Connected to art_sites_registry database');
     
     // Check if Role column already exists
     const [columns] = await connection.execute(`
       SELECT COLUMN_NAME 
       FROM INFORMATION_SCHEMA.COLUMNS 
-      WHERE TABLE_SCHEMA = 'preart_sites_registry' 
+      WHERE TABLE_SCHEMA = 'art_sites_registry' 
       AND TABLE_NAME = 'tbluser' 
       AND COLUMN_NAME = 'Role'
     `);

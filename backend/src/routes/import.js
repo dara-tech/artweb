@@ -201,7 +201,7 @@ router.post('/sql', [
       }
 
       // Create new site and database
-      databaseName = `preart_${finalSiteCode}`;
+      databaseName = `art_${finalSiteCode}`;
       
       // Check if site already exists
       const existingSite = await Site.findOne({ where: { code: finalSiteCode } });

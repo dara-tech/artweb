@@ -10,7 +10,7 @@ async function safeSiteUpdate() {
     const [columns] = await registryConnection.query(`
       SELECT COLUMN_NAME 
       FROM INFORMATION_SCHEMA.COLUMNS 
-      WHERE TABLE_SCHEMA = 'preart_sites_registry' 
+      WHERE TABLE_SCHEMA = 'art_sites_registry' 
       AND TABLE_NAME = 'sites' 
       AND COLUMN_NAME IN ('short_name', 'display_name', 'search_terms')
     `);
