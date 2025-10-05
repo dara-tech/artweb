@@ -443,7 +443,7 @@ Extended information for infant patients
 #### **1. Clone Repository**
 ```bash
 git clone <repository-url>
-cd artweb
+cd preartweb
 ```
 
 #### **2. Backend Setup**
@@ -480,7 +480,7 @@ All databases use the preart_ naming convention by default.
 ### **Project Structure**
 
 ```
-artweb/
+preartweb/
 ├── backend/
 │   ├── src/
 │   │   ├── config/          # Database configuration
