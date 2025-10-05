@@ -1,26 +1,46 @@
 import axios from 'axios'
 
-// Determine API URL based on current hostname
+// Determine API URL based on environment and hostname
 const getApiUrl = () => {
   const hostname = window.location.hostname
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+  const protocol = window.location.protocol
+  
+  // Check if we're in production (HTTPS or specific domains)
+  const isProduction = protocol === 'https:' || 
+    hostname.includes('nchads.gov.kh') || 
+    hostname.includes('yourdomain.com') ||
+    import.meta.env.PROD
+  
+  if (isProduction) {
+    // Production: Use HTTPS and same domain
+    return `${protocol}//${hostname}`
+  } else if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    // Development: Use localhost
     return 'http://localhost:3001'
   } else {
-    // For network access, use the same hostname but port 3001
+    // Network development: Use same hostname with port 3001
     return `http://${hostname}:3001`
   }
 }
 
 let API_BASE_URL = import.meta.env.VITE_API_URL || getApiUrl()
 
-// Ensure API_BASE_URL doesn't end with /api to avoid double /api
-if (API_BASE_URL.endsWith('/api')) {
-  API_BASE_URL = API_BASE_URL.replace('/api', '')
+// Clean up API_BASE_URL - remove any trailing /api or /apiv1 to avoid conflicts
+if (API_BASE_URL.endsWith('/api') || API_BASE_URL.endsWith('/apiv1')) {
+  API_BASE_URL = API_BASE_URL.replace(/\/api(v1)?$/, '')
 }
+
+// Add trailing slash if missing
+if (!API_BASE_URL.endsWith('/')) {
+  API_BASE_URL += '/'
+}
+
+console.log('🔗 API Base URL:', API_BASE_URL)
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
+  timeout: 30000, // 30 second timeout
   headers: {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -45,21 +65,36 @@ api.interceptors.request.use(
       }
     }
     
+    // Log requests in development
+    if (import.meta.env.DEV) {
+      console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`)
+    }
+    
     return config
   },
   (error) => {
+    console.error('❌ API Request Error:', error)
     return Promise.reject(error)
   }
 )
 
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Log responses in development
+    if (import.meta.env.DEV) {
+      console.log(`✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`)
+    }
+    return response
+  },
   (error) => {
+    console.error('❌ API Response Error:', error.response?.status, error.response?.data || error.message)
+    
     if (error.response?.status === 401) {
       localStorage.removeItem('token')
       window.location.href = '/'
     }
+    
     return Promise.reject(error)
   }
 )
