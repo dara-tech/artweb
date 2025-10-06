@@ -354,8 +354,11 @@ router.delete('/sites/:siteCode', authenticateToken, async (req, res) => {
     await registryConnection.query(`
       UPDATE sites 
       SET status = 0, updated_at = CURRENT_TIMESTAMP
-      WHERE code = ?
-    `, [siteCode]);
+      WHERE code = :siteCode
+    `, {
+      replacements: { siteCode },
+      type: registryConnection.QueryTypes.UPDATE
+    });
 
     res.json({
       success: true,

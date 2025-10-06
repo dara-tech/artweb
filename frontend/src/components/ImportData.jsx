@@ -163,6 +163,7 @@ const ImportData = () => {
     setImportStatus('importing');
     setImportProgress(0);
     setImportMessage('Starting import process...');
+    setValidationErrors([]);
 
     try {
       const formData = new FormData();
@@ -181,6 +182,16 @@ const ImportData = () => {
 
       const response = await importApi.importSqlFile(formData, (progress) => {
         setImportProgress(progress);
+        // Update message based on progress
+        if (progress < 30) {
+          setImportMessage('Uploading file...');
+        } else if (progress < 60) {
+          setImportMessage('Processing SQL file...');
+        } else if (progress < 90) {
+          setImportMessage('Creating database and importing data...');
+        } else if (progress < 100) {
+          setImportMessage('Finalizing import...');
+        }
       });
 
       if (response.success) {
@@ -197,6 +208,9 @@ const ImportData = () => {
           });
         }
         
+        // Show success popup
+        alert(`✅ Import Successful!\n\n${response.message || 'Data imported successfully!'}\n\nSite: ${createNewDatabase ? newSiteCode : targetSite}\nFile: ${selectedFile.name}`);
+        
         // Reset form
         setSelectedFile(null);
         setTargetSite('');
@@ -206,6 +220,7 @@ const ImportData = () => {
         setNewSiteProvince('');
         setNewSiteDistrict('');
         setNewSiteFileName('');
+        setExtractedSiteInfo(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
         }
@@ -215,11 +230,13 @@ const ImportData = () => {
       } else {
         setImportStatus('error');
         setImportMessage(response.message || 'Import failed');
+        alert(`❌ Import Failed!\n\n${response.message || 'Import failed'}\n\nPlease check your file and try again.`);
       }
     } catch (error) {
       console.error('Import error:', error);
       setImportStatus('error');
       setImportMessage(error.message || 'Import failed');
+      alert(`❌ Import Error!\n\n${error.message || 'Import failed'}\n\nPlease check your file and try again.`);
     }
   };
 
@@ -413,15 +430,24 @@ const ImportData = () => {
       )}
 
       {importStatus !== 'idle' && (
-        <Alert>
+        <Alert className={importStatus === 'error' ? 'border-red-200 bg-red-50' : importStatus === 'success' ? 'border-green-200 bg-green-50' : 'border-blue-200 bg-blue-50'}>
           <div className="flex items-center gap-2">
             {getStatusIcon()}
-            <AlertDescription>{importMessage}</AlertDescription>
+            <AlertDescription className={importStatus === 'error' ? 'text-red-800' : importStatus === 'success' ? 'text-green-800' : 'text-blue-800'}>
+              {importMessage}
+            </AlertDescription>
           </div>
           {importStatus === 'importing' && (
-            <div className="mt-3 space-y-1">
-              <Progress value={importProgress} className="w-full" />
-              <p className="text-sm text-gray-600">{importProgress}% complete</p>
+            <div className="mt-3 space-y-2">
+              <div className="flex justify-between text-sm text-gray-600">
+                <span>Progress</span>
+                <span>{importProgress}%</span>
+              </div>
+              <Progress value={importProgress} className="w-full h-2" />
+              <div className="flex justify-between text-xs text-gray-500">
+                <span>Uploading & Processing</span>
+                <span>{importProgress < 50 ? 'Uploading...' : importProgress < 90 ? 'Processing...' : 'Finalizing...'}</span>
+              </div>
             </div>
           )}
         </Alert>
@@ -431,12 +457,22 @@ const ImportData = () => {
       <Button
         onClick={handleImport}
         disabled={importStatus === 'importing' || !selectedFile}
-        className="w-full"
+        className={`w-full ${importStatus === 'importing' ? 'bg-blue-600 hover:bg-blue-700' : importStatus === 'success' ? 'bg-green-600 hover:bg-green-700' : importStatus === 'error' ? 'bg-red-600 hover:bg-red-700' : ''}`}
       >
         {importStatus === 'importing' ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Importing...
+            Importing... ({importProgress}%)
+          </>
+        ) : importStatus === 'success' ? (
+          <>
+            <CheckCircle className="h-4 w-4 mr-2" />
+            Import Successful
+          </>
+        ) : importStatus === 'error' ? (
+          <>
+            <AlertCircle className="h-4 w-4 mr-2" />
+            Import Failed - Try Again
           </>
         ) : (
           <>

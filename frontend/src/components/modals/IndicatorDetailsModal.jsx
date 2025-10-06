@@ -97,9 +97,20 @@ const IndicatorDetailsModal = ({
     let columns = [...baseColumns];
 
     // Add columns based on indicator type
-    if (indicatorName?.includes('MMD') || indicatorName?.includes('TLD') || 
-        indicatorName?.includes('Eligible MMD')) {
+    if (indicatorName?.includes('MMD') || indicatorName?.includes('Eligible MMD')) {
       columns = [...columns, ...artColumns];
+    }
+    
+    // TLD indicators - exclude ART Duration for indicator 5.2
+    if (indicatorName?.includes('TLD')) {
+      if (indicatorName?.includes('5.2. New ART started with TLD')) {
+        // For indicator 5.2, use ART columns without ART Duration
+        const artColumnsWithoutDuration = artColumns.filter(col => col.key !== 'Startartstatus');
+        columns = [...columns, ...artColumnsWithoutDuration];
+      } else {
+        // For other TLD indicators, use full ART columns
+        columns = [...columns, ...artColumns];
+      }
     }
     
     // Special case for Active ART indicators - exclude ART Duration for indicator 1
@@ -170,7 +181,10 @@ const IndicatorDetailsModal = ({
     // Handle VL field name variations (10.6 uses LastVLDate/LastVLLoad/StatusVL, 10.7 uses DateResult/HIVLoad/vlresultstatus)
     LastVLDate: record.LastVLDate || record.DateResult,
     LastVLLoad: record.LastVLLoad || record.HIVLoad,
-    StatusVL: record.StatusVL || record.vlresultstatus
+    StatusVL: record.StatusVL || record.vlresultstatus,
+    // Handle Lost and Return fields
+    return_type: record.return_type || record.TypeofReturn || 'N/A',
+    art_number: record.art_number || record.Artnum || record.ART || 'N/A'
   }));
 
   // Sorting functionality
@@ -402,7 +416,10 @@ const IndicatorDetailsModal = ({
         patient_type: record.patient_type || getCorrectPatientType(record),
         LastVLDate: record.LastVLDate || record.DateResult,
         LastVLLoad: record.LastVLLoad || record.HIVLoad,
-        StatusVL: record.StatusVL || record.vlresultstatus
+        StatusVL: record.StatusVL || record.vlresultstatus,
+        // Handle Lost and Return fields
+        return_type: record.return_type || record.TypeofReturn || 'N/A',
+        art_number: record.art_number || record.Artnum || record.ART || 'N/A'
       }));
       
       // Create CSV content - ONLY the data records

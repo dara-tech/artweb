@@ -17,7 +17,6 @@ const siteManagementRoutes = require('./routes/site-management');
 const siteOperationsRoutes = require('./routes/site-operations');
 const siteIndicatorsRoutes = require('./routes/site-indicators');
 const performanceRoutes = require('./routes/performance');
-const dataImportExportRoutes = require('./routes/data-import-export');
 const optimizedIndicatorsRoutes = require('./routes/optimized-indicators');
 const adultPatientRoutes = require('./routes/adultPatients');
 const childPatientRoutes = require('./routes/childPatients');
@@ -28,6 +27,7 @@ const infantVisitRoutes = require('./routes/infantVisits');
 const scriptDownloadRoutes = require('./routes/script-download');
 const roleManagementRoutes = require('./routes/role-management');
 const importRoutes = require('./routes/import');
+const dataManagementRoutes = require('./routes/data-management');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -113,7 +113,7 @@ app.use('/apiv1/site-operations', siteOperationsRoutes);
 app.use('/apiv1/site-indicators', siteIndicatorsRoutes);
 app.use('/apiv1/performance', performanceRoutes);
 app.use('/apiv1/indicators-optimized', optimizedIndicatorsRoutes);
-app.use('/apiv1/data', dataImportExportRoutes);
+app.use('/apiv1/data', importRoutes);
 app.use('/apiv1/patients/adult', adultPatientRoutes);
 app.use('/apiv1/patients/child', childPatientRoutes);
 app.use('/apiv1/patients/infant', infantPatientRoutes);
@@ -123,6 +123,7 @@ app.use('/apiv1/visits/infant', infantVisitRoutes);
 app.use('/apiv1/scripts', scriptDownloadRoutes);
 app.use('/apiv1/roles', roleManagementRoutes);
 app.use('/apiv1/import', importRoutes);
+app.use('/apiv1/data', dataManagementRoutes);
 
 // Make io available to routes
 app.set('io', io);

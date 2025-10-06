@@ -53,21 +53,19 @@ function Login() {
     <div className="min-h-screen flex items-center justify-center bg-background py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-bold text-foreground">PreART System</h1>
-          <p className="mt-2 text-muted-foreground">Medical Management System</p>
+            <h1 className="text-3xl font-bold text-foreground">PreART System</h1>
+            <p className="mt-2 text-muted-foreground">Report System</p>
         </div>
         
         <Card>
           <CardHeader>
             <CardTitle>Sign In</CardTitle>
-            <CardDescription>
-              Enter your credentials to access the system
-            </CardDescription>
+          <CardDescription>Please Enter username and password </CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
-              <Alert className="mb-4" variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
+              <Alert className="mb-4 border-red-500 bg-red-50" variant="destructive">
+                <AlertDescription className="text-red-700 font-medium">{error}</AlertDescription>
               </Alert>
             )}
 
@@ -79,6 +77,7 @@ function Login() {
                   name="username"
                   type="text"
                   required
+                  placeholder="Enter your username"
                   value={credentials.username}
                   onChange={handleChange}
                   disabled={loading}
@@ -92,6 +91,7 @@ function Login() {
                   name="password"
                   type="password"
                   required
+                  placeholder="Enter your password"
                   value={credentials.password}
                   onChange={handleChange}
                   disabled={loading}

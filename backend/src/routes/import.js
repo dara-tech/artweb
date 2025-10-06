@@ -121,7 +121,7 @@ const extractSiteInfoFromSql = async (filePath) => {
 // Import SQL file endpoint
 router.post('/sql', [
   authenticateToken,
-  requireRole(['super_admin', 'admin']),
+  requireRole(['super_admin', 'admin', 'data_manager']),
   upload.single('sqlFile')
 ], async (req, res) => {
   try {
@@ -409,7 +409,7 @@ const executeSqlFile = async (filePath, databaseName) => {
 // Validate SQL file endpoint
 router.post('/validate', [
   authenticateToken,
-  requireRole(['super_admin', 'admin']),
+  requireRole(['super_admin', 'admin', 'data_manager']),
   upload.single('sqlFile')
 ], async (req, res) => {
   try {
@@ -525,7 +525,7 @@ router.get('/sites', authenticateToken, async (req, res) => {
 // Get import history
 router.get('/history', [
   authenticateToken,
-  requireRole(['super_admin', 'admin'])
+  requireRole(['super_admin', 'admin', 'data_manager'])
 ], async (req, res) => {
   try {
     // This would typically come from a database table

@@ -1,6 +1,6 @@
 -- =====================================================
 -- 10.2 MMD
--- Generated: 2025-10-02T12:01:55.093Z
+-- Generated: 2025-10-06T07:09:48.476Z
 -- =====================================================
 
 -- =====================================================
@@ -254,7 +254,14 @@ WITH tblactive AS (
         a.nmonthART,
         IF(a.nmonthART >= 6, ">6M", "<6M") AS Startartstatus,
         DATEDIFF(v.DaApp, v.DatVisit) AS ndays,
-        IF(DATEDIFF(v.DaApp, v.DatVisit) > 80, "MMD", "Not-MMD") AS MMDStatus,
+        CASE 
+            WHEN DATEDIFF(v.DaApp, v.DatVisit) <= 80 THEN "Not-MMD"
+            WHEN DATEDIFF(v.DaApp, v.DatVisit) BETWEEN 81 AND 100 THEN "3M"
+            WHEN DATEDIFF(v.DaApp, v.DatVisit) BETWEEN 101 AND 130 THEN "4M"
+            WHEN DATEDIFF(v.DaApp, v.DatVisit) BETWEEN 131 AND 160 THEN "5M"
+            WHEN DATEDIFF(v.DaApp, v.DatVisit) >= 161 THEN "6M"
+            ELSE "Not-MMD"
+        END AS MMDStatus,
         rd.drugname,
         IF(LEFT(i.clinicid, 1) = "P" AND rd.TLDStatus != "TLD" AND LOCATE('DTG', drugname) > 0, 
            "TLD", rd.TLDStatus) AS TLDStatus,
@@ -289,5 +296,5 @@ SELECT
 FROM tblactive
 WHERE ART IS NOT NULL
     AND Startartstatus = '>6M' 
-    AND MMDStatus = 'MMD';
+    AND MMDStatus IN ('3M', '4M', '5M', '6M');
 

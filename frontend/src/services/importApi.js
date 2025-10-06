@@ -23,6 +23,17 @@ export const importApi = {
   // Import SQL file
   importSqlFile: async (formData, onProgress) => {
     try {
+      // Simulate progress updates since the backend doesn't support real-time progress
+      if (onProgress) {
+        onProgress(10); // Starting
+        await new Promise(resolve => setTimeout(resolve, 100));
+        onProgress(30); // Uploading
+        await new Promise(resolve => setTimeout(resolve, 100));
+        onProgress(60); // Processing
+        await new Promise(resolve => setTimeout(resolve, 100));
+        onProgress(90); // Almost done
+      }
+
       const response = await fetch(`${API_BASE_URL}/apiv1/import/sql`, {
         method: 'POST',
         headers: getAuthHeaders(),
@@ -35,6 +46,12 @@ export const importApi = {
       }
 
       const result = await response.json();
+      
+      // Complete progress
+      if (onProgress) {
+        onProgress(100);
+      }
+      
       return result;
     } catch (error) {
       console.error('Import API error:', error);

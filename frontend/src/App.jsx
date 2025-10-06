@@ -16,7 +16,7 @@ import InfantVisitForm from './pages/patients/VisitForm/Infant/InfantVisitForm'
 import InfantVisitList from './pages/patients/VisitForm/Infant/InfantVisitList'
 import DataManagement from './pages/DataManagement'
 import RoleManagement from './pages/RoleManagement'
-import ImportDataPage from './pages/ImportDataPage'
+import DataImportExport from './pages/DataManagement/components/DataImportExport'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
 import IndicatorsDashboard from './pages/indicators/IndicatorsDashboard'
 import AdvancedLayout from './components/layout/AdvancedLayout'
@@ -48,6 +48,9 @@ function App() {
     if (user?.role === 'viewer') {
       return '/indicators'
     }
+    if (user?.role === 'data_manager') {
+      return '/import-data'
+    }
     return '/dashboard'
   }
 
@@ -57,7 +60,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
           
-          {/* Dashboard - Not accessible to viewers */}
+          {/* Dashboard - Not accessible to viewers and data managers */}
           <Route path="/dashboard" element={
             <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
               <Dashboard />
@@ -177,10 +180,10 @@ function App() {
             </ProtectedRoute>
           } />
           
-          {/* Import Data - Only for super_admin and admin */}
+          {/* Import Data - Only for super_admin, admin, and data_manager */}
           <Route path="/import-data" element={
-            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
-              <ImportDataPage />
+            <ProtectedRoute allowedRoles={['admin', 'super_admin', 'data_manager']}>
+              <DataImportExport />
             </ProtectedRoute>
           } />
           

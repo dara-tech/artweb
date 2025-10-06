@@ -1,4 +1,4 @@
-# 🏥 PreART Medical Management System
+# 🏥 PreART System
 ## Complete User & Developer Documentation
 
 ---
@@ -461,30 +461,7 @@ cd frontend
 npm install
 npm run dev
 ```
-
-#### **4. Database Setup**
-```bash
-# Create registry database
-mysql -u root -p
-CREATE DATABASE preart_sites_registry;
-EXIT;
-
-# Create the tblartsite table (required by legacy routes)
-mysql -u root -p preart_sites_registry -e "
-CREATE TABLE IF NOT EXISTS tblartsite (
-  Sid varchar(10) NOT NULL,
-  SiteName varchar(100) NOT NULL,
-  Status tinyint(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (Sid),
-  KEY idx_status (Status)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-"
-
-# Run setup scripts
-cd backend
-node scripts/setup-user-table.js
-node scripts/populate-sites.js
-```
+`
 
 #### **5. Database Setup Complete**
 All databases use the preart_ naming convention by default.

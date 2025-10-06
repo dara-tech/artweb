@@ -13,7 +13,7 @@ FROM (
     FROM tblaimain p
     LEFT OUTER JOIN tblaart art ON p.ClinicID = art.ClinicID
     WHERE p.TypeofReturn IS NOT NULL
-      AND p.TypeofReturn <> -1
+      AND p.TypeofReturn >= 0
       AND p.DafirstVisit BETWEEN :StartDate AND :EndDate
     GROUP BY p.Sex, art.ART, p.ClinicID
     

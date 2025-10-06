@@ -49,6 +49,12 @@ router.get('/roles', authenticateToken, (req, res) => {
       label: 'Site Manager',
       description: 'Manage specific site operations',
       permissions: ['site_management', 'data_entry', 'reports']
+    },
+    {
+      value: 'data_manager',
+      label: 'Data Manager',
+      description: 'Import/export data, manage databases, review indicator reports',
+      permissions: ['data_import', 'data_export', 'database_management', 'reports', 'indicator_reports']
     }
   ];
 
@@ -84,7 +90,7 @@ router.get('/users', authenticateToken, requireRole(['super_admin', 'admin']), a
 router.put('/users/:userId/role', [
   authenticateToken,
   requireRole(['super_admin', 'admin']),
-  body('role').isIn(['super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager']).withMessage('Invalid role'),
+  body('role').isIn(['super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager', 'data_manager']).withMessage('Invalid role'),
   body('assignedSites').optional().isArray().withMessage('Assigned sites must be an array')
 ], async (req, res) => {
   try {
@@ -154,7 +160,7 @@ router.post('/users', [
   body('username').isLength({ min: 3, max: 40 }).withMessage('Username must be between 3 and 40 characters'),
   body('fullName').isLength({ min: 2, max: 40 }).withMessage('Full name must be between 2 and 40 characters'),
   body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  body('role').isIn(['super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager']).withMessage('Invalid role'),
+  body('role').isIn(['super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager', 'data_manager']).withMessage('Invalid role'),
   body('assignedSites').optional().isArray().withMessage('Assigned sites must be an array')
 ], async (req, res) => {
   try {
@@ -390,7 +396,8 @@ router.get('/permissions', authenticateToken, (req, res) => {
     nurse: ['patient_care', 'basic_data_entry'],
     data_entry: ['data_entry'],
     viewer: ['view_reports', 'view_data'],
-    site_manager: ['site_management', 'data_entry', 'reports', 'patient_care']
+    site_manager: ['site_management', 'data_entry', 'reports', 'patient_care'],
+    data_manager: ['data_import', 'data_export', 'database_management', 'reports', 'indicator_reports', 'view_data']
   };
 
   const userRole = req.user.role;

@@ -47,7 +47,7 @@ const SiteFilter = ({
         <SelectTrigger className="h-9 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
           <SelectValue placeholder="Select site" />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="max-h-60 overflow-y-auto scrollbar-hide">
           {showAllOption && (
             <SelectItem value="all">
               All Sites
@@ -88,7 +88,7 @@ const SiteFilter = ({
           <SelectTrigger className="w-full sm:w-56 h-9 border-gray-300 focus:border-blue-500 focus:ring-blue-500">
             <SelectValue placeholder="Select site" />
           </SelectTrigger>
-          <SelectContent className="max-h-80 w-full">
+          <SelectContent className="max-h-80 w-full overflow-y-auto scrollbar-hide">
             {showAllOption && (
               <SelectItem value="all" className="py-2 sm:py-3">
                 <div className="flex items-center gap-2 sm:gap-3">
@@ -99,7 +99,7 @@ const SiteFilter = ({
                 </div>
               </SelectItem>
             )}
-            {filteredSites.slice(0, 6).map((site) => (
+            {filteredSites.map((site) => (
               <SelectItem key={site.code} value={site.code} className="py-2 sm:py-3">
                 <div className="flex items-center gap-2 sm:gap-3">
                   <div className="flex flex-col flex-1 min-w-0">
@@ -121,7 +121,7 @@ const SiteFilter = ({
             ))}
             {filteredSites.length > 6 && (
               <div className="px-3 py-2 text-xs text-gray-500 text-center border-t">
-                Showing 6 of {filteredSites.length} sites
+                Showing first {Math.min(6, filteredSites.length)} of {filteredSites.length} sites
               </div>
             )}
           </SelectContent>

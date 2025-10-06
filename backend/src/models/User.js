@@ -45,12 +45,12 @@ const User = sequelize.define('User', {
     }
   },
   role: {
-    type: DataTypes.ENUM('super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager'),
+    type: DataTypes.ENUM('super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager', 'data_manager'),
     field: 'Role',
     allowNull: false,
     defaultValue: 'viewer',
     validate: {
-      isIn: [['super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager']]
+      isIn: [['super_admin', 'admin', 'doctor', 'nurse', 'data_entry', 'viewer', 'site_manager', 'data_manager']]
     }
   },
   assignedSites: {

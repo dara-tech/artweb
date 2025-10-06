@@ -66,7 +66,7 @@ class SiteDatabaseManager {
   // Get all active sites
   async getAllSites() {
     try {
-      const [results] = await this.registryConnection.query(
+      const results = await this.registryConnection.query(
         `SELECT 
           code, 
           name, 
@@ -78,7 +78,10 @@ class SiteDatabaseManager {
           database_name
         FROM sites 
         WHERE status = 1 
-        ORDER BY code`
+        ORDER BY code`,
+        {
+          type: this.registryConnection.QueryTypes.SELECT
+        }
       );
       return results;
     } catch (error) {

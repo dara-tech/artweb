@@ -33,14 +33,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     user?.role === 'super_admin' || user?.role === 'admin', 
     [user?.role]
   )
+  const isDataManager = useMemo(() => user?.role === 'data_manager', [user?.role])
+  const isDataEntry = useMemo(() => 
+    user?.role === 'data_entry' || user?.role === 'doctor' || user?.role === 'nurse' || user?.role === 'site_manager',
+    [user?.role]
+  )
 
   // Memoized navigation items for better performance
   const navigationItems = useMemo(() => {
     if (!user || isViewer) return []
     const items = []
 
-    // Dashboard - hide for viewers
-    if (!isViewer) {
+    // Dashboard - show for all except viewers and data managers
+    if (!isViewer && !isDataManager) {
       items.push({
         name: 'Dashboard',
         href: '/dashboard',
@@ -50,8 +55,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
       })
     }
 
-    // Data entry sections - hide for viewers
-    if (!isViewer) {
+    // Data Manager specific menu - only data management and reports
+    if (isDataManager) {
+      items.push(
+        {
+          name: 'Data Management',
+          href: '/import-data',
+          icon: Upload,
+          current: location.pathname.startsWith('/import-data'),
+          category: 'data'
+        }
+      )
+    } else if (!isViewer) {
+      // Data entry sections - hide for viewers and data managers
       items.push(
         {
           name: 'All Patients',
@@ -152,8 +168,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
           icon: FileBarChart,
           current: location.pathname === '/indicators'
         },
-        // Indicators Dashboard - hide for viewers
-        ...(isViewer ? [] : [{
+        // Indicators Dashboard - hide for viewers and data managers
+        ...(isViewer || isDataManager ? [] : [{
           name: 'Indicators Dashboard',
           href: '/indicators/dashboard',
           icon: BarChart3,
@@ -163,7 +179,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
     })
 
     return items
-  }, [isViewer, isAdmin, location.pathname])
+  }, [isViewer, isAdmin, isDataManager, isDataEntry, location.pathname])
 
   // Don't render sidebar until user data is loaded
   if (loading || !user) {
@@ -245,7 +261,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
                 </div>
                 <div className="flex-1 min-w-0">
                   <h1 className="text-lg font-semibold text-card-foreground truncate">PreART System</h1>
-                  <p className="text-xs text-muted-foreground truncate">Patient Management</p>
+
                 </div>
               </div>
             ) : (
