@@ -232,7 +232,7 @@ WITH tblactive AS (
         i.OffIn, 
         a.ART, 
         a.DaArt,
-        v.DatVisit, 
+        v.DatVisit AS DatVisit, 
         v.ARTnum, 
         v.DaApp,
         a.nmonthART,
@@ -290,6 +290,7 @@ SELECT
     DaArt,
     DafirstVisit,
     DaBirth,
+    DatVisit AS datevisit,
     OffIn,
     CASE 
         WHEN OffIn = 0 THEN 'Not Transferred'

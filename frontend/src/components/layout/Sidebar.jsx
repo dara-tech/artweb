@@ -170,7 +170,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
         },
         // Indicators Dashboard - hide for viewers and data managers
         ...(isViewer || isDataManager ? [] : [{
-          name: 'Indicators Dashboard',
+          name: 'Visualization',
           href: '/indicators/dashboard',
           icon: BarChart3,
           current: location.pathname === '/indicators/dashboard'

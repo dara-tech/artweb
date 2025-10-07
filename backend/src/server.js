@@ -36,11 +36,22 @@ const io = new Server(server, {
   cors: {
     origin: [
       process.env.FRONTEND_URL || 'http://localhost:5173',
+      'http://localhost:5174',
       'http://localhost:3000',
       'http://localhost:3001',
       'http://127.0.0.1:5173',
-      'http://127.0.0.1:3000'
-
+      'http://127.0.0.1:5174',
+      'http://127.0.0.1:3000',
+      'http://192.168.1.120:5173',  // Your actual current IP
+      'http://192.168.1.120:5174',  // Your actual current IP with port 5174
+      'http://192.168.0.120:5173',
+      'http://192.168.0.120:5174',
+      /^http:\/\/192\.168\.\d+\.\d+:5173$/,
+      /^http:\/\/192\.168\.\d+\.\d+:5174$/,
+      /^http:\/\/10\.\d+\.\d+\.\d+:5173$/,
+      /^http:\/\/10\.\d+\.\d+\.\d+:5174$/,
+      /^http:\/\/172\.\d+\.\d+\.\d+:5173$/,
+      /^http:\/\/172\.\d+\.\d+\.\d+:5174$/
     ],
     methods: ['GET', 'POST'],
     credentials: true
@@ -54,18 +65,26 @@ app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:5173',
     'http://localhost:5174',  // Current local port
-    'http://192.168.1.249:5174',  // Current network IP and port
-    'http://192.168.1.249:5173',  // Current network IP with default port
+    'http://192.168.1.120:5173',  // Your actual current IP
+    'http://192.168.1.120:5174',  // Your actual current IP with port 5174
+    'http://192.168.0.120:5173',  // Previous IP
+    'http://192.168.0.120:5174',  // Previous IP with port 5174
+    'http://192.168.1.249:5174',  // Previous network IP and port
+    'http://192.168.1.249:5173',  // Previous network IP with default port
     'http://192.168.10.205:5173',
     'http://192.168.0.146:5173',  // Fixed port
     'http://192.168.0.146:5174',
-    'http://192.168.0.63:5173',  // Current server IP
+    'http://192.168.0.63:5173',  // Previous server IP
     'http://192.168.0.63:3000', 
     'http://172.20.10.5:5173', // Alternative port
     /^http:\/\/192\.168\.\d+\.\d+:5173$/,  // Allow any device on 192.168.x.x network
     /^http:\/\/192\.168\.\d+\.\d+:5174$/,  // Allow any device on 192.168.x.x network with port 5174
     /^http:\/\/192\.168\.\d+\.\d+:3000$/,   // Allow any device on 192.168.x.x network
-    /^http:\/\/192\.168\.\d+\.\d+:3001$/   // Allow backend port on 192.168.x.x network
+    /^http:\/\/192\.168\.\d+\.\d+:3001$/,   // Allow backend port on 192.168.x.x network
+    /^http:\/\/10\.\d+\.\d+\.\d+:5173$/,    // Allow any device on 10.x.x.x network
+    /^http:\/\/10\.\d+\.\d+\.\d+:5174$/,    // Allow any device on 10.x.x.x network with port 5174
+    /^http:\/\/172\.\d+\.\d+\.\d+:5173$/,   // Allow any device on 172.x.x.x network
+    /^http:\/\/172\.\d+\.\d+\.\d+:5174$/    // Allow any device on 172.x.x.x network with port 5174
   ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],

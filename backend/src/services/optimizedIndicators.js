@@ -173,6 +173,11 @@ class OptimizedIndicators {
         }
       }
 
+      // Get pagination parameters
+      const page = params.page || 1;
+      const limit = Math.min(params.limit || 100, 100000); // Cap at 100k
+      const offset = (page - 1) * limit;
+
       // Try to get the details version of the query first
       const query = this.queries.get(`${indicatorId}_details`);
       if (!query) {
@@ -181,8 +186,10 @@ class OptimizedIndicators {
         if (!fallbackQuery) {
           throw new Error(`Indicator ${indicatorId} not found`);
         }
-        // Use fallback query
-        const result = await sequelize.query(fallbackQuery, {
+        
+        // Get total count for pagination
+        const countQuery = `SELECT COUNT(*) as total FROM (${fallbackQuery}) as count_query`;
+        const countResult = await sequelize.query(countQuery, {
           replacements: {
             StartDate: params.startDate,
             EndDate: params.endDate,
@@ -204,6 +211,9 @@ class OptimizedIndicators {
         const totalCount = countResult[0].total;
         
         // Use fallback query with pagination
+        const cleanFallbackQuery = fallbackQuery.trim().replace(/;+$/, '');
+        const paginatedFallbackQuery = `${cleanFallbackQuery} LIMIT ${limit} OFFSET ${offset}`;
+        
         const fallbackResult = await sequelize.query(paginatedFallbackQuery, {
           replacements: {
             StartDate: params.startDate,
@@ -252,11 +262,6 @@ class OptimizedIndicators {
         };
       }
 
-      // Add LIMIT and OFFSET to the query for database-level pagination
-      const page = params.page || 1;
-      const limit = Math.min(params.limit || 100, 100000); // Cap at 100k
-      const offset = (page - 1) * limit;
-      
       // Add pagination to the query (remove semicolon first if present)
       const cleanQuery = query.trim().replace(/;+$/, '');
       const paginatedQuery = `${cleanQuery} LIMIT ${limit} OFFSET ${offset}`;
@@ -285,7 +290,8 @@ class OptimizedIndicators {
       });
       
       // Get total count for pagination info
-      const countQuery = `SELECT COUNT(*) as total FROM (${query}) as count_query`;
+      const cleanQueryForCount = query.trim().replace(/;+$/, '');
+      const countQuery = `SELECT COUNT(*) as total FROM (${cleanQueryForCount}) as count_query`;
       const countResult = await sequelize.query(countQuery, {
         replacements: {
           StartDate: params.startDate,
@@ -369,7 +375,6 @@ class OptimizedIndicators {
     } catch (error) {
       console.error(`❌ Error executing ${indicatorId} details:`, error.message);
       console.error(`❌ Error stack:`, error.stack);
-      console.error(`❌ Query that failed:`, paginatedQuery.substring(0, 500) + '...');
       throw error;
     }
   }

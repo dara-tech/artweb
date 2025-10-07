@@ -73,8 +73,6 @@ export const getDateRangeForYearQuarter = (year, quarter) => {
 
 // Calculate summary statistics
 export const calculateSummaryStats = (indicatorsData) => {
-  console.log('Calculating summary stats from indicators:', indicatorsData.map(ind => ind.Indicator));
-  
   // Helper function to find indicators with flexible matching
   const findIndicator = (patterns) => {
     for (const pattern of patterns) {
@@ -82,7 +80,6 @@ export const calculateSummaryStats = (indicatorsData) => {
         ind.Indicator && ind.Indicator.toLowerCase().includes(pattern.toLowerCase())
       );
       if (found) {
-        console.log(`Found indicator for pattern "${pattern}":`, found.Indicator, 'Value:', found.TOTAL);
         return found.TOTAL || 0;
       }
     }
@@ -112,13 +109,6 @@ export const calculateSummaryStats = (indicatorsData) => {
     '10.5. tpt complete',
     'tpt complete'
   ]);
-
-  console.log('Summary stats calculated:', {
-    activePatients,
-    newEnrolled,
-    viralSuppressed,
-    tptCompleted
-  });
 
   return {
     activePatients,

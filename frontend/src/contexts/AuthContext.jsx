@@ -32,7 +32,6 @@ export const AuthProvider = ({ children }) => {
       // Add timeout to prevent hanging requests
       const controller = new AbortController()
       const timeoutId = setTimeout(() => {
-        console.log('Login request timed out after 30 seconds')
         controller.abort()
       }, 30000) // 30 second timeout
       
@@ -47,14 +46,8 @@ export const AuthProvider = ({ children }) => {
       
       clearTimeout(timeoutId)
       
-      console.log('📡 Response received:')
-      console.log('  Status:', response.status)
-      console.log('  OK:', response.ok)
-      console.log('  URL:', response.url)
-      
       if (!response.ok) {
         const errorData = await response.json()
-        console.log('❌ Login failed:', errorData)
         return {
           success: false,
           error: errorData.message || `Login failed (${response.status})`
@@ -62,10 +55,8 @@ export const AuthProvider = ({ children }) => {
       }
       
       const data = await response.json()
-      console.log('✅ Login successful:', data)
       
       if (data.token) {
-        console.log('Setting token and user:', data.user)
         localStorage.setItem('token', data.token)
         setUser(data.user)
         setLoading(false)
@@ -99,7 +90,6 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       const token = localStorage.getItem('token')
-      console.log('🔍 Checking auth status, token exists:', !!token)
       
       if (token) {
         // First, try to decode the token locally to avoid unnecessary API calls
@@ -107,12 +97,8 @@ export const AuthProvider = ({ children }) => {
           const payload = JSON.parse(atob(token.split('.')[1]))
           const now = Date.now() / 1000
           
-          console.log('Token payload:', payload)
-          console.log('Token expired:', payload.exp < now)
-          
           // Check if token is expired
           if (payload.exp && payload.exp < now) {
-            console.log('Token expired, removing...')
             localStorage.removeItem('token')
             setUser(null)
             setLoading(false)
@@ -128,7 +114,6 @@ export const AuthProvider = ({ children }) => {
             assignedSites: payload.assignedSites
           }
           
-          console.log('Setting user from token:', userData)
           setUser(userData)
           setLoading(false)
           
@@ -142,7 +127,6 @@ export const AuthProvider = ({ children }) => {
           setLoading(false)
         }
       } else {
-        console.log('No token found, setting loading to false')
         setLoading(false)
       }
     } catch (error) {

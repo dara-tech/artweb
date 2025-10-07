@@ -9,7 +9,6 @@ import { useAuth } from '../../contexts/AuthContext';
 import {
   ReportHeader,
   ReportConfiguration,
-  ExecutiveSummary,
   IndicatorsTable,
   ReportPreview,
   generateAvailableYears,
@@ -45,7 +44,12 @@ const IndicatorsReport = () => {
   
   // Year and Quarter selection
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [selectedQuarter, setSelectedQuarter] = useState(Math.floor(new Date().getMonth() / 3) + 1);
+  const [selectedQuarter, setSelectedQuarter] = useState(() => {
+    const currentMonth = new Date().getMonth();
+    const currentQuarter = Math.floor(currentMonth / 3) + 1;
+    // If we're in Q4 (months 9-11), show Q3 instead since Q4 is not complete
+    return currentQuarter === 4 ? 3 : currentQuarter;
+  });
   
   // Site filtering
   const [sites, setSites] = useState([]);
@@ -79,7 +83,7 @@ const IndicatorsReport = () => {
   // Debug modal state changes (only when modal opens with data)
   useEffect(() => {
     if (showDetailsModal && indicatorDetails.length > 0) {
-      console.log('🔍 Modal opened with', indicatorDetails.length, 'records for', selectedIndicator?.Indicator);
+      // Modal opened with data
     }
   }, [showDetailsModal, selectedIndicator, indicatorDetails]);
 
@@ -96,11 +100,14 @@ const IndicatorsReport = () => {
     
     // If current year, make sure quarter is not in the future
     const currentYear = new Date().getFullYear();
-    const currentQuarter = Math.floor(new Date().getMonth() / 3) + 1;
+    const currentMonth = new Date().getMonth();
+    const currentQuarter = Math.floor(currentMonth / 3) + 1;
+    // If we're in Q4, show Q3 instead since Q4 is not complete
+    const availableQuarter = currentQuarter === 4 ? 3 : currentQuarter;
     
-    if (newYear === currentYear && selectedQuarter > currentQuarter) {
-      setSelectedQuarter(currentQuarter);
-      const dateRange = getDateRangeForYearQuarter(newYear, currentQuarter);
+    if (newYear === currentYear && selectedQuarter > availableQuarter) {
+      setSelectedQuarter(availableQuarter);
+      const dateRange = getDateRangeForYearQuarter(newYear, availableQuarter);
       setDateRange(dateRange);
     } else {
       const dateRange = getDateRangeForYearQuarter(newYear, selectedQuarter);
@@ -136,34 +143,17 @@ const IndicatorsReport = () => {
         params.siteCode = selectedSite.code;
       }
       
-      console.log('🔍 API Request Parameters:', {
-        category,
-        params,
-        selectedSite: selectedSite ? { code: selectedSite.code, name: selectedSite.name } : 'No site selected'
-      });
+      // API request parameters logged for debugging
       
       // Always get all indicators, filtering will be done on frontend
       const response = await reportingApi.getAllIndicators(params);
       
       if (response.success) {
-        console.log('🔍 FRONTEND API RESPONSE ANALYSIS');
-        console.log('=====================================');
-        console.log('📊 Raw API response:', response);
-        console.log('📈 Performance data:', response.performance);
-        console.log('📅 Period:', response.period);
-        console.log('📋 Raw data structure:', response.data);
-        console.log('📊 Data type:', Array.isArray(response.data) ? 'Array' : typeof response.data);
-        
         // Process the data based on whether it's site-specific or all sites
         let indicatorsData = [];
         
         if (selectedSite) {
           // Site-specific data: response.data is an array of indicator objects
-          console.log('🏥 Processing site-specific data');
-          console.log('📊 Site info:', response.site);
-          console.log('📋 Raw site data:', response.data);
-          
-          // Extract the data from each indicator (data is already the indicator object)
           indicatorsData = response.data.map(indicatorData => ({
             Indicator: indicatorData.Indicator,
             TOTAL: Number(indicatorData.TOTAL || 0),
@@ -173,14 +163,8 @@ const IndicatorsReport = () => {
             Female_over_14: Number(indicatorData.Female_over_14 || 0),
             error: indicatorData.error || null
           }));
-          
-          console.log(`📊 Processed ${indicatorsData.length} indicators for site ${selectedSite.code}`);
         } else {
           // All sites data: response.data is an array of indicator objects (already aggregated by backend)
-          console.log('🌐 Processing all sites data - using pre-aggregated indicators');
-          console.log('📊 Raw aggregated data:', response.data);
-          
-          // The backend already aggregates the data, so we just need to process it
           indicatorsData = response.data.map(indicatorData => ({
             Indicator: indicatorData.Indicator,
             TOTAL: Number(indicatorData.TOTAL || 0),
@@ -190,26 +174,7 @@ const IndicatorsReport = () => {
             Female_over_14: Number(indicatorData.Female_over_14 || 0),
             error: indicatorData.error || null
           }));
-          
-          console.log(`📊 Processed ${indicatorsData.length} pre-aggregated indicators`);
         }
-        
-        console.log('📋 Processed indicators data (first 3):', indicatorsData.slice(0, 3));
-        console.log('📊 Total indicators processed:', indicatorsData.length);
-        
-        // Log each indicator with detailed breakdown
-        console.log('🔍 DETAILED INDICATOR BREAKDOWN:');
-        indicatorsData.forEach((indicator, index) => {
-          console.log(`\n📊 Indicator ${index + 1}:`, {
-            name: indicator.Indicator,
-            total: indicator.TOTAL,
-            male_0_14: indicator.Male_0_14,
-            female_0_14: indicator.Female_0_14,
-            male_over_14: indicator.Male_over_14,
-            female_over_14: indicator.Female_over_14,
-            error: indicator.error || 'none'
-          });
-        });
         
         // Filter indicators to show only 1-10.8 range
         const filteredIndicators = indicatorsData.filter(indicator => {
@@ -220,52 +185,20 @@ const IndicatorsReport = () => {
           if (!match) return false;
           
           const indicatorNum = parseFloat(match[1]);
-          const shouldInclude = indicatorNum >= 1 && indicatorNum <= 10.8;
-          
-          if (shouldInclude) {
-            console.log(`✅ Including indicator: ${indicator.Indicator} (${indicatorNum})`);
-          } else {
-            console.log(`❌ Excluding indicator: ${indicator.Indicator} (${indicatorNum})`);
-          }
-          
-          return shouldInclude;
+          return indicatorNum >= 1 && indicatorNum <= 10.8;
         });
-        
-        console.log('\n🎯 FILTERED INDICATORS SUMMARY:');
-        console.log('================================');
-        console.log('📊 Total filtered indicators:', filteredIndicators.length);
-        console.log('📋 Filtered indicators data:', filteredIndicators);
         
         setIndicators(filteredIndicators);
         
         // Calculate and update summary statistics
         const stats = calculateSummaryStats(filteredIndicators);
-        console.log('\n📈 CALCULATED SUMMARY STATISTICS:');
-        console.log('==================================');
-        console.log('Active Patients:', stats.activePatients);
-        console.log('New Enrolled:', stats.newEnrolled);
-        console.log('Viral Suppressed:', stats.viralSuppressed);
-        console.log('TPT Completed:', stats.tptCompleted);
         setSummaryStats(stats);
-        
-        // Debug: Log the specific indicators we're looking for
-        console.log('\n🔍 SPECIFIC INDICATOR LOOKUP:');
-        console.log('==============================');
-        console.log('10. Active ART patients:', filteredIndicators.find(ind => ind.Indicator && ind.Indicator.toLowerCase().includes('active art patients')));
-        console.log('3. Newly Enrolled:', filteredIndicators.find(ind => ind.Indicator && ind.Indicator.toLowerCase().includes('newly enrolled')));
-        console.log('10.8. VL suppression:', filteredIndicators.find(ind => ind.Indicator && ind.Indicator.toLowerCase().includes('vl suppression')));
-        console.log('10.5. TPT Complete:', filteredIndicators.find(ind => ind.Indicator && ind.Indicator.toLowerCase().includes('tpt complete')));
         
         // Validate data consistency
         const validationResults = validateDataConsistency(stats, filteredIndicators);
         if (validationResults.hasMismatches) {
-          console.warn('⚠️ Data consistency issues found:', validationResults.mismatches);
-        } else {
-          console.log('✅ Data consistency validation passed');
+          console.warn('Data consistency issues found:', validationResults.mismatches);
         }
-        
-        console.log('\n🎉 FRONTEND DATA PROCESSING COMPLETE');
-        console.log('=====================================');
         
         setIsInitialLoad(false);
       } else {
@@ -288,22 +221,17 @@ const IndicatorsReport = () => {
     try {
       setSitesLoading(true);
       const response = await siteApi.getAllSites();
-      console.log('Raw sites response:', response);
       
       // Handle the response structure properly
       const sitesData = response.sites || response.data || response;
-      console.log('Processed sites data:', sitesData);
-      
       setSites(sitesData);
-      console.log('Loaded sites with data:', sitesData?.length || 0);
       
       // Auto-select first site if none is selected
       if (sitesData && sitesData.length > 0 && !selectedSite) {
         setSelectedSite(sitesData[0]);
-        console.log('Auto-selected first site:', sitesData[0]);
       }
     } catch (error) {
-      console.error('Error loading sites with data:', error);
+      console.error('Error loading sites:', error);
       // Fallback to all sites if the new endpoint fails
       try {
         const fallbackResponse = await siteApi.getAllSites();
@@ -313,12 +241,10 @@ const IndicatorsReport = () => {
           index === self.findIndex(s => s.code === site.code)
         );
         setSites(uniqueSites);
-        console.log('Loaded fallback sites (deduplicated):', uniqueSites.length);
         
         // Auto-select first site if none is selected
         if (uniqueSites && uniqueSites.length > 0 && !selectedSite) {
           setSelectedSite(uniqueSites[0]);
-          console.log('Auto-selected first fallback site:', uniqueSites[0]);
         }
       } catch (fallbackError) {
         console.error('Error loading fallback sites:', fallbackError);
@@ -337,8 +263,11 @@ const IndicatorsReport = () => {
   // Initialize date range on component mount
   useEffect(() => {
     const currentYear = new Date().getFullYear();
-    const currentQuarter = Math.floor(new Date().getMonth() / 3) + 1;
-    const initialDateRange = getDateRangeForYearQuarter(currentYear, currentQuarter);
+    const currentMonth = new Date().getMonth();
+    const currentQuarter = Math.floor(currentMonth / 3) + 1;
+    // If we're in Q4, use Q3 instead since Q4 is not complete
+    const initialQuarter = currentQuarter === 4 ? 3 : currentQuarter;
+    const initialDateRange = getDateRangeForYearQuarter(currentYear, initialQuarter);
     setDateRange(initialDateRange);
   }, []);
 
@@ -354,7 +283,6 @@ const IndicatorsReport = () => {
   // Fetch data when site selection changes
   useEffect(() => {
     if (!isInitialLoad) {
-      console.log('🔄 Site changed, fetching new data...', selectedSite);
       const timeoutId = setTimeout(() => {
         fetchIndicators(activeTab);
       }, 300);
@@ -424,7 +352,6 @@ const IndicatorsReport = () => {
 
   const fetchIndicatorDetails = async (indicator, page = 1, search = '', filters = {}) => {
     if (!indicator) {
-      console.log('❌ No indicator provided');
       return;
     }
     
@@ -503,7 +430,6 @@ const IndicatorsReport = () => {
             sampleSite: response.sampleSite,
             message: response.message
           });
-          console.log('📊 Sample data detected:', response.message);
         } else if (response.isAggregatedData) {
           setIsSampleData(false);
           setSampleDataInfo({
@@ -511,18 +437,12 @@ const IndicatorsReport = () => {
             sourceSites: response.sourceSites,
             message: response.message
           });
-          console.log('📊 Aggregated data detected:', response.message);
         } else {
           setIsSampleData(false);
           setSampleDataInfo(null);
         }
-        
-        console.log('✅ Loaded', response.data?.length || 0, 'records for', indicator.Indicator);
-        console.log('📊 Full API Response:', response);
-        console.log('📊 Pagination data:', response.pagination);
-        console.log('📊 Total count:', response.pagination?.totalCount);
       } else {
-        console.error('❌ Failed to fetch details:', response.message);
+        console.error('Failed to fetch details:', response.message);
         setIndicatorDetails([]);
         setPagination({});
         setDetailsError(response.message || 'Failed to fetch indicator details');
@@ -709,7 +629,12 @@ const IndicatorsReport = () => {
         />
 
          {/* Executive Summary Dashboard */}
-        <ExecutiveSummary summaryStats={summaryStats} />
+        {/* <ExecutiveSummary summaryStats={summaryStats} /> */}
+        <ReportHeader 
+          selectedSite={selectedSite}
+          selectedYear={selectedYear}
+          selectedQuarter={selectedQuarter}
+        />
 
         {/* Error Message */}
         {error && (

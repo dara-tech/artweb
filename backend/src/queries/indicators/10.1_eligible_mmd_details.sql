@@ -177,6 +177,7 @@ SELECT
     DaArt,
     DafirstVisit,
     DaBirth,
+    DatVisit AS datevisit,
     OffIn,
     CASE 
         WHEN OffIn = 0 THEN 'Not Transferred'

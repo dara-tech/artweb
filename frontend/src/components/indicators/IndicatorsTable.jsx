@@ -41,67 +41,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
     return (
       <div className="space-y-4 sm:space-y-6">
         {/* Report Header Skeleton - Bilingual Format */}
-        <div className="bg-card shadow-sm p-6 mb-6">
-          <div className="animate-pulse">
-            {/* Main Title Skeleton */}
-            <div className="text-center mb-6">
-              <div className="h-8 bg-muted rounded w-3/4 mx-auto mb-2"></div>
-            </div>
-
-            {/* Report Parameters Table Skeleton */}
-            <div className="border border-border overflow-hidden">
-              <table className="w-full">
-                <tbody>
-                  {/* Row 1: Facility Name, File Name */}
-                  <tr className="border-b border-border">
-                    <td className="px-4 py-3 w-1/4 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                    </td>
-                    <td className="px-4 py-3 w-1/4 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-2/3"></div>
-                    </td>
-                    <td className="px-4 py-3 w-1/4 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                    </td>
-                    <td className="px-4 py-3 w-1/4">
-                      <div className="h-4 bg-muted rounded w-1/3"></div>
-                    </td>
-                  </tr>
-                  {/* Row 2: Operational District, Province */}
-                  <tr className="border-b border-border">
-                    <td className="px-4 py-3 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-3/4"></div>
-                    </td>
-                    <td className="px-4 py-3 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-2/3"></div>
-                    </td>
-                    <td className="px-4 py-3 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-1/2"></div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-4 bg-muted rounded w-2/3"></div>
-                    </td>
-                  </tr>
-                  {/* Row 3: Year, Quarter */}
-                  <tr>
-                    <td className="px-4 py-3 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-1/3"></div>
-                    </td>
-                    <td className="px-4 py-3 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-1/4"></div>
-                    </td>
-                    <td className="px-4 py-3 border-r border-border">
-                      <div className="h-4 bg-muted rounded w-1/3"></div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="h-4 bg-muted rounded w-1/4"></div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+      
 
         {/* Indicators Table Skeleton */}
         <div className="bg-card border border-border shadow-sm overflow-hidden">

@@ -17,5 +17,6 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // allow LAN access
     port: 5173,      // standard Vite port
+    strictPort: true, // fail if port is already in use
   },
 })

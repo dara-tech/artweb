@@ -68,11 +68,7 @@ export const reportingApi = {
       useCache
     }
     
-    console.log('🔍 API Request:', {
-      indicatorId,
-      queryParams,
-      siteCode
-    })
+    
     
     // For "All Sites", aggregate data from all available sites
     if (siteCode) {

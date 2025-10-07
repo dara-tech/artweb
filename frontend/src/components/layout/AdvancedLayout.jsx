@@ -284,13 +284,13 @@ const AdvancedLayout = ({ children }) => {
                       <span className="ml-2 hidden sm:inline">Download Scripts</span>
                     </Button>
                     <Button 
-                      variant="ghost" 
+                      variant="destructive" 
                       size="sm" 
                       onClick={handleLogout}
-                      className="hover:bg-destructive/10 hover:text-destructive transition-all duration-200 rounded-lg"
+                      className="hover:bg-destructive/10 hover:text-destructive transition-all duration-200 rounded-lg cursor-pointer"
                       title="Sign Out"
                     >
-                      <LogOut className="w-4 h-4" />
+                      <LogOut className=" h-4 w-4 " />
                     </Button>
                   </div>
                 )}
@@ -333,7 +333,7 @@ const AdvancedLayout = ({ children }) => {
                         onClick={handleLogout} 
                         className="text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer"
                       >
-                        <LogOut className="mr-3 h-4 w-4" />
+                        <LogOut className="mr-3 h-4 w-4 rounded-full text-destructive" />
                         <span>Sign Out</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>

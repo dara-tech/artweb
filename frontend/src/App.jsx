@@ -25,10 +25,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 function App() {
   const { user, loading } = useAuth()
 
-  console.log('App render - user:', user, 'loading:', loading)
-
   if (loading) {
-    console.log('Showing loading screen')
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="text-lg text-foreground">Loading...</div>
@@ -37,11 +34,8 @@ function App() {
   }
 
   if (!user) {
-    console.log('No user, showing login')
     return <Login />
   }
-
-  console.log('User authenticated, showing dashboard')
 
   // Determine default route based on user role
   const getDefaultRoute = () => {

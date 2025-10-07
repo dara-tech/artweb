@@ -35,7 +35,7 @@ if (!API_BASE_URL.endsWith('/')) {
   API_BASE_URL += '/'
 }
 
-console.log('🔗 API Base URL:', API_BASE_URL)
+// API Base URL configured
 
 // Create axios instance
 const api = axios.create({
@@ -65,15 +65,12 @@ api.interceptors.request.use(
       }
     }
     
-    // Log requests in development
-    if (import.meta.env.DEV) {
-      console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`)
-    }
+    // Log requests in development (disabled for cleaner console)
     
     return config
   },
   (error) => {
-    console.error('❌ API Request Error:', error)
+    console.error('API Request Error:', error)
     return Promise.reject(error)
   }
 )
@@ -81,14 +78,11 @@ api.interceptors.request.use(
 // Response interceptor to handle auth errors
 api.interceptors.response.use(
   (response) => {
-    // Log responses in development
-    if (import.meta.env.DEV) {
-      console.log(`✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`)
-    }
+    // Log responses in development (disabled for cleaner console)
     return response
   },
   (error) => {
-    console.error('❌ API Response Error:', error.response?.status, error.response?.data || error.message)
+    console.error('API Response Error:', error.response?.status, error.response?.data || error.message)
     
     if (error.response?.status === 401) {
       localStorage.removeItem('token')

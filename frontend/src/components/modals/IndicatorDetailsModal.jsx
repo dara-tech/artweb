@@ -156,6 +156,7 @@ const IndicatorDetailsModal = ({
 
     if (indicatorName?.includes('MMD')) {
       columns = [...columns, 
+        { key: 'datevisit', label: 'Visit Date', type: 'date' },
         { key: 'MMDStatus', label: 'MMD Status', type: 'badge' }
       ];
     }
