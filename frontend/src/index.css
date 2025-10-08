@@ -1,6 +1,27 @@
 @import "tailwindcss";
 
+.py-3, .py-4{
+  padding: 3px 10px !important;
+}
+
+
 @layer base {
+  * {
+    font-family: 'Hanuman', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  }
+  
+  body {
+    font-family: 'Hanuman', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  }
+
+  
+  
+  /* Hanuman font weight utilities */
+  .font-hanuman-thin { font-weight: 100; }
+  .font-hanuman-light { font-weight: 300; }
+  .font-hanuman-normal { font-weight: 400; }
+  .font-hanuman-bold { font-weight: 700; }
+  .font-hanuman-black { font-weight: 900; }
   :root {
     /* ===========================================
        EXPERT HEALTHCARE DESIGN SYSTEM

@@ -40,30 +40,27 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
   if (loading) {
     return (
       <div className="space-y-4 sm:space-y-6">
-        {/* Report Header Skeleton - Bilingual Format */}
-      
-
         {/* Indicators Table Skeleton */}
-        <div className="bg-card border border-border shadow-sm overflow-hidden">
+        <div className="bg-card border border-border overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               {/* Table Header Skeleton */}
               <thead className="bg-muted border-b-2 border-border">
                 <tr>
-                  <th className="px-4 py-4 text-right text-sm font-bold text-foreground border-r border-border">
-                    <div className="h-4 bg-muted rounded w-32"></div>
+                  <th className="px-4 py-4 text-center text-sm font-bold text-foreground border-r border-border">
+                    <div className="h-4 bg-muted-foreground/20 rounded w-32 mx-auto animate-pulse"></div>
                   </th>
                   <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
-                    <div className="h-4 bg-muted rounded w-12 mx-auto"></div>
+                    <div className="h-4 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
                   </th>
                   <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24 border-r border-border">
-                    <div className="h-4 bg-muted rounded w-16"></div>
+                    <div className="h-4 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                   </th>
                   <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
-                    <div className="h-4 bg-muted rounded w-16"></div>
+                    <div className="h-4 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                   </th>
                   <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24">
-                    <div className="h-4 bg-muted rounded w-16"></div>
+                    <div className="h-4 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                   </th>
                 </tr>
               </thead>
@@ -74,56 +71,62 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                   <React.Fragment key={i}>
                     {/* Indicator Header Row Skeleton */}
                     <tr className="border-b border-border">
-                      <td className="px-3 py-4 text-right text-sm font-medium text-muted-foreground border-r border-border" rowSpan="3">
-                        <div className="h-4 bg-muted rounded w-4 mx-auto"></div>
-                      </td>
+                      {/* Indicator Name - spans 3 rows */}
                       <td className="px-4 py-4 text-sm text-foreground align-middle text-left border-r border-border" rowSpan="3">
-                        <div className="h-4 bg-muted rounded w-48 mb-2"></div>
-                        <div className="h-3 bg-muted rounded w-32"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded w-48 mb-2 animate-pulse"></div>
+                        <div className="h-3 bg-muted-foreground/20 rounded w-32 animate-pulse"></div>
                       </td>
+
+                      {/* Age 0-14 */}
                       <td className="px-3 py-4 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border">
-                        <div className="h-4 bg-muted rounded w-8 mx-auto"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded w-8 mx-auto animate-pulse"></div>
                       </td>
+
+                      {/* Male 0-14 */}
                       <td className="px-3 py-4 text-right border-r border-border">
-                        <div className="h-6 bg-muted rounded w-12 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
                       </td>
+
+                      {/* Female 0-14 */}
                       <td className="px-3 py-4 text-right border-r border-border">
-                        <div className="h-6 bg-muted rounded w-12 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
                       </td>
+
+                      {/* Total 0-14 */}
                       <td className="px-3 py-4 text-right">
-                        <div className="h-6 bg-muted rounded w-12 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
                       </td>
                     </tr>
 
                     {/* 15+ Age Group Row Skeleton */}
                     <tr className="bg-muted border-b border-border">
                       <td className="px-3 py-3 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border">
-                        <div className="h-4 bg-muted rounded w-8 mx-auto"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded w-8 mx-auto animate-pulse"></div>
                       </td>
                       <td className="px-3 py-3 text-right border-r border-border">
-                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                       </td>
                       <td className="px-3 py-3 text-right border-r border-border">
-                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                       </td>
                       <td className="px-3 py-3 text-right">
-                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                       </td>
                     </tr>
 
                     {/* Sub-Total Row Skeleton */}
                     <tr className="bg-muted border-b-2 border-border font-bold">
                       <td className="px-3 py-3 text-center text-sm font-bold text-muted-foreground bg-muted/50 border-r border-border">
-                        <div className="h-4 bg-muted rounded w-12 mx-auto"></div>
+                        <div className="h-4 bg-muted-foreground/20 rounded w-12 mx-auto animate-pulse"></div>
                       </td>
                       <td className="px-3 py-3 text-right border-r border-border">
-                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                       </td>
                       <td className="px-3 py-3 text-right border-r border-border">
-                        <div className="h-6 bg-muted rounded w-16 ml-auto"></div>
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
                       </td>
                       <td className="px-3 py-3 text-right">
-                        <div className="h-7 bg-muted rounded w-20 ml-auto"></div>
+                        <div className="h-7 bg-muted-foreground/20 rounded w-20 ml-auto animate-pulse"></div>
                       </td>
                     </tr>
                   </React.Fragment>
@@ -134,12 +137,10 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
         </div>
 
         {/* Report Footer Skeleton */}
-        <div className="bg-muted border border-border p-4 sm:p-6 mt-6 sm:mt-8">
-          <div className="animate-pulse">
-            <div className="text-right text-muted-foreground">
-              <div className="h-4 bg-muted rounded w-3/4 ml-auto"></div>
-              <div className="h-3 bg-muted rounded w-1/2 ml-auto mt-2"></div>
-            </div>
+        <div className="bg-muted border border-border rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
+          <div className="text-right text-muted-foreground">
+            <div className="h-4 bg-muted-foreground/20 rounded w-3/4 ml-auto animate-pulse"></div>
+            <div className="h-3 bg-muted-foreground/20 rounded w-1/2 ml-auto mt-2 animate-pulse"></div>
           </div>
         </div>
       </div>
@@ -148,15 +149,45 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
 
   if (indicators.length === 0) {
     return (
-      <Card className="border-dashed border-2 border-border">
-        <CardContent className="p-8 sm:p-12 text-right">
-          <div className="flex flex-col items-center gap-4">
-            <div className="p-3 sm:p-4 bg-muted rounded-full">
-              <BarChart3 className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
+      <Card className="border-dashed border-2 border-border bg-gradient-to-br from-card to-muted/20">
+        <CardContent className="p-8 sm:p-12 text-center">
+          <div className="flex flex-col items-center gap-6">
+            {/* Animated Icon Container */}
+            <div className="relative">
+              <div className="absolute inset-0 bg-primary/10 rounded-full animate-ping"></div>
+              <div className="relative p-4 sm:p-6 bg-gradient-to-br from-primary/10 to-primary/5 rounded-full border border-primary/20">
+                <BarChart3 className="h-8 w-8 sm:h-10 sm:w-10 text-primary animate-pulse" />
+              </div>
             </div>
-            <div>
-              <h3 className="text-base sm:text-lg font-semibold text-foreground mb-2">No Data Available</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">No indicators found for the selected period and filters.</p>
+
+            {/* Content */}
+            <div className="space-y-3 max-w-md">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text">
+                No Indicators Available
+              </h3>
+              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                No indicators were found for the selected reporting period and applied filters. 
+                Try adjusting your search criteria or selecting a different time range.
+              </p>
+            </div>
+
+            {/* Suggestions */}
+            <div className="mt-4 p-4 bg-muted/50 rounded-lg border border-border/50 w-full max-w-md">
+              <h4 className="text-sm font-semibold text-foreground mb-2">Suggestions:</h4>
+              <ul className="text-xs text-muted-foreground space-y-1 text-left">
+                <li className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-primary rounded-full"></div>
+                  Check if data exists for the selected period
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-primary rounded-full"></div>
+                  Verify site and filter selections
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1 h-1 bg-primary rounded-full"></div>
+                  Try expanding the date range
+                </li>
+              </ul>
             </div>
           </div>
         </CardContent>
@@ -174,7 +205,7 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
             {/* Table Header */}
             <thead className="bg-muted border-b-2 border-border">
               <tr>
-                <th className="px-4 py-4 text-right text-sm font-bold text-foreground border-r border-border">
+                <th className="px-4 py-4 text-center text-sm font-bold text-foreground border-r border-border">
                   សុចនាករ Indicator
                 </th>
                 <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
@@ -203,9 +234,13 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     {/* Indicator Name - spans 3 rows */}
                     <td className="px-4 py-4 text-sm text-foreground align-middle text-left border-r border-border" rowSpan="3">
                       <div 
-                        className="font-medium leading-tight text-left cursor-pointer hover:text-primary hover:underline transition-colors"
-                        onClick={() => onIndicatorClick && onIndicatorClick(indicator)}
-                        title="Click to view all patients for this indicator"
+                        className={`font-medium leading-tight text-left transition-colors ${
+                          (indicator.TOTAL || 0) > 0 
+                            ? 'cursor-pointer hover:text-primary hover:underline' 
+                            : 'cursor-not-allowed text-muted-foreground'
+                        }`}
+                        onClick={() => (indicator.TOTAL || 0) > 0 && onIndicatorClick && onIndicatorClick(indicator)}
+                        title={(indicator.TOTAL || 0) > 0 ? "Click to view all patients for this indicator" : "No data available for this indicator"}
                       >
                         {getDisplayIndicatorName(indicator.Indicator)}
                       </div>
@@ -225,12 +260,16 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     {/* Male 0-14 */}
                     <td className="px-3 py-4 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-blue-600 cursor-pointer underline hover:text-blue-800 transition-colors"
+                        className={`text-lg font-normal transition-colors ${
+                          (indicator.Male_0_14 || 0) > 0 
+                            ? 'text-blue-600 cursor-pointer underline hover:text-blue-800' 
+                            : 'text-muted-foreground cursor-not-allowed'
+                        }`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onIndicatorClick && onIndicatorClick(indicator, { gender: 'male', ageGroup: '0-14' });
+                          (indicator.Male_0_14 || 0) > 0 && onIndicatorClick && onIndicatorClick(indicator, { gender: 'male', ageGroup: '0-14' });
                         }}
-                        title="Click to view detailed list of male patients aged 0-14"
+                        title={(indicator.Male_0_14 || 0) > 0 ? "Click to view detailed list of male patients aged 0-14" : "No male patients aged 0-14"}
                       >
                         {(indicator.Male_0_14 || 0).toLocaleString()}
                       </div>
@@ -239,12 +278,16 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     {/* Female 0-14 */}
                     <td className="px-3 py-4 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-pink-600 cursor-pointer underline hover:text-pink-800 transition-colors"
+                        className={`text-lg font-normal transition-colors ${
+                          (indicator.Female_0_14 || 0) > 0 
+                            ? 'text-pink-600 cursor-pointer underline hover:text-pink-800' 
+                            : 'text-muted-foreground cursor-not-allowed'
+                        }`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onIndicatorClick && onIndicatorClick(indicator, { gender: 'female', ageGroup: '0-14' });
+                          (indicator.Female_0_14 || 0) > 0 && onIndicatorClick && onIndicatorClick(indicator, { gender: 'female', ageGroup: '0-14' });
                         }}
-                        title="Click to view detailed list of female patients aged 0-14"
+                        title={(indicator.Female_0_14 || 0) > 0 ? "Click to view detailed list of female patients aged 0-14" : "No female patients aged 0-14"}
                       >
                         {(indicator.Female_0_14 || 0).toLocaleString()}
                       </div>
@@ -266,24 +309,32 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                     </td>
                     <td className="px-3 py-3 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-blue-600 cursor-pointer underline hover:text-blue-800 transition-colors"
+                        className={`text-lg font-normal transition-colors ${
+                          (indicator.Male_over_14 || 0) > 0 
+                            ? 'text-blue-600 cursor-pointer underline hover:text-blue-800' 
+                            : 'text-muted-foreground cursor-not-allowed'
+                        }`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onIndicatorClick && onIndicatorClick(indicator, { gender: 'male', ageGroup: '>14' });
+                          (indicator.Male_over_14 || 0) > 0 && onIndicatorClick && onIndicatorClick(indicator, { gender: 'male', ageGroup: '>14' });
                         }}
-                        title="Click to view detailed list of male patients aged 15+"
+                        title={(indicator.Male_over_14 || 0) > 0 ? "Click to view detailed list of male patients aged 15+" : "No male patients aged 15+"}
                       >
                         {(indicator.Male_over_14 || 0).toLocaleString()}
                       </div>
                     </td>
                     <td className="px-3 py-3 text-right border-r border-border">
                       <div 
-                        className="text-lg font-normal text-pink-600 cursor-pointer underline hover:text-pink-800 transition-colors"
+                        className={`text-lg font-normal transition-colors ${
+                          (indicator.Female_over_14 || 0) > 0 
+                            ? 'text-pink-600 cursor-pointer underline hover:text-pink-800' 
+                            : 'text-muted-foreground cursor-not-allowed'
+                        }`}
                         onClick={(e) => {
                           e.stopPropagation();
-                          onIndicatorClick && onIndicatorClick(indicator, { gender: 'female', ageGroup: '>14' });
+                          (indicator.Female_over_14 || 0) > 0 && onIndicatorClick && onIndicatorClick(indicator, { gender: 'female', ageGroup: '>14' });
                         }}
-                        title="Click to view detailed list of female patients aged 15+"
+                        title={(indicator.Female_over_14 || 0) > 0 ? "Click to view detailed list of female patients aged 15+" : "No female patients aged 15+"}
                       >
                         {(indicator.Female_over_14 || 0).toLocaleString()}
                       </div>
@@ -311,8 +362,9 @@ const IndicatorsTable = ({ indicators, loading, onIndicatorClick, selectedSite, 
                       </div>
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <div className="text-xl font-bold text-foreground">
+                      <div className="text-xl font-bold text-foreground hover:text-primary underline cursor-pointer" onClick={() => onIndicatorClick && onIndicatorClick(indicator)}>
                         {(indicator.TOTAL || 0).toLocaleString()}
+    
                       </div>
                     </td>
                   </tr>

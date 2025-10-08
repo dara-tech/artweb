@@ -2,6 +2,7 @@
 SELECT
     '8.3' as step,
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -23,6 +24,7 @@ SELECT
     s.Da as transfer_date,
     s.Status as transfer_status_code
 FROM tblaimain main 
+LEFT JOIN tblaart art ON main.ClinicID = art.ClinicID
 JOIN tblavpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE 
     s.Da BETWEEN :StartDate AND :EndDate 
@@ -33,6 +35,7 @@ UNION ALL
 SELECT
     '8.3' as step,
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -54,6 +57,7 @@ SELECT
     s.Da as transfer_date,
     s.Status as transfer_status_code
 FROM tblcimain main 
+LEFT JOIN tblcart art ON main.ClinicID = art.ClinicID
 JOIN tblcvpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE 
     s.Da BETWEEN :StartDate AND :EndDate 

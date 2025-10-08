@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Upload, Database, CheckCircle, AlertCircle, X, FileText, Loader2 } from 'lucide-react';
+import { Upload, Database, CheckCircle, AlertCircle, X, FileText, Loader2, Play, Pause } from 'lucide-react';
 import siteApi from '../services/siteApi';
 import importApi from '../services/importApi';
+import toastService from '../services/toastService';
 
 const ImportData = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -26,6 +27,7 @@ const ImportData = () => {
   const [loading, setLoading] = useState(false);
   const [validationErrors, setValidationErrors] = useState([]);
   const [extractedSiteInfo, setExtractedSiteInfo] = useState(null);
+  const [isActive, setIsActive] = useState(true);
   
   const fileInputRef = useRef(null);
 
@@ -38,8 +40,11 @@ const ImportData = () => {
     try {
       setLoading(true);
       const response = await siteApi.getAllSites();
-      const sitesData = response.sites || response.data || response;
-      setSites(sitesData || []);
+      const allSites = response.sites || response.data || response;
+      
+      // Filter out inactive sites (status = 0)
+      const activeSites = (allSites || []).filter(site => site.status === 1);
+      setSites(activeSites);
     } catch (error) {
       console.error('Error loading sites:', error);
       setImportStatus('error');
@@ -58,6 +63,8 @@ const ImportData = () => {
         setImportStatus('idle');
         setExtractedSiteInfo(null);
         
+        toastService.success('File Selected', `Selected file: ${file.name}`);
+        
         // Check if file contains tblsitename table
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -70,11 +77,13 @@ const ImportData = () => {
               detected: true,
               message: 'Site information will be automatically extracted from tblsitename table'
             });
+            toastService.info('Site Info Detected', 'Site information will be automatically extracted from tblsitename table');
           }
         };
         reader.readAsText(file);
       } else {
         setValidationErrors(['Please select a valid SQL file (.sql)']);
+        toastService.error('Invalid File Type', 'Please select a valid SQL file (.sql)');
       }
     }
   };
@@ -89,6 +98,8 @@ const ImportData = () => {
         setImportStatus('idle');
         setExtractedSiteInfo(null);
         
+        toastService.success('File Dropped', `Dropped file: ${file.name}`);
+        
         // Check if file contains tblsitename table
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -101,11 +112,13 @@ const ImportData = () => {
               detected: true,
               message: 'Site information will be automatically extracted from tblsitename table'
             });
+            toastService.info('Site Info Detected', 'Site information will be automatically extracted from tblsitename table');
           }
         };
         reader.readAsText(file);
       } else {
         setValidationErrors(['Please select a valid SQL file (.sql)']);
+        toastService.error('Invalid File Type', 'Please select a valid SQL file (.sql)');
       }
     }
   };
@@ -114,12 +127,43 @@ const ImportData = () => {
     event.preventDefault();
   };
 
+  const handleToggleActive = (newActiveState) => {
+    if (importStatus === 'importing') {
+      toastService.warning(
+        'Cannot Change Status',
+        'Import status cannot be changed while an import is in progress.'
+      );
+      return; // Don't allow changes during import
+    }
+    
+    if (isActive && !newActiveState) {
+      // Confirmation when deactivating
+      const confirmed = window.confirm(
+        'Are you sure you want to deactivate the import function? This will prevent new imports from being processed.'
+      );
+      if (confirmed) {
+        setIsActive(newActiveState);
+        toastService.warning(
+          'Import Deactivated',
+          'Import function has been deactivated. New imports will be blocked.'
+        );
+      }
+    } else {
+      setIsActive(newActiveState);
+      toastService.success(
+        'Import Activated',
+        'Import function has been activated. You can now import data.'
+      );
+    }
+  };
+
   const removeFile = () => {
     setSelectedFile(null);
     setExtractedSiteInfo(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
+    toastService.info('File Removed', 'Selected file has been removed.');
   };
 
   const validateForm = () => {
@@ -157,6 +201,12 @@ const ImportData = () => {
 
   const handleImport = async () => {
     if (!validateForm()) {
+      return;
+    }
+
+    if (!isActive) {
+      setImportStatus('error');
+      setImportMessage('Import is currently inactive. Please activate the import function first.');
       return;
     }
 
@@ -208,8 +258,11 @@ const ImportData = () => {
           });
         }
         
-        // Show success popup
-        alert(`✅ Import Successful!\n\n${response.message || 'Data imported successfully!'}\n\nSite: ${createNewDatabase ? newSiteCode : targetSite}\nFile: ${selectedFile.name}`);
+        // Show success toast
+        toastService.success(
+          'Import Successful!',
+          `${response.message || 'Data imported successfully!'}\n\nSite: ${createNewDatabase ? newSiteCode : targetSite}\nFile: ${selectedFile.name}`
+        );
         
         // Reset form
         setSelectedFile(null);
@@ -230,13 +283,19 @@ const ImportData = () => {
       } else {
         setImportStatus('error');
         setImportMessage(response.message || 'Import failed');
-        alert(`❌ Import Failed!\n\n${response.message || 'Import failed'}\n\nPlease check your file and try again.`);
+        toastService.error(
+          'Import Failed!',
+          `${response.message || 'Import failed'}\n\nPlease check your file and try again.`
+        );
       }
     } catch (error) {
       console.error('Import error:', error);
       setImportStatus('error');
       setImportMessage(error.message || 'Import failed');
-      alert(`❌ Import Error!\n\n${error.message || 'Import failed'}\n\nPlease check your file and try again.`);
+      toastService.error(
+        'Import Error!',
+        `${error.message || 'Import failed'}\n\nPlease check your file and try again.`
+      );
     }
   };
 
@@ -259,6 +318,46 @@ const ImportData = () => {
       <div className="text-center">
         <h1 className="text-2xl font-semibold text-gray-900 mb-2">Import Data</h1>
         <p className="text-gray-600">Upload SQL files to import data into your system</p>
+        
+        {/* Active/Inactive Status Controls */}
+        <div className="mt-4 flex justify-center gap-3">
+          <Button
+            variant={isActive ? "default" : "outline"}
+            size="sm"
+            onClick={() => handleToggleActive(true)}
+            disabled={importStatus === 'importing'}
+            className={`flex items-center gap-2 ${isActive ? 'bg-green-600 hover:bg-green-700 text-white' : 'border-green-600 text-green-600 hover:bg-green-50'} ${importStatus === 'importing' ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <Play className="h-4 w-4" />
+            Active
+          </Button>
+          <Button
+            variant={!isActive ? "default" : "outline"}
+            size="sm"
+            onClick={() => handleToggleActive(false)}
+            disabled={importStatus === 'importing'}
+            className={`flex items-center gap-2 ${!isActive ? 'bg-red-600 hover:bg-red-700 text-white' : 'border-red-600 text-red-600 hover:bg-red-50'} ${importStatus === 'importing' ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            <Pause className="h-4 w-4" />
+            Inactive
+          </Button>
+        </div>
+        
+        {/* Status Indicator */}
+        <div className="mt-2">
+          <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+            isActive 
+              ? 'bg-green-100 text-green-800 border border-green-200' 
+              : 'bg-red-100 text-red-800 border border-red-200'
+          }`}>
+            {isActive ? 'Import is Active' : 'Import is Inactive'}
+          </span>
+          {importStatus === 'importing' && (
+            <p className="mt-1 text-xs text-gray-500">
+              Status controls disabled during import process
+            </p>
+          )}
+        </div>
       </div>
 
       {/* File Upload */}
@@ -456,8 +555,8 @@ const ImportData = () => {
       {/* Import Button */}
       <Button
         onClick={handleImport}
-        disabled={importStatus === 'importing' || !selectedFile}
-        className={`w-full ${importStatus === 'importing' ? 'bg-blue-600 hover:bg-blue-700' : importStatus === 'success' ? 'bg-green-600 hover:bg-green-700' : importStatus === 'error' ? 'bg-red-600 hover:bg-red-700' : ''}`}
+        disabled={importStatus === 'importing' || !selectedFile || !isActive}
+        className={`w-full ${importStatus === 'importing' ? 'bg-blue-600 hover:bg-blue-700' : importStatus === 'success' ? 'bg-green-600 hover:bg-green-700' : importStatus === 'error' ? 'bg-red-600 hover:bg-red-700' : !isActive ? 'bg-gray-400 hover:bg-gray-500' : ''}`}
       >
         {importStatus === 'importing' ? (
           <>
@@ -473,6 +572,11 @@ const ImportData = () => {
           <>
             <AlertCircle className="h-4 w-4 mr-2" />
             Import Failed - Try Again
+          </>
+        ) : !isActive ? (
+          <>
+            <Pause className="h-4 w-4 mr-2" />
+            Import Inactive - Activate First
           </>
         ) : (
           <>

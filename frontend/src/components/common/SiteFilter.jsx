@@ -44,7 +44,7 @@ const SiteFilter = ({
         }}
         disabled={disabled}
       >
-        <SelectTrigger className="h-9 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
+        <SelectTrigger className="h-11 text-sm border-gray-200 focus:border-slate-400 focus:ring-slate-400">
           <SelectValue placeholder="Select site" />
         </SelectTrigger>
         <SelectContent className="max-h-60 overflow-y-auto scrollbar-hide">

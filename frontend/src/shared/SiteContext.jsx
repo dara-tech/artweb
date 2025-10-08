@@ -41,7 +41,10 @@ export const SiteProvider = ({ children }) => {
       }
       
       const response = await siteApi.getAllSites()
-      const siteData = response.sites || response
+      const allSites = response.sites || response
+      
+      // Filter out inactive sites (status = 0)
+      const siteData = allSites.filter(site => site.status === 1)
       
       setSites(siteData)
       setIsMultiSite(siteData.length > 1)

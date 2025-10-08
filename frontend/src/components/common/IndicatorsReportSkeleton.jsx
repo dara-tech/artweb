@@ -4,40 +4,39 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 const IndicatorsReportSkeleton = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background mx-auto lg:max-w-[300mm]">
       <div className="p-4 space-y-6">
         {/* Report Configuration Panel Skeleton */}
-        <Card className="shadow-lg border border-border">
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
-              {/* Site Selection */}
-              <div className="flex-1">
-                <Skeleton className="h-4 w-16 mb-2" />
-                <Skeleton className="h-9 w-full" />
+        <div className="bg-card border border-border rounded-lg shadow-sm">
+          <div className="p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3 sm:gap-4 lg:gap-6">
+              {/* Health Facility Selection */}
+              <div className="flex-1 min-w-0">
+                <div className="space-y-1 sm:space-y-2">
+                  <Skeleton className="h-10 sm:h-11 w-full rounded-md" />
+                </div>
               </div>
-              
-              {/* Year Selection */}
-              <div className="flex-1">
-                <Skeleton className="h-4 w-12 mb-2" />
-                <Skeleton className="h-9 w-full" />
+
+              {/* Time Period */}
+              <div className="flex-1 min-w-0">
+                <div className="space-y-1 sm:space-y-2">
+                  <div className="flex gap-1 sm:gap-2">
+                    <Skeleton className="h-10 sm:h-11 flex-1 rounded-md" />
+                    <Skeleton className="h-10 sm:h-11 flex-1 rounded-md" />
+                  </div>
+                </div>
               </div>
-              
-              {/* Quarter Selection */}
-              <div className="flex-1">
-                <Skeleton className="h-4 w-16 mb-2" />
-                <Skeleton className="h-9 w-full" />
-              </div>
-              
+
               {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Skeleton className="h-9 w-20" />
-                <Skeleton className="h-9 w-20" />
-                <Skeleton className="h-9 w-20" />
-                <Skeleton className="h-9 w-20" />
+              <div className="flex items-center justify-center sm:justify-end gap-1 sm:gap-2 self-stretch sm:self-end">
+                <Skeleton className="h-10 sm:h-11 w-10 sm:w-11 rounded-md" />
+                <Skeleton className="h-10 sm:h-11 w-10 sm:w-11 rounded-md" />
+                <Skeleton className="h-10 sm:h-11 w-10 sm:w-11 rounded-md" />
+                <Skeleton className="h-10 sm:h-11 w-10 sm:w-11 rounded-md" />
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Report Header Skeleton */}
         
@@ -99,109 +98,111 @@ const IndicatorsReportSkeleton = () => {
         </div>
 
         {/* Main Indicators Table Skeleton */}
-        <div className="bg-card rounded-lg">
-          <div className="p-0">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                {/* Table Header Skeleton */}
-                <thead className="bg-muted border-b-2 border-border">
-                  <tr>
-                    <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-12">
-                      <Skeleton className="h-4 w-4 mx-auto" />
-                    </th>
-                    <th className="px-4 py-4 text-center text-sm font-bold text-foreground">
-                      <Skeleton className="h-4 w-32 mx-auto" />
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-20">
-                      <Skeleton className="h-4 w-16 mx-auto" />
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-24">
-                      <Skeleton className="h-4 w-16 mx-auto" />
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-24">
-                      <Skeleton className="h-4 w-16 mx-auto" />
-                    </th>
-                    <th className="px-3 py-4 text-center text-sm font-bold text-foreground w-24">
-                      <Skeleton className="h-4 w-16 mx-auto" />
-                    </th>
-                  </tr>
-                </thead>
+        <div className="space-y-4 sm:space-y-6">
+        {/* Indicators Table Skeleton */}
+        <div className="bg-card border border-border overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              {/* Table Header Skeleton */}
+              <thead className="bg-muted border-b-2 border-border">
+                <tr>
+                  <th className="px-4 py-4 text-center text-sm font-bold text-foreground border-r border-border">
+                    <div className="h-4 bg-muted-foreground/20 rounded w-32 mx-auto animate-pulse"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
+                    <div className="h-4 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24 border-r border-border">
+                    <div className="h-4 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-32 border-r border-border">
+                    <div className="h-4 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                  </th>
+                  <th className="px-3 py-4 text-right text-sm font-bold text-foreground w-24">
+                    <div className="h-4 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                  </th>
+                </tr>
+              </thead>
 
-                {/* Table Body Skeleton */}
-                <tbody className="bg-card divide-y divide-border">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <React.Fragment key={index}>
-                      {/* Indicator Header Row Skeleton */}
-                      <tr className="border-b border-border">
-                        {/* Row Number */}
-                        <td className="px-3 py-4 text-center text-sm font-medium text-foreground" rowSpan="3">
-                          <Skeleton className="h-4 w-4 mx-auto" />
-                        </td>
+              {/* Table Body Skeleton */}
+              <tbody className="bg-card divide-y divide-border">
+                {[...Array(5)].map((_, i) => (
+                  <React.Fragment key={i}>
+                    {/* Indicator Header Row Skeleton */}
+                    <tr className="border-b border-border">
+                      {/* Indicator Name - spans 3 rows */}
+                      <td className="px-4 py-4 text-sm text-foreground align-middle text-left border-r border-border" rowSpan="3">
+                        <div className="h-4 bg-muted-foreground/20 rounded w-48 mb-2 animate-pulse"></div>
+                        <div className="h-3 bg-muted-foreground/20 rounded w-32 animate-pulse"></div>
+                      </td>
 
-                        {/* Indicator Name - spans 3 rows */}
-                        <td className="px-4 py-4 text-sm text-foreground align-middle text-center" rowSpan="3">
-                          <Skeleton className="h-4 w-64 mx-auto" />
-                        </td>
+                      {/* Age 0-14 */}
+                      <td className="px-3 py-4 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border">
+                        <div className="h-4 bg-muted-foreground/20 rounded w-8 mx-auto animate-pulse"></div>
+                      </td>
 
-                        {/* Age 0-14 */}
-                        <td className="px-3 py-4 text-center text-sm font-medium text-muted-foreground">
-                          <Skeleton className="h-4 w-8 mx-auto" />
-                        </td>
+                      {/* Male 0-14 */}
+                      <td className="px-3 py-4 text-right border-r border-border">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
+                      </td>
 
-                        {/* Male 0-14 */}
-                        <td className="px-3 py-4 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
+                      {/* Female 0-14 */}
+                      <td className="px-3 py-4 text-right border-r border-border">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
+                      </td>
 
-                        {/* Female 0-14 */}
-                        <td className="px-3 py-4 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
+                      {/* Total 0-14 */}
+                      <td className="px-3 py-4 text-right">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-12 ml-auto animate-pulse"></div>
+                      </td>
+                    </tr>
 
-                        {/* Total 0-14 */}
-                        <td className="px-3 py-4 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
-                      </tr>
+                    {/* 15+ Age Group Row Skeleton */}
+                    <tr className="bg-muted border-b border-border">
+                      <td className="px-3 py-3 text-center text-sm font-medium text-muted-foreground bg-muted/50 border-r border-border">
+                        <div className="h-4 bg-muted-foreground/20 rounded w-8 mx-auto animate-pulse"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                      </td>
+                    </tr>
 
-                      {/* 15+ Age Group Row Skeleton */}
-                      <tr className="bg-muted/50 border-b border-border">
-                        <td className="px-3 py-3 text-center text-sm font-medium text-muted-foreground">
-                          <Skeleton className="h-4 w-8 mx-auto" />
-                        </td>
-                        <td className="px-3 py-3 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
-                        <td className="px-3 py-3 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
-                        <td className="px-3 py-3 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
-                      </tr>
-
-                      {/* Sub-Total Row Skeleton */}
-                      <tr className="bg-primary/10 border-b-2 border-primary/20 font-bold">
-                        <td className="px-3 py-3 text-center text-sm font-bold text-muted-foreground">
-                          <Skeleton className="h-4 w-12 mx-auto" />
-                        </td>
-                        <td className="px-3 py-3 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
-                        <td className="px-3 py-3 text-center">
-                          <Skeleton className="h-6 w-12 mx-auto" />
-                        </td>
-                        <td className="px-3 py-3 text-center">
-                          <Skeleton className="h-6 w-16 mx-auto" />
-                        </td>
-                      </tr>
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    {/* Sub-Total Row Skeleton */}
+                    <tr className="bg-muted border-b-2 border-border font-bold">
+                      <td className="px-3 py-3 text-center text-sm font-bold text-muted-foreground bg-muted/50 border-r border-border">
+                        <div className="h-4 bg-muted-foreground/20 rounded w-12 mx-auto animate-pulse"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right border-r border-border">
+                        <div className="h-6 bg-muted-foreground/20 rounded w-16 ml-auto animate-pulse"></div>
+                      </td>
+                      <td className="px-3 py-3 text-right">
+                        <div className="h-7 bg-muted-foreground/20 rounded w-20 ml-auto animate-pulse"></div>
+                      </td>
+                    </tr>
+                  </React.Fragment>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
+
+        {/* Report Footer Skeleton */}
+        <div className="bg-muted border border-border rounded-lg p-4 sm:p-6 mt-6 sm:mt-8">
+          <div className="text-right text-muted-foreground">
+            <div className="h-4 bg-muted-foreground/20 rounded w-3/4 ml-auto animate-pulse"></div>
+            <div className="h-3 bg-muted-foreground/20 rounded w-1/2 ml-auto mt-2 animate-pulse"></div>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   );

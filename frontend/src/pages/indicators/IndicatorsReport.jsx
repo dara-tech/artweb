@@ -139,6 +139,7 @@ const IndicatorsReport = () => {
         useCache: true
       };
       
+      // Only add siteCode if a specific site is selected (not "All Sites")
       if (selectedSite) {
         params.siteCode = selectedSite.code;
       }
@@ -224,6 +225,8 @@ const IndicatorsReport = () => {
       
       // Handle the response structure properly
       const sitesData = response.sites || response.data || response;
+      
+      // Backend now returns only active sites (status = 1)
       setSites(sitesData);
       
       // Auto-select first site if none is selected
@@ -236,7 +239,7 @@ const IndicatorsReport = () => {
       try {
         const fallbackResponse = await siteApi.getAllSites();
         const fallbackSites = fallbackResponse.sites || fallbackResponse.data || fallbackResponse;
-        // Remove duplicates based on site code
+        // Remove duplicates based on site code (backend now filters for active sites)
         const uniqueSites = fallbackSites.filter((site, index, self) => 
           index === self.findIndex(s => s.code === site.code)
         );
@@ -493,38 +496,21 @@ const IndicatorsReport = () => {
   };
 
   // Helper functions for print
-  const getProvinceName = (siteCode) => {
-    if (!siteCode) return 'Unknown';
+  const getProvinceName = (site) => {
+    if (!site) return 'Unknown';
     
-    const provinceCode = siteCode.substring(0, 2);
-    const provinceMap = {
-      '02': 'Battambang',
-      '03': 'Kampong Cham', 
-      '12': 'Kampong Thom',
-      '18': 'Preah Sihanouk',
-      '01': 'Phnom Penh',
-      '04': 'Kampong Chhnang',
-      '05': 'Kampong Speu',
-      '06': 'Kampong Thom',
-      '07': 'Kampot',
-      '08': 'Kandal',
-      '09': 'Koh Kong',
-      '10': 'Kratie',
-      '11': 'Mondulkiri',
-      '13': 'Preah Vihear',
-      '14': 'Pursat',
-      '15': 'Ratanakiri',
-      '16': 'Siem Reap',
-      '17': 'Stung Treng',
-      '19': 'Svay Rieng',
-      '20': 'Takeo',
-      '21': 'Oddar Meanchey',
-      '22': 'Kep',
-      '23': 'Pailin',
-      '24': 'Tbong Khmum'
-    };
+    // If site has province field, use it directly
+    if (site.province) {
+      return site.province;
+    }
     
-    return `${provinceCode}. ${provinceMap[provinceCode] || 'Unknown Province'}`;
+    // Fallback to site code parsing if province not available
+    if (site.code) {
+      const provinceCode = site.code.substring(0, 2);
+      return `${provinceCode}. Unknown Province`;
+    }
+    
+    return 'Unknown Province';
   };
 
   const getOperationalDistrict = (site) => {
@@ -606,8 +592,8 @@ const IndicatorsReport = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="p-4 space-y-6">
+    <div className="min-h-screen bg-background mx-auto lg:max-w-[300mm]">
+      <div className="space-y-4">
         {/* Report Configuration Panel */}
         <ReportConfiguration
                     sites={sites}
@@ -626,6 +612,7 @@ const IndicatorsReport = () => {
           onPrint={printToPDF}
           loading={loading}
           isSuperAdmin={isSuperAdmin}
+          isViewer={isViewer}
         />
 
          {/* Executive Summary Dashboard */}

@@ -7,23 +7,36 @@ import {
   FileText, 
   Trash2,
   RefreshCw,
-  AlertCircle
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+  Edit,
+  Save,
+  X
 } from 'lucide-react';
 import api from '../../../services/api';
+import toastService from '../../../services/toastService';
 
 const DataViewer = () => {
   const [sites, setSites] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [updatingStatus, setUpdatingStatus] = useState(null);
+  const [editingFileName, setEditingFileName] = useState(null);
+  const [editingValue, setEditingValue] = useState('');
 
   console.log('DataViewer component rendered');
 
   const showMessage = (type, message) => {
-    // Simple alert for now - you can replace this with a proper notification system
+    // Use toast notifications instead of alerts
     if (type === 'success') {
-      alert(`✅ ${message}`);
+      toastService.success('Success', message);
     } else if (type === 'error') {
-      alert(`❌ ${message}`);
+      toastService.error('Error', message);
+    } else if (type === 'warning') {
+      toastService.warning('Warning', message);
+    } else if (type === 'info') {
+      toastService.info('Info', message);
     }
   };
 
@@ -36,20 +49,115 @@ const DataViewer = () => {
       setLoading(true);
       setError(null);
 
-      // Fetch only sites registry - it contains all the data we need
+      console.log('🔄 Fetching sites data...');
+      // Fetch all sites (both active and inactive) for management
       const sitesResponse = await api.get('/apiv1/lookups/sites-registry');
 
+      console.log('📡 Sites response:', sitesResponse);
+      console.log('📡 Sites data:', sitesResponse.data);
+
       if (Array.isArray(sitesResponse.data)) {
+        // Show all sites in DataViewer for management purposes
+        console.log('✅ DataViewer loaded sites:', sitesResponse.data.length);
+        console.log('📊 Sites with status:', sitesResponse.data.map(s => `${s.code}: ${s.status === 1 ? 'Active' : 'Inactive'}`));
         setSites(sitesResponse.data);
+      } else {
+        console.error('❌ Invalid sites data format:', sitesResponse.data);
+        setError('Invalid data format received from server');
       }
     } catch (err) {
-      console.error('Error fetching data:', err);
+      console.error('❌ Error fetching data:', err);
+      console.error('❌ Error details:', err.response?.data);
       setError('Failed to fetch data. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+
+  const updateSiteStatus = async (siteCode, newStatus) => {
+    try {
+      setUpdatingStatus(siteCode);
+      console.log(`🔄 Updating site ${siteCode} status from ${sites.find(s => s.code === siteCode)?.status} to ${newStatus}`);
+      
+      const response = await api.put(`/apiv1/site-operations/sites/${siteCode}/status`, {
+        status: newStatus
+      });
+      
+      console.log('📡 Status update response:', response);
+      console.log('📡 Response data:', response.data);
+      
+      if (response.data && response.data.success) {
+        // Update the local state immediately
+        setSites(prevSites => {
+          const updatedSites = prevSites.map(site => 
+            site.code === siteCode 
+              ? { ...site, status: newStatus }
+              : site
+          );
+          console.log('🔄 Updated sites state:', updatedSites.find(s => s.code === siteCode));
+          return updatedSites;
+        });
+        
+        const statusText = newStatus === 1 ? 'activated' : 'deactivated';
+        showMessage('success', `Site ${siteCode} has been ${statusText} successfully`);
+        console.log(`✅ Site ${siteCode} status updated to ${newStatus}`);
+      } else {
+        console.error('❌ Status update failed:', response.data);
+        showMessage('error', response.data?.message || 'Failed to update site status');
+      }
+    } catch (err) {
+      console.error('❌ Error updating site status:', err);
+      console.error('❌ Error details:', err.response?.data);
+      showMessage('error', `Failed to update site status: ${err.message}`);
+    } finally {
+      setUpdatingStatus(null);
+    }
+  };
+
+  const startEditingFileName = (siteCode, currentFileName) => {
+    setEditingFileName(siteCode);
+    setEditingValue(currentFileName || '');
+  };
+
+  const cancelEditingFileName = () => {
+    setEditingFileName(null);
+    setEditingValue('');
+  };
+
+  const saveFileName = async (siteCode) => {
+    try {
+      console.log(`Updating file name for site ${siteCode} to: ${editingValue.trim()}`);
+      
+      const response = await api.put(`/apiv1/site-operations/sites/${siteCode}/file-name`, {
+        fileName: editingValue.trim()
+      });
+      
+      console.log('File name update response:', response.data);
+      
+      if (response.data.success) {
+        // Update the local state immediately
+        setSites(prevSites => 
+          prevSites.map(site => 
+            site.code === siteCode 
+              ? { ...site, fileName: editingValue.trim() }
+              : site
+          )
+        );
+        
+        showMessage('success', `File name updated for site ${siteCode}`);
+        setEditingFileName(null);
+        setEditingValue('');
+        console.log(`File name updated successfully for site ${siteCode}`);
+      } else {
+        console.error('File name update failed:', response.data.message);
+        showMessage('error', response.data.message || 'Failed to update file name');
+      }
+    } catch (err) {
+      console.error('Error updating file name:', err);
+      showMessage('error', 'Failed to update file name. Please try again.');
+    }
+  };
 
   const deleteSite = async (siteCode) => {
     if (!window.confirm(`Are you sure you want to delete site "${siteCode}"? This action cannot be undone.`)) {
@@ -104,7 +212,7 @@ const DataViewer = () => {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Data Viewer</h2>
-          <p className="text-muted-foreground">View all imported data with file names and database information</p>
+          <p className="text-muted-foreground">Manage all sites (active and inactive) with file names and database information</p>
         </div>
         <Button onClick={fetchData} variant="outline" size="sm">
           <RefreshCw className="h-4 w-4 mr-2" />
@@ -124,21 +232,21 @@ const DataViewer = () => {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Sites with File Names</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Active Sites</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {sites.filter(site => site.fileName).length}
+            <div className="text-2xl font-bold text-green-600">
+              {sites.filter(site => site.status === 1).length}
             </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Sites without File Names</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Inactive Sites</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {sites.filter(site => !site.fileName).length}
+            <div className="text-2xl font-bold text-red-600">
+              {sites.filter(site => site.status === 0).length}
             </div>
           </CardContent>
         </Card>
@@ -165,13 +273,13 @@ const DataViewer = () => {
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Site Name</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">File Name</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Search Terms</th>
-                    <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Status</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Active Status</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {sites.map((site) => (
-                    <tr key={site.code} className="hover:bg-muted/50">
+                    <tr key={site.code} className="hover:bg-muted/50 group">
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-2">
                        
@@ -184,18 +292,84 @@ const DataViewer = () => {
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-2">
                           <FileText className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm text-foreground truncate max-w-xs" title={site.fileName || 'No file name'}>
-                            {site.fileName || 'No file name'}
-                          </span>
+                          {editingFileName === site.code ? (
+                            <div className="flex items-center space-x-2 flex-1">
+                              <input
+                                type="text"
+                                value={editingValue}
+                                onChange={(e) => setEditingValue(e.target.value)}
+                                className="flex-1 px-2 py-1 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                placeholder="Enter file name"
+                                autoFocus
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    saveFileName(site.code);
+                                  } else if (e.key === 'Escape') {
+                                    cancelEditingFileName();
+                                  }
+                                }}
+                              />
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => saveFileName(site.code)}
+                                className="h-6 w-6 p-0"
+                              >
+                                <Save className="h-3 w-3 text-green-600" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={cancelEditingFileName}
+                                className="h-6 w-6 p-0"
+                              >
+                                <X className="h-3 w-3 text-red-600" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center space-x-2 flex-1">
+                              <span className="text-sm text-foreground truncate max-w-xs" title={site.fileName || 'No file name'}>
+                                {site.fileName || 'No file name'}
+                              </span>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => startEditingFileName(site.code, site.fileName)}
+                                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <Edit className="h-3 w-3 text-blue-600" />
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-3">
                         <span className="text-sm text-muted-foreground">{site.searchTerms}</span>
                       </td>
                       <td className="px-4 py-3">
-                        <Badge variant={site.fileName ? "default" : "secondary"}>
-                          {site.fileName ? "Has File" : "No File"}
-                        </Badge>
+                        <div className="flex items-center space-x-2">
+                          <Badge 
+                            variant={site.status === 1 ? "default" : "secondary"}
+                            className={site.status === 1 ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                          >
+                            {site.status === 1 ? "Active" : "Inactive"}
+                          </Badge>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateSiteStatus(site.code, site.status === 1 ? 0 : 1)}
+                            disabled={updatingStatus === site.code}
+                            className="h-6 w-6 p-0"
+                          >
+                            {updatingStatus === site.code ? (
+                              <RefreshCw className="h-3 w-3 animate-spin" />
+                            ) : site.status === 1 ? (
+                              <XCircle className="h-3 w-3 text-red-600" />
+                            ) : (
+                              <CheckCircle className="h-3 w-3 text-green-600" />
+                            )}
+                          </Button>
+                        </div>
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex space-x-2">

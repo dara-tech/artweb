@@ -204,7 +204,7 @@ const AdvancedLayout = ({ children }) => {
         {/* Main Content Area */}
         <div className={`flex-1 flex flex-col overflow-hidden ${isViewer ? 'w-full' : ''}`}>
           {/* Top Header */}
-          <header className={`bg-card/95 backdrop-blur-md border-b border-border/50 px-4 py-3 shadow-sm ${
+          <header className={`bg-card/95 backdrop-blur-md border-b border-border/50 px-4 py-1   ${
             isFullscreen ? 'border-primary/30 bg-primary/5' : ''
           }`}>
             <div className="flex items-center justify-between">
@@ -230,16 +230,7 @@ const AdvancedLayout = ({ children }) => {
                   </Button>
                 )}
                 
-                {/* Search Bar */}
-                <div className="hidden md:block">
-                  <div className="relative group">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 transition-colors group-focus-within:text-primary" />
-                    <Input
-                      placeholder="Search patients, reports..."
-                      className="pl-10 w-72 bg-muted/40 border-0 focus:bg-background focus:ring-2 focus:ring-primary/20 transition-all duration-200 rounded-lg"
-                    />
-                  </div>
-                </div>
+           
               </div>
 
               {/* Right Section */}

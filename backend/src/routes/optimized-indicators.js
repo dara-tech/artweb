@@ -279,35 +279,103 @@ router.get('/:indicatorId/details', async (req, res) => {
       limit: params.limit
     });
     
-    const result = await optimizedIndicators.executeIndicatorDetails(indicatorId, params, false); // Disable caching
-
-    console.log('🔍 Backend result:', {
-      dataLength: result.data?.length || 0,
-      pagination: result.pagination,
-      totalCount: result.pagination?.totalCount
+    // Aggregate data from all individual sites instead of using main database
+    console.log('🔍 Aggregating detail data from individual sites...');
+    const startTime = performance.now();
+    
+    // Get all sites
+    const sites = await siteDatabaseManager.getAllSites();
+    console.log(`📊 Found ${sites.length} sites to aggregate details from`);
+    
+    // Collect all detail records from all sites
+    const allDetailRecords = [];
+    const siteResults = [];
+    
+    for (const site of sites) {
+      try {
+        console.log(`🏥 Processing site ${site.code} (${site.name}) for details`);
+        const siteDetailResult = await siteOptimizedIndicators.executeSiteIndicatorDetails(
+          site.code, 
+          indicatorId, 
+          params, 
+          1, 
+          10000, // Get all records from each site
+          search, 
+          ageGroup, 
+          gender
+        );
+        
+        // Add site information to each record
+        const recordsWithSite = siteDetailResult.data.map(record => ({
+          ...record,
+          site_code: site.code,
+          site_name: site.name,
+          site_province: site.province
+        }));
+        
+        allDetailRecords.push(...recordsWithSite);
+        siteResults.push({
+          siteCode: site.code,
+          siteName: site.name,
+          recordCount: siteDetailResult.data.length,
+          success: true
+        });
+        
+        console.log(`✅ Site ${site.code}: ${siteDetailResult.data.length} detail records`);
+      } catch (error) {
+        console.error(`❌ Error processing site ${site.code} for details:`, error.message);
+        siteResults.push({
+          siteCode: site.code,
+          siteName: site.name,
+          recordCount: 0,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+    
+    console.log(`📊 Total detail records collected: ${allDetailRecords.length}`);
+    
+    // Apply pagination to the aggregated results
+    const totalRecords = allDetailRecords.length;
+    const totalPages = Math.ceil(totalRecords / params.limit);
+    const offset = (params.page - 1) * params.limit;
+    const paginatedRecords = allDetailRecords.slice(offset, offset + params.limit);
+    
+    const executionTime = performance.now() - startTime;
+    
+    console.log('🔍 Aggregated detail result:', {
+      totalRecords,
+      paginatedRecords: paginatedRecords.length,
+      page: params.page,
+      totalPages,
+      executionTime: `${executionTime.toFixed(2)}ms`
     });
 
     res.json({
       success: true,
-      data: result.data || [],
-      pagination: result.pagination || {
-        page: 1,
-        limit: 100,
-        totalCount: 0,
-        totalPages: 0,
-        hasNext: false,
-        hasPrev: false
+      data: paginatedRecords,
+      pagination: {
+        page: params.page,
+        limit: params.limit,
+        totalCount: totalRecords,
+        totalPages,
+        hasNext: params.page < totalPages,
+        hasPrev: params.page > 1
       },
-      search: result.search || '',
+      search: search || '',
       performance: {
-        executionTime: result.executionTime || 0,
-        recordCount: (result.data || []).length
+        executionTime: executionTime,
+        recordCount: paginatedRecords.length,
+        sitesProcessed: sites.length,
+        successfulSites: siteResults.filter(s => s.success).length
       },
       period: {
         startDate: params.startDate,
         endDate: params.endDate,
         previousEndDate: params.previousEndDate
-      }
+      },
+      siteResults: siteResults
     });
   } catch (error) {
     console.error(`❌ Error fetching detailed records for indicator ${indicatorId}:`, error);
@@ -369,30 +437,94 @@ router.get('/details/:indicatorId', async (req, res) => {
       const startTime = performance.now();
       
       try {
-        const details = await optimizedIndicators.executeIndicatorDetails(indicatorId, params, false); // Disable caching
+        // Aggregate data from all individual sites instead of using main database
+        console.log('🔍 Aggregating detail data from individual sites...');
+        
+        // Get all sites
+        const sites = await siteDatabaseManager.getAllSites();
+        console.log(`📊 Found ${sites.length} sites to aggregate details from`);
+        
+        // Collect all detail records from all sites
+        const allDetailRecords = [];
+        const siteResults = [];
+        
+        for (const site of sites) {
+          try {
+            console.log(`🏥 Processing site ${site.code} (${site.name}) for details`);
+            const siteDetailResult = await siteOptimizedIndicators.executeSiteIndicatorDetails(
+              site.code, 
+              indicatorId, 
+              params, 
+              1, 
+              10000, // Get all records from each site
+              search, 
+              ageGroup, 
+              gender
+            );
+            
+            // Add site information to each record
+            const recordsWithSite = siteDetailResult.data.map(record => ({
+              ...record,
+              site_code: site.code,
+              site_name: site.name,
+              site_province: site.province
+            }));
+            
+            allDetailRecords.push(...recordsWithSite);
+            siteResults.push({
+              siteCode: site.code,
+              siteName: site.name,
+              recordCount: siteDetailResult.data.length,
+              success: true
+            });
+            
+            console.log(`✅ Site ${site.code}: ${siteDetailResult.data.length} detail records`);
+          } catch (error) {
+            console.error(`❌ Error processing site ${site.code} for details:`, error.message);
+            siteResults.push({
+              siteCode: site.code,
+              siteName: site.name,
+              recordCount: 0,
+              success: false,
+              error: error.message
+            });
+          }
+        }
+        
+        console.log(`📊 Total detail records collected: ${allDetailRecords.length}`);
+        
+        // Apply pagination to the aggregated results
+        const totalRecords = allDetailRecords.length;
+        const totalPages = Math.ceil(totalRecords / params.limit);
+        const offset = (params.page - 1) * params.limit;
+        const paginatedRecords = allDetailRecords.slice(offset, offset + params.limit);
+        
         const executionTime = performance.now() - startTime;
         
         const result = {
           success: true,
-          data: details.data || [],
-          pagination: details.pagination || {
-            page: 1,
-            limit: 100,
-            totalCount: 0,
-            totalPages: 0,
-            hasNext: false,
-            hasPrev: false
+          data: paginatedRecords,
+          pagination: {
+            page: params.page,
+            limit: params.limit,
+            totalCount: totalRecords,
+            totalPages,
+            hasNext: params.page < totalPages,
+            hasPrev: params.page > 1
           },
-          search: details.search || '',
+          search: search || '',
           performance: {
-            executionTime: details.executionTime || 0,
-            recordCount: (details.data || []).length
+            executionTime: executionTime,
+            recordCount: paginatedRecords.length,
+            sitesProcessed: sites.length,
+            successfulSites: siteResults.filter(s => s.success).length
           },
           period: {
             startDate: params.startDate,
             endDate: params.endDate,
             previousEndDate: params.previousEndDate
-          }
+          },
+          siteResults: siteResults
         };
         
         return result;

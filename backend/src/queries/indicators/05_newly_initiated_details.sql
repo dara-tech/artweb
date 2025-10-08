@@ -1,6 +1,7 @@
 -- Indicator 5: Newly Initiated - Detailed Records
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -33,6 +34,7 @@ UNION ALL
 
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'

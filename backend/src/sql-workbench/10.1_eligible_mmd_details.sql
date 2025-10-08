@@ -1,6 +1,6 @@
 -- =====================================================
 -- 10.1 ELIGIBLE MMD DETAILS
--- Generated: 2025-10-06T07:09:48.475Z
+-- Generated: 2025-10-08T09:39:33.698Z
 -- =====================================================
 
 -- =====================================================
@@ -192,6 +192,7 @@ SELECT
     DaArt,
     DafirstVisit,
     DaBirth,
+    DatVisit AS datevisit,
     OffIn,
     CASE 
         WHEN OffIn = 0 THEN 'Not Transferred'

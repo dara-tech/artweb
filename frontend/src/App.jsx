@@ -18,7 +18,6 @@ import DataManagement from './pages/DataManagement'
 import RoleManagement from './pages/RoleManagement'
 import DataImportExport from './pages/DataManagement/components/DataImportExport'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
-import IndicatorsDashboard from './pages/indicators/IndicatorsDashboard'
 import AdvancedLayout from './components/layout/AdvancedLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -185,12 +184,7 @@ function App() {
           <Route path="/indicators" element={<IndicatorsReport />} />
           
           
-          {/* Indicators Dashboard - Not accessible to viewers */}
-          <Route path="/indicators/dashboard" element={
-            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
-              <IndicatorsDashboard />
-            </ProtectedRoute>
-          } />
+        
           
           <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
         </Routes>

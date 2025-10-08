@@ -1,6 +1,6 @@
 -- =====================================================
 -- 10.5 TPT COMPLETE DETAILS
--- Generated: 2025-10-06T07:09:48.478Z
+-- Generated: 2025-10-08T09:39:33.700Z
 -- =====================================================
 
 -- =====================================================
@@ -118,6 +118,7 @@ tbltptdrug AS (
 SELECT
     '10.5' as step,
     i.clinicid,
+    a.ART as art_number,
     i.Sex AS sex,
     CASE 
         WHEN i.Sex = 0 THEN 'Female'

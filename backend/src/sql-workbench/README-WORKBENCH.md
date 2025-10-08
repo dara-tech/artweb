@@ -108,7 +108,7 @@ Execute specific indicator files:
 | 04 | 04_retested_positive.sql | Retested positive patients |
 | 05 | 05_newly_initiated.sql | Newly initiated ART patients |
 | 05.1.1 | 05.1.1_art_same_day.sql | ART same day initiation |
-| 05.1.2 | 05.1.2_preart_1_7_days.sql | ART 1-7 days initiation |
+| 05.1.2 | 05.1.2_art_1_7_days.sql | ART 1-7 days initiation |
 | 05.1.3 | 05.1.3_art_over_7_days.sql | ART over 7 days initiation |
 | 05.2 | 05.2_art_with_tld.sql | ART with TLD |
 | 06 | 06_transfer_in.sql | Transfer in patients |

@@ -1,6 +1,6 @@
 -- =====================================================
 -- ART Web Complete Indicators Analysis - Workbench SQL
--- Generated: 2025-10-06T07:09:48.453Z
+-- Generated: 2025-10-08T09:39:33.673Z
 -- 
 -- This file contains all HIV/AIDS indicators with parameters
 -- Ready to use in MySQL Workbench, phpMyAdmin, or any SQL workbench
@@ -183,7 +183,7 @@ FROM tblactive;
 
 -- =====================================================
 -- 01 ACTIVE ART PREVIOUS DETAILS
--- Generated: 2025-10-06T07:09:48.455Z
+-- Generated: 2025-10-08T09:39:33.680Z
 -- =====================================================
 
 -- =====================================================
@@ -365,7 +365,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 02 ACTIVE PRE ART PREVIOUS
--- Generated: 2025-10-06T07:09:48.455Z
+-- Generated: 2025-10-08T09:39:33.680Z
 -- =====================================================
 
 -- =====================================================
@@ -471,7 +471,7 @@ where ART is null;
 
 -- =====================================================
 -- 02 ACTIVE PRE ART PREVIOUS DETAILS
--- Generated: 2025-10-06T07:09:48.456Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -597,7 +597,7 @@ order by DafirstVisit DESC, clinicid;
 
 -- =====================================================
 -- 03 NEWLY ENROLLED
--- Generated: 2025-10-06T07:09:48.456Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -666,7 +666,7 @@ FROM (
 
 -- =====================================================
 -- 03 NEWLY ENROLLED DETAILS
--- Generated: 2025-10-06T07:09:48.456Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -697,6 +697,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 -- Indicator 3: Newly Enrolled - Detailed Records (matching aggregate logic)
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -729,6 +730,7 @@ UNION ALL
 
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -767,7 +769,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 04 RETESTED POSITIVE
--- Generated: 2025-10-06T07:09:48.456Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -868,7 +870,7 @@ FROM (
 
 -- =====================================================
 -- 04 RETESTED POSITIVE DETAILS
--- Generated: 2025-10-06T07:09:48.457Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -900,6 +902,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 -- This matches the old VB.NET implementation exactly
 SELECT
     p.ClinicID as clinicid,
+    COALESCE(art.ART, art2.ART) as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -913,7 +916,7 @@ SELECT
     END as typepatients,
     p.DaBirth as DaBirth,
     p.DafirstVisit as DafirstVisit,
-    NULL as DaArt,
+    COALESCE(art.DaArt, art2.DaArt) as DaArt,
     p.DatVisit as DatVisit,
     p.OffIn as OffIn,
     p.type as patient_type,
@@ -971,6 +974,8 @@ FROM (
     LEFT JOIN tblcimain ci ON ci.ClinicID = lt.ClinicID
     WHERE ci.OffIn <> 1 AND ci.LClinicID = '' AND ci.DafirstVisit BETWEEN @StartDate AND @EndDate
 ) p
+LEFT JOIN tblaart art ON p.ClinicID = art.ClinicID AND p.type = 'Adult'
+LEFT JOIN tblcart art2 ON p.ClinicID = art2.ClinicID AND p.type = 'Child'
 ORDER BY p.DafirstVisit DESC, p.ClinicID;
 
 -- =====================================================
@@ -982,7 +987,7 @@ ORDER BY p.DafirstVisit DESC, p.ClinicID;
 
 -- =====================================================
 -- 05.1.1 ART SAME DAY
--- Generated: 2025-10-06T07:09:48.457Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -1036,7 +1041,7 @@ FROM (
 
 -- =====================================================
 -- 05.1.1 ART SAME DAY DETAILS
--- Generated: 2025-10-06T07:09:48.458Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -1068,6 +1073,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 SELECT
     '05.1.1' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1101,6 +1107,7 @@ UNION ALL
 SELECT
     '05.1.1' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1138,7 +1145,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 05.1.2 ART 1 7 DAYS
--- Generated: 2025-10-06T07:09:48.458Z
+-- Generated: 2025-10-08T09:39:33.681Z
 -- =====================================================
 
 -- =====================================================
@@ -1192,7 +1199,7 @@ FROM (
 
 -- =====================================================
 -- 05.1.2 ART 1 7 DAYS DETAILS
--- Generated: 2025-10-06T07:09:48.458Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1224,6 +1231,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 SELECT
     '5.1.2' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1256,6 +1264,7 @@ UNION ALL
 SELECT
     '5.1.2' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1293,7 +1302,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 05.1.3 ART OVER 7 DAYS
--- Generated: 2025-10-06T07:09:48.458Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1347,7 +1356,7 @@ FROM (
 
 -- =====================================================
 -- 05.1.3 ART OVER 7 DAYS DETAILS
--- Generated: 2025-10-06T07:09:48.458Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1379,6 +1388,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 SELECT
     '5.1.3' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1411,6 +1421,7 @@ UNION ALL
 SELECT
     '5.1.3' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1447,7 +1458,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 05.2 ART WITH TLD
--- Generated: 2025-10-06T07:09:48.459Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1505,7 +1516,7 @@ FROM (
 
 -- =====================================================
 -- 05.2 ART WITH TLD DETAILS
--- Generated: 2025-10-06T07:09:48.459Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1546,7 +1557,7 @@ SELECT
     '15+' as typepatients,
     p.DaBirth as DaBirth,
     p.DafirstVisit as DafirstVisit,
-    art.ART as ART,
+    art.ART as art_number,
     art.DaArt as DaArt,
     v.DatVisit as DatVisit,
     p.OffIn as OffIn,
@@ -1586,7 +1597,7 @@ SELECT
     '≤14' as typepatients,
     p.DaBirth as DaBirth,
     p.DafirstVisit as DafirstVisit,
-    art.ART as ART,
+    art.ART as art_number,
     art.DaArt as DaArt,
     v.DatVisit as DatVisit,
     p.OffIn as OffIn,
@@ -1623,7 +1634,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 05 NEWLY INITIATED
--- Generated: 2025-10-06T07:09:48.459Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1652,16 +1663,13 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 -- MAIN QUERY
 -- =====================================================
 -- Indicator 5: Newly Initiated
-SELECT
-    '5. Newly Initiated' AS Indicator,
-    IFNULL(COUNT(*), 0) AS TOTAL,
-    IFNULL(SUM(CASE WHEN PatientList.type = 'Child' AND PatientList.Sex = 'Male' THEN 1 ELSE 0 END), 0) AS Male_0_14,
-    IFNULL(SUM(CASE WHEN PatientList.type = 'Child' AND PatientList.Sex = 'Female' THEN 1 ELSE 0 END), 0) AS Female_0_14,
-    IFNULL(SUM(CASE WHEN PatientList.type = 'Adult' AND PatientList.Sex = 'Male' THEN 1 ELSE 0 END), 0) AS Male_over_14,
-    IFNULL(SUM(CASE WHEN PatientList.type = 'Adult' AND PatientList.Sex = 'Female' THEN 1 ELSE 0 END), 0) AS Female_over_14
-FROM (
+WITH tblnewlyinitiated AS (
     -- Adults: Must have ART start date in quarter, NOT be a transfer-in, AND NOT be a lost-return patient
-    SELECT 'Adult' as type, IF(p.Sex=0, "Female", "Male") as Sex
+    SELECT 
+        'Adult' as type, 
+        IF(p.Sex=0, "Female", "Male") as Sex,
+        p.ClinicID,
+        art.DaArt
     FROM tblaimain p 
     JOIN tblaart art ON p.ClinicID = art.ClinicID
     JOIN tblavmain v ON p.ClinicID = v.ClinicID AND v.DatVisit = art.DaArt 
@@ -1673,14 +1681,27 @@ FROM (
     UNION ALL
     
     -- Children: Must have ART start date in quarter AND NOT be a transfer-in
-    SELECT 'Child' as type, IF(p.Sex=0, "Female", "Male") as Sex
+    SELECT 
+        'Child' as type, 
+        IF(p.Sex=0, "Female", "Male") as Sex,
+        p.ClinicID,
+        art.DaArt
     FROM tblcimain p 
     JOIN tblcart art ON p.ClinicID = art.ClinicID
     JOIN tblcvmain v ON p.ClinicID = v.ClinicID AND v.DatVisit = art.DaArt
     WHERE 
         art.DaArt BETWEEN @StartDate AND @EndDate 
         AND (p.OffIn IS NULL OR p.OffIn <> @transfer_in_code)
-) AS PatientList;
+)
+
+SELECT
+    '5. Newly Initiated' AS Indicator,
+    IFNULL(COUNT(*), 0) AS TOTAL,
+    IFNULL(SUM(CASE WHEN type = 'Child' AND Sex = 'Male' THEN 1 ELSE 0 END), 0) AS Male_0_14,
+    IFNULL(SUM(CASE WHEN type = 'Child' AND Sex = 'Female' THEN 1 ELSE 0 END), 0) AS Female_0_14,
+    IFNULL(SUM(CASE WHEN type = 'Adult' AND Sex = 'Male' THEN 1 ELSE 0 END), 0) AS Male_over_14,
+    IFNULL(SUM(CASE WHEN type = 'Adult' AND Sex = 'Female' THEN 1 ELSE 0 END), 0) AS Female_over_14
+FROM tblnewlyinitiated;
 
 
 -- =====================================================
@@ -1692,7 +1713,7 @@ FROM (
 
 -- =====================================================
 -- 05 NEWLY INITIATED DETAILS
--- Generated: 2025-10-06T07:09:48.459Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1723,6 +1744,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 -- Indicator 5: Newly Initiated - Detailed Records
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1755,6 +1777,7 @@ UNION ALL
 
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1793,7 +1816,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 06 TRANSFER IN
--- Generated: 2025-10-06T07:09:48.459Z
+-- Generated: 2025-10-08T09:39:33.682Z
 -- =====================================================
 
 -- =====================================================
@@ -1863,7 +1886,7 @@ FROM (
 
 -- =====================================================
 -- 06 TRANSFER IN DETAILS
--- Generated: 2025-10-06T07:09:48.460Z
+-- Generated: 2025-10-08T09:39:33.683Z
 -- =====================================================
 
 -- =====================================================
@@ -1897,6 +1920,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 -- Child: LEFT JOIN with tblcart but requires tblcart.ClinicID IS NOT NULL
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1931,6 +1955,7 @@ UNION ALL
 
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -1975,7 +2000,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 07 LOST AND RETURN
--- Generated: 2025-10-06T07:09:48.460Z
+-- Generated: 2025-10-08T09:39:33.683Z
 -- =====================================================
 
 -- =====================================================
@@ -2018,7 +2043,7 @@ FROM (
     FROM tblaimain p
     LEFT OUTER JOIN tblaart art ON p.ClinicID = art.ClinicID
     WHERE p.TypeofReturn IS NOT NULL
-      AND p.TypeofReturn <> -1
+      AND p.TypeofReturn >= 0
       AND p.DafirstVisit BETWEEN @StartDate AND @EndDate
     GROUP BY p.Sex, art.ART, p.ClinicID
     
@@ -2044,7 +2069,7 @@ FROM (
 
 -- =====================================================
 -- 07 LOST AND RETURN DETAILS
--- Generated: 2025-10-06T07:09:48.460Z
+-- Generated: 2025-10-08T09:39:33.683Z
 -- =====================================================
 
 -- =====================================================
@@ -2094,12 +2119,19 @@ SELECT
         WHEN p.OffIn = 3 THEN 'Transferred Out'
         ELSE CONCAT('Status: ', p.OffIn)
     END as transfer_status,
-    p.TypeofReturn as return_type,
-    p.Artnum as art_number
+    CASE 
+        WHEN p.TypeofReturn = 0 THEN 'Lost and Return'
+        WHEN p.TypeofReturn = 1 THEN 'Return'
+        WHEN p.TypeofReturn = 2 THEN 'Transfer In'
+        WHEN p.TypeofReturn = 3 THEN 'Transfer Out'
+        WHEN p.TypeofReturn = 4 THEN 'Re-enrollment'
+        ELSE CONCAT('Type: ', p.TypeofReturn)
+    END as return_type,
+    art.ART as art_number
 FROM tblaimain p
 LEFT OUTER JOIN tblaart art ON p.ClinicID = art.ClinicID
 WHERE p.TypeofReturn IS NOT NULL 
-    AND p.TypeofReturn <> -1
+    AND p.TypeofReturn >= 0
     AND p.DafirstVisit BETWEEN @StartDate AND @EndDate
 GROUP BY p.Sex, art.ART, p.ClinicID
 
@@ -2126,8 +2158,8 @@ SELECT
         WHEN p.OffIn = 3 THEN 'Transferred Out'
         ELSE CONCAT('Status: ', p.OffIn)
     END as transfer_status,
-    NULL as return_type,
-    NULL as art_number
+    'Lost and Return' as return_type,
+    art.ART as art_number
 FROM tblcimain p
 LEFT OUTER JOIN tblcart art ON p.ClinicID = art.ClinicID
 WHERE p.LClinicID IS NOT NULL 
@@ -2147,7 +2179,7 @@ ORDER BY DafirstVisit DESC, clinicid;
 
 -- =====================================================
 -- 08.1 DEAD
--- Generated: 2025-10-06T07:09:48.460Z
+-- Generated: 2025-10-08T09:39:33.683Z
 -- =====================================================
 
 -- =====================================================
@@ -2199,7 +2231,7 @@ FROM (
 
 -- =====================================================
 -- 08.1 DEAD DETAILS
--- Generated: 2025-10-06T07:09:48.460Z
+-- Generated: 2025-10-08T09:39:33.683Z
 -- =====================================================
 
 -- =====================================================
@@ -2230,6 +2262,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 -- Indicator 8.1: Dead - Detailed Records (matching aggregate logic exactly)
 SELECT
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -2237,7 +2270,6 @@ SELECT
         ELSE 'Unknown'
     END as sex_display,
     '15+' as typepatients,
-    main.DaBirth as DaBirth,
     main.DafirstVisit as DafirstVisit,
     main.OffIn as OffIn,
     'Adult' as patient_type,
@@ -2249,9 +2281,31 @@ SELECT
         ELSE CONCAT('Status: ', main.OffIn)
     END as transfer_status,
     s.Da as death_date,
-    s.Status as death_status
+    s.Status as death_status,
+    CASE 
+        WHEN s.Place = 0 THEN 'Home'
+        WHEN s.Place = 1 THEN 'Hospital'
+        WHEN s.Place = 2 THEN COALESCE(s.OPlace, 'Other')
+        ELSE 'Unknown'
+    END as death_place,
+    CASE 
+        WHEN s.Cause LIKE '%/%' THEN 
+            CASE 
+                WHEN SUBSTRING_INDEX(s.Cause, '/', -1) REGEXP '^[0-9]+$' THEN 
+                    COALESCE(r.Reason, 'Unknown')
+                ELSE 
+                    CONCAT(
+                        COALESCE(r.Reason, 'Unknown'), 
+                        ' - ', 
+                        SUBSTRING_INDEX(s.Cause, '/', -1)
+                    )
+            END
+        ELSE COALESCE(r.Reason, s.Cause)
+    END as death_reason
 FROM tblaimain main 
 JOIN tblavpatientstatus s ON main.ClinicID = s.ClinicID
+LEFT JOIN tblaart art ON main.ClinicID = art.ClinicID
+LEFT JOIN tblreason r ON CAST(SUBSTRING_INDEX(s.Cause, '/', 1) AS UNSIGNED) = r.Rid
 WHERE s.Da BETWEEN @StartDate AND @EndDate 
     AND s.Status = @dead_code
 
@@ -2259,6 +2313,7 @@ UNION ALL
 
 SELECT
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -2266,7 +2321,6 @@ SELECT
         ELSE 'Unknown'
     END as sex_display,
     '≤14' as typepatients,
-    main.DaBirth as DaBirth,
     main.DafirstVisit as DafirstVisit,
     main.OffIn as OffIn,
     'Child' as patient_type,
@@ -2278,9 +2332,31 @@ SELECT
         ELSE CONCAT('Status: ', main.OffIn)
     END as transfer_status,
     s.Da as death_date,
-    s.Status as death_status
+    s.Status as death_status,
+    CASE 
+        WHEN s.Place = 0 THEN 'Home'
+        WHEN s.Place = 1 THEN 'Hospital'
+        WHEN s.Place = 2 THEN COALESCE(s.OPlace, 'Other')
+        ELSE 'Unknown'
+    END as death_place,
+    CASE 
+        WHEN s.Cause LIKE '%/%' THEN 
+            CASE 
+                WHEN SUBSTRING_INDEX(s.Cause, '/', -1) REGEXP '^[0-9]+$' THEN 
+                    COALESCE(r.Reason, 'Unknown')
+                ELSE 
+                    CONCAT(
+                        COALESCE(r.Reason, 'Unknown'), 
+                        ' - ', 
+                        SUBSTRING_INDEX(s.Cause, '/', -1)
+                    )
+            END
+        ELSE COALESCE(r.Reason, s.Cause)
+    END as death_reason
 FROM tblcimain main 
 JOIN tblcvpatientstatus s ON main.ClinicID = s.ClinicID
+LEFT JOIN tblcart art ON main.ClinicID = art.ClinicID
+LEFT JOIN tblreason r ON CAST(SUBSTRING_INDEX(s.Cause, '/', 1) AS UNSIGNED) = r.Rid
 WHERE s.Da BETWEEN @StartDate AND @EndDate 
     AND s.Status = @dead_code
 ORDER BY death_date DESC, clinicid;
@@ -2295,7 +2371,7 @@ ORDER BY death_date DESC, clinicid;
 
 -- =====================================================
 -- 08.2 LOST TO FOLLOWUP
--- Generated: 2025-10-06T07:09:48.460Z
+-- Generated: 2025-10-08T09:39:33.683Z
 -- =====================================================
 
 -- =====================================================
@@ -2347,7 +2423,7 @@ FROM (
 
 -- =====================================================
 -- 08.2 LOST TO FOLLOWUP DETAILS
--- Generated: 2025-10-06T07:09:48.461Z
+-- Generated: 2025-10-08T09:39:33.683Z
 -- =====================================================
 
 -- =====================================================
@@ -2378,6 +2454,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 -- Indicator 8.2: Lost to follow up (LTFU) - Detailed Records (matching aggregate logic)
 SELECT
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -2399,6 +2476,7 @@ SELECT
     s.Da as ltf_date,
     s.Status as ltf_status_code
 FROM tblaimain main 
+LEFT JOIN tblaart art ON main.ClinicID = art.ClinicID
 JOIN tblavpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE s.Da BETWEEN @StartDate AND @EndDate 
     AND s.Status = @lost_code
@@ -2407,6 +2485,7 @@ UNION ALL
 
 SELECT
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -2428,6 +2507,7 @@ SELECT
     s.Da as ltf_date,
     s.Status as ltf_status_code
 FROM tblcimain main 
+LEFT JOIN tblcart art ON main.ClinicID = art.ClinicID
 JOIN tblcvpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE s.Da BETWEEN @StartDate AND @EndDate 
     AND s.Status = @lost_code
@@ -2443,7 +2523,7 @@ ORDER BY ltf_date DESC, clinicid;
 
 -- =====================================================
 -- 08.3 TRANSFER OUT
--- Generated: 2025-10-06T07:09:48.461Z
+-- Generated: 2025-10-08T09:39:33.684Z
 -- =====================================================
 
 -- =====================================================
@@ -2495,7 +2575,7 @@ FROM (
 
 -- =====================================================
 -- 08.3 TRANSFER OUT DETAILS
--- Generated: 2025-10-06T07:09:48.461Z
+-- Generated: 2025-10-08T09:39:33.684Z
 -- =====================================================
 
 -- =====================================================
@@ -2527,6 +2607,7 @@ SET @tpt_drug_list = "'Isoniazid','3HP','6H'"; -- TPT drug list
 SELECT
     '8.3' as step,
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -2548,6 +2629,7 @@ SELECT
     s.Da as transfer_date,
     s.Status as transfer_status_code
 FROM tblaimain main 
+LEFT JOIN tblaart art ON main.ClinicID = art.ClinicID
 JOIN tblavpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE 
     s.Da BETWEEN @StartDate AND @EndDate 
@@ -2558,6 +2640,7 @@ UNION ALL
 SELECT
     '8.3' as step,
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -2579,6 +2662,7 @@ SELECT
     s.Da as transfer_date,
     s.Status as transfer_status_code
 FROM tblcimain main 
+LEFT JOIN tblcart art ON main.ClinicID = art.ClinicID
 JOIN tblcvpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE 
     s.Da BETWEEN @StartDate AND @EndDate 
@@ -2595,7 +2679,7 @@ ORDER BY transfer_date DESC, clinicid;
 
 -- =====================================================
 -- 09 ACTIVE PRE ART
--- Generated: 2025-10-06T07:09:48.461Z
+-- Generated: 2025-10-08T09:39:33.684Z
 -- =====================================================
 
 -- =====================================================
@@ -2795,7 +2879,7 @@ where ART is null;
 
 -- =====================================================
 -- 09 ACTIVE PRE ART DETAILS
--- Generated: 2025-10-06T07:09:48.461Z
+-- Generated: 2025-10-08T09:39:33.685Z
 -- =====================================================
 
 -- =====================================================
@@ -3008,7 +3092,7 @@ ORDER BY v.DatVisit DESC, i.clinicid;
 
 -- =====================================================
 -- 10.1 ELIGIBLE MMD
--- Generated: 2025-10-06T07:09:48.462Z
+-- Generated: 2025-10-08T09:39:33.685Z
 -- =====================================================
 
 -- =====================================================
@@ -3215,7 +3299,7 @@ where ART is not null and Startartstatus = '>6M';
 
 -- =====================================================
 -- 10.1 ELIGIBLE MMD DETAILS
--- Generated: 2025-10-06T07:09:48.462Z
+-- Generated: 2025-10-08T09:39:33.686Z
 -- =====================================================
 
 -- =====================================================
@@ -3422,6 +3506,7 @@ SELECT
     DaArt,
     DafirstVisit,
     DaBirth,
+    DatVisit AS datevisit,
     OffIn,
     CASE 
         WHEN OffIn = 0 THEN 'Not Transferred'
@@ -3446,7 +3531,7 @@ ORDER BY DaArt DESC, clinicid;
 
 -- =====================================================
 -- 10.2 MMD
--- Generated: 2025-10-06T07:09:48.462Z
+-- Generated: 2025-10-08T09:39:33.686Z
 -- =====================================================
 
 -- =====================================================
@@ -3769,7 +3854,7 @@ WHERE ART IS NOT NULL
 
 -- =====================================================
 -- 10.2 MMD DETAILS
--- Generated: 2025-10-06T07:09:48.463Z
+-- Generated: 2025-10-08T09:39:33.686Z
 -- =====================================================
 
 -- =====================================================
@@ -4031,7 +4116,7 @@ WITH tblactive AS (
         i.OffIn, 
         a.ART, 
         a.DaArt,
-        v.DatVisit, 
+        v.DatVisit AS DatVisit, 
         v.ARTnum, 
         v.DaApp,
         a.nmonthART,
@@ -4089,6 +4174,7 @@ SELECT
     DaArt,
     DafirstVisit,
     DaBirth,
+    DatVisit AS datevisit,
     OffIn,
     CASE 
         WHEN OffIn = 0 THEN 'Not Transferred'
@@ -4115,7 +4201,7 @@ ORDER BY DaArt DESC, clinicid;
 
 -- =====================================================
 -- 10.3 TLD
--- Generated: 2025-10-06T07:09:48.463Z
+-- Generated: 2025-10-08T09:39:33.686Z
 -- =====================================================
 
 -- =====================================================
@@ -4432,7 +4518,7 @@ WHERE ART IS NOT NULL
 
 -- =====================================================
 -- 10.3 TLD DETAILS
--- Generated: 2025-10-06T07:09:48.463Z
+-- Generated: 2025-10-08T09:39:33.686Z
 -- =====================================================
 
 -- =====================================================
@@ -4772,7 +4858,7 @@ ORDER BY DaArt DESC, clinicid;
 
 -- =====================================================
 -- 10.4 TPT START
--- Generated: 2025-10-06T07:09:48.463Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -5083,7 +5169,7 @@ WHERE ART IS NOT NULL AND tptstatus != 'Not Start';
 
 -- =====================================================
 -- 10.4 TPT START DETAILS
--- Generated: 2025-10-06T07:09:48.463Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -5419,7 +5505,7 @@ ORDER BY DaArt DESC, clinicid;
 
 -- =====================================================
 -- 10.5 TPT COMPLETE
--- Generated: 2025-10-06T07:09:48.465Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -5721,7 +5807,7 @@ where ART is not null and tptstatus = 'TPT Complete';
 
 -- =====================================================
 -- 10.5 TPT COMPLETE DETAILS
--- Generated: 2025-10-06T07:09:48.465Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -5854,6 +5940,7 @@ tbltptdrug AS (
 SELECT
     '10.5' as step,
     i.clinicid,
+    a.ART as art_number,
     i.Sex AS sex,
     CASE 
         WHEN i.Sex = 0 THEN 'Female'
@@ -5901,7 +5988,7 @@ ORDER BY v.DatVisit DESC, i.clinicid;
 
 -- =====================================================
 -- 10.6 ELIGIBLE VL TEST
--- Generated: 2025-10-06T07:09:48.465Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -6025,7 +6112,7 @@ WHERE StatusVL <> '';
 
 -- =====================================================
 -- 10.6 ELIGIBLE VL TEST DETAILS
--- Generated: 2025-10-06T07:09:48.465Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -6176,7 +6263,7 @@ ORDER BY DaArt DESC, ClinicID;
 
 -- =====================================================
 -- 10.7 VL TESTED 12M
--- Generated: 2025-10-06T07:09:48.465Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -6483,7 +6570,7 @@ WHERE ART IS NOT NULL
 
 -- =====================================================
 -- 10.7 VL TESTED 12M DETAILS
--- Generated: 2025-10-06T07:09:48.466Z
+-- Generated: 2025-10-08T09:39:33.687Z
 -- =====================================================
 
 -- =====================================================
@@ -6819,7 +6906,7 @@ ORDER BY DaArt DESC, clinicid;
 
 -- =====================================================
 -- 10.8 VL SUPPRESSION
--- Generated: 2025-10-06T07:09:48.466Z
+-- Generated: 2025-10-08T09:39:33.688Z
 -- =====================================================
 
 -- =====================================================
@@ -7128,7 +7215,7 @@ WHERE ART IS NOT NULL
 
 -- =====================================================
 -- 10.8 VL SUPPRESSION DETAILS
--- Generated: 2025-10-06T07:09:48.466Z
+-- Generated: 2025-10-08T09:39:33.688Z
 -- =====================================================
 
 -- =====================================================
@@ -7466,7 +7553,7 @@ ORDER BY DaArt DESC, clinicid;
 
 -- =====================================================
 -- 10 ACTIVE ART CURRENT
--- Generated: 2025-10-06T07:09:48.466Z
+-- Generated: 2025-10-08T09:39:33.688Z
 -- =====================================================
 
 -- =====================================================
@@ -7625,7 +7712,7 @@ FROM tblactive;
 
 -- =====================================================
 -- 10 ACTIVE ART CURRENT DETAILS
--- Generated: 2025-10-06T07:09:48.466Z
+-- Generated: 2025-10-08T09:39:33.688Z
 -- =====================================================
 
 -- =====================================================
@@ -7791,7 +7878,7 @@ ORDER BY v.DatVisit DESC, i.clinicid;
 
 -- =====================================================
 -- VARIABLES
--- Generated: 2025-10-06T07:09:48.466Z
+-- Generated: 2025-10-08T09:39:33.688Z
 -- =====================================================
 
 -- =====================================================

@@ -198,39 +198,22 @@ export const validateDataConsistency = (summaryStats, indicatorsData) => {
   };
 };
 
-// Get province name from site code
-export const getProvinceName = (siteCode) => {
-  if (!siteCode) return 'Unknown';
+// Get province name from site data (now uses database)
+export const getProvinceName = (site) => {
+  if (!site) return 'Unknown';
   
-  const provinceCode = siteCode.substring(0, 2);
-  const provinceMap = {
-    '02': 'Battambang',
-    '03': 'Kampong Cham', 
-    '12': 'Kampong Thom',
-    '18': 'Preah Sihanouk',
-    '01': 'Phnom Penh',
-    '04': 'Kampong Chhnang',
-    '05': 'Kampong Speu',
-    '06': 'Kampong Thom',
-    '07': 'Kampot',
-    '08': 'Kandal',
-    '09': 'Koh Kong',
-    '10': 'Kratie',
-    '11': 'Mondulkiri',
-    '13': 'Preah Vihear',
-    '14': 'Pursat',
-    '15': 'Ratanakiri',
-    '16': 'Siem Reap',
-    '17': 'Stung Treng',
-    '19': 'Svay Rieng',
-    '20': 'Takeo',
-    '21': 'Oddar Meanchey',
-    '22': 'Kep',
-    '23': 'Pailin',
-    '24': 'Tbong Khmum'
-  };
+  // If site has province field, use it directly
+  if (site.province) {
+    return site.province;
+  }
   
-  return `${provinceCode}. ${provinceMap[provinceCode] || 'Unknown Province'}`;
+  // Fallback to site code parsing if province not available
+  if (site.code) {
+    const provinceCode = site.code.substring(0, 2);
+    return `${provinceCode}. Unknown Province`;
+  }
+  
+  return 'Unknown Province';
 };
 
 // Get operational district from site
@@ -297,9 +280,12 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
     <html>
     <head>
       <title>ART Indicators Report - ${siteName}</title>
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Hanuman:wght@100;300;400;700;900&display=swap" rel="stylesheet">
       <style>
         body {
-          font-family: Arial, sans-serif;
+          font-family: 'Hanuman', Arial, sans-serif;
           margin: 20px;
           padding: 14px;
           color: #333;
@@ -397,7 +383,7 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
         }
         @media print {
           @page {
-            margin: 0.5in;
+            margin: 0.4in;
             size: A4;
           }
           
@@ -408,26 +394,26 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
           
           body { 
             margin: 0; 
-            font-size: 12px;
-            line-height: 1.4;
+            font-size: 13px;
+            line-height: 1.3;
             background: white !important;
           }
           
           .report-header { 
             page-break-after: avoid; 
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             break-inside: avoid;
           }
           
           .main-title h1 {
-            font-size: 18px;
-            margin: 10px 0;
-            line-height: 1.3;
+            font-size: 20px;
+            margin: 8px 0;
+            line-height: 1.2;
           }
           
           .report-parameters {
             page-break-inside: avoid;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
           }
           
           .report-parameters table {
@@ -436,16 +422,16 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
           
           .report-parameters .label,
           .report-parameters .value {
-            font-size: 11px;
-            padding: 8px 12px;
+            font-size: 12px;
+            padding: 6px 10px;
           }
           
           .indicators-table { 
             page-break-inside: auto;
-            font-size: 10px;
+            font-size: 11px;
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
+            margin-top: 15px;
           }
           
           .indicators-table thead {
@@ -459,20 +445,20 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
           .indicators-table th {
             background: #2563eb !important;
             color: white !important;
-            padding: 8px 6px;
-            font-size: 10px;
+            padding: 10px 8px;
+            font-size: 11px;
             font-weight: bold;
             border: 1px solid #1d4ed8 !important;
             page-break-inside: avoid;
           }
           
           .indicators-table thead tr:first-child th:first-child {
-            padding-top: 15px;
+            padding-top: 12px;
           }
           
           .indicators-table td {
-            padding: 6px 4px;
-            font-size: 10px;
+            padding: 8px 6px;
+            font-size: 11px;
             border: 1px solid #e2e8f0 !important;
             page-break-inside: avoid;
           }
@@ -480,8 +466,8 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
           .indicators-table tr {
             page-break-inside: avoid;
             break-inside: avoid;
-            orphans: 3;
-            widows: 3;
+            orphans: 2;
+            widows: 2;
           }
           
           .indicators-table tr:nth-child(even) {
@@ -497,27 +483,50 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
           
           .footer {
             page-break-inside: avoid;
-            margin-top: 20px;
-            font-size: 10px;
+            margin-top: 15px;
+            font-size: 11px;
           }
           
           /* Prevent orphaned rows */
           .indicators-table tbody tr {
             page-break-inside: avoid;
-            orphans: 3;
-            widows: 3;
+            orphans: 2;
+            widows: 2;
           }
           
           /* Keep indicator groups together when possible */
           .indicator-group {
             page-break-inside: avoid;
-            orphans: 3;
-            widows: 3;
+            orphans: 2;
+            widows: 2;
           }
           
           /* Add space when table breaks to new page */
           .indicators-table {
             page-break-before: auto;
+          }
+          
+          /* Optimize table column widths for A4 */
+          .indicators-table th:nth-child(1),
+          .indicators-table td:nth-child(1) {
+            width: 45%;
+            min-width: 250px;
+          }
+          
+          .indicators-table th:nth-child(2),
+          .indicators-table td:nth-child(2) {
+            width: 15%;
+            min-width: 80px;
+          }
+          
+          .indicators-table th:nth-child(3),
+          .indicators-table td:nth-child(3),
+          .indicators-table th:nth-child(4),
+          .indicators-table td:nth-child(4),
+          .indicators-table th:nth-child(5),
+          .indicators-table td:nth-child(5) {
+            width: 12.5%;
+            min-width: 70px;
           }
           
           .indicators-table thead {
@@ -554,7 +563,7 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
                 <td class="label">ឈ្មោះស្រុកប្រតិបត្តិ (Operational District):</td>
                 <td class="value">${selectedSite ? getOperationalDistrict(selectedSite) : 'All Operational Districts'}</td>
                 <td class="label">ខេត្ត-ក្រុង (Province):</td>
-                <td class="value">${selectedSite ? getProvinceName(selectedSite.code) : 'All Provinces'}</td>
+                <td class="value">${selectedSite ? getProvinceName(selectedSite) : 'All Provinces'}</td>
               </tr>
               <tr>
                 <td class="label">ឆ្នាំ (Year):</td>
@@ -571,7 +580,6 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
       <table class="indicators-table">
         <thead>
           <tr>
-            <th>#</th>
             <th>សុចនាករ Indicator</th>
             <th>អាយុ Age</th>
             <th>ប្រុស Male</th>
@@ -583,7 +591,6 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
           ${indicators.map((indicator, index) => `
             <!-- Indicator Header Row -->
             <tr>
-              <td rowspan="3">${index + 1}</td>
               <td rowspan="3" style="text-align: left; font-weight: bold;">${getDisplayIndicatorName(indicator.Indicator)}</td>
               <td style="text-align: center; background: #f8fafc;">0-14</td>
               <td style="text-align: right;">${(indicator.Male_0_14 || 0).toLocaleString()}</td>

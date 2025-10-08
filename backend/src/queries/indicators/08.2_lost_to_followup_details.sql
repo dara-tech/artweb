@@ -1,6 +1,7 @@
 -- Indicator 8.2: Lost to follow up (LTFU) - Detailed Records (matching aggregate logic)
 SELECT
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -22,6 +23,7 @@ SELECT
     s.Da as ltf_date,
     s.Status as ltf_status_code
 FROM tblaimain main 
+LEFT JOIN tblaart art ON main.ClinicID = art.ClinicID
 JOIN tblavpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE s.Da BETWEEN :StartDate AND :EndDate 
     AND s.Status = :lost_code
@@ -30,6 +32,7 @@ UNION ALL
 
 SELECT
     main.ClinicID as clinicid,
+    art.ART as art_number,
     main.Sex as sex,
     CASE 
         WHEN main.Sex = 0 THEN 'Female'
@@ -51,6 +54,7 @@ SELECT
     s.Da as ltf_date,
     s.Status as ltf_status_code
 FROM tblcimain main 
+LEFT JOIN tblcart art ON main.ClinicID = art.ClinicID
 JOIN tblcvpatientstatus s ON main.ClinicID = s.ClinicID
 WHERE s.Da BETWEEN :StartDate AND :EndDate 
     AND s.Status = :lost_code

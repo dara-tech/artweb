@@ -1,6 +1,6 @@
 -- =====================================================
 -- 05 NEWLY INITIATED DETAILS
--- Generated: 2025-10-06T07:09:48.472Z
+-- Generated: 2025-10-08T09:39:33.695Z
 -- =====================================================
 
 -- =====================================================
@@ -20,6 +20,7 @@ SET @transfer_in_code = 1;                 -- Transfer in status code
 -- Indicator 5: Newly Initiated - Detailed Records
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -52,6 +53,7 @@ UNION ALL
 
 SELECT
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'

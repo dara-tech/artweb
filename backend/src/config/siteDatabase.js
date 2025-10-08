@@ -54,7 +54,7 @@ class SiteDatabaseManager {
   async getSiteInfo(siteCode) {
     try {
       const [results] = await this.registryConnection.query(
-        `SELECT * FROM sites WHERE code = '${siteCode}' AND status = 1`
+        `SELECT * FROM sites WHERE code = '${siteCode}'`
       );
       return results[0] || null;
     } catch (error) {
@@ -74,6 +74,8 @@ class SiteDatabaseManager {
           COALESCE(display_name, short_name, name) as display_name,
           COALESCE(search_terms, name) as search_terms,
           file_name,
+          province,
+          type,
           status,
           database_name
         FROM sites 
@@ -86,6 +88,34 @@ class SiteDatabaseManager {
       return results;
     } catch (error) {
       console.error('Error getting all sites:', error);
+      return [];
+    }
+  }
+
+  // Get all sites (including inactive) for management purposes
+  async getAllSitesForManagement() {
+    try {
+      const results = await this.registryConnection.query(
+        `SELECT 
+          code, 
+          name, 
+          COALESCE(short_name, name) as short_name,
+          COALESCE(display_name, short_name, name) as display_name,
+          COALESCE(search_terms, name) as search_terms,
+          file_name,
+          province,
+          type,
+          status,
+          database_name
+        FROM sites 
+        ORDER BY code`,
+        {
+          type: this.registryConnection.QueryTypes.SELECT
+        }
+      );
+      return results;
+    } catch (error) {
+      console.error('Error getting all sites for management:', error);
       return [];
     }
   }

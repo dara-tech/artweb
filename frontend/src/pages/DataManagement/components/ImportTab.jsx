@@ -154,8 +154,8 @@ const ImportTab = ({
       
       if (result.success) {
         setImportStatus('success');
-        setImportMessage(`Import completed! ${result.statistics?.successful || 0} statements executed successfully.`);
-        showMessage('success', `Import completed! ${result.statistics?.successful || 0} statements executed successfully.`);
+        setImportMessage(`Import completed! ${result.statistics?.successful || ''} `);
+        showMessage('success', `Import completed! ${result.statistics?.successful || ''}`);
         
         // Show extracted site info if available
         if (result.extractedSiteInfo) {

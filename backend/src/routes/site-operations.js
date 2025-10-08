@@ -335,6 +335,110 @@ router.put('/sites/:siteCode', authenticateToken, async (req, res) => {
   }
 });
 
+// Update site status
+router.put('/sites/:siteCode/status', authenticateToken, async (req, res) => {
+  try {
+    const { siteCode } = req.params;
+    const { status } = req.body;
+
+    if (status === undefined || (status !== 0 && status !== 1)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Status must be 0 (inactive) or 1 (active)'
+      });
+    }
+
+    // Check if site exists
+    const existingSite = await siteDatabaseManager.getSiteInfo(siteCode);
+    if (!existingSite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Site not found'
+      });
+    }
+
+    // Update site status
+    const registryConnection = siteDatabaseManager.getRegistryConnection();
+    await registryConnection.query(`
+      UPDATE sites 
+      SET status = :status, updated_at = CURRENT_TIMESTAMP
+      WHERE code = :siteCode
+    `, {
+      replacements: { status, siteCode },
+      type: registryConnection.QueryTypes.UPDATE
+    });
+
+    res.json({
+      success: true,
+      message: `Site ${siteCode} status updated to ${status === 1 ? 'active' : 'inactive'}`,
+      site: {
+        code: siteCode,
+        status: status
+      }
+    });
+
+  } catch (error) {
+    console.error('Update site status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update site status',
+      error: error.message
+    });
+  }
+});
+
+// Update site file name
+router.put('/sites/:siteCode/file-name', authenticateToken, async (req, res) => {
+  try {
+    const { siteCode } = req.params;
+    const { fileName } = req.body;
+
+    if (!fileName) {
+      return res.status(400).json({
+        success: false,
+        message: 'File name is required'
+      });
+    }
+
+    // Check if site exists
+    const existingSite = await siteDatabaseManager.getSiteInfo(siteCode);
+    if (!existingSite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Site not found'
+      });
+    }
+
+    // Update site file name
+    const registryConnection = siteDatabaseManager.getRegistryConnection();
+    await registryConnection.query(`
+      UPDATE sites 
+      SET file_name = :fileName, updated_at = CURRENT_TIMESTAMP
+      WHERE code = :siteCode
+    `, {
+      replacements: { fileName, siteCode },
+      type: registryConnection.QueryTypes.UPDATE
+    });
+
+    res.json({
+      success: true,
+      message: `File name updated for site ${siteCode}`,
+      site: {
+        code: siteCode,
+        fileName: fileName
+      }
+    });
+
+  } catch (error) {
+    console.error('Update file name error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update file name',
+      error: error.message
+    });
+  }
+});
+
 // Delete site from registry (soft delete)
 router.delete('/sites/:siteCode', authenticateToken, async (req, res) => {
   try {
@@ -349,20 +453,54 @@ router.delete('/sites/:siteCode', authenticateToken, async (req, res) => {
       });
     }
 
-    // Soft delete site (set status to 0)
+    // Hard delete site (remove from registry and drop database)
     const registryConnection = siteDatabaseManager.getRegistryConnection();
+    
+    // First, get the database name before deleting the site record
+    const databaseName = existingSite.database_name;
+    
+    // Delete from registry
     await registryConnection.query(`
-      UPDATE sites 
-      SET status = 0, updated_at = CURRENT_TIMESTAMP
+      DELETE FROM sites 
       WHERE code = :siteCode
     `, {
       replacements: { siteCode },
-      type: registryConnection.QueryTypes.UPDATE
+      type: registryConnection.QueryTypes.DELETE
     });
+
+    // Drop the site's database if it exists
+    if (databaseName) {
+      try {
+        console.log(`🗑️ Attempting to drop database: ${databaseName}`);
+        const { sequelize } = require('../config/database');
+        const connection = await sequelize.getQueryInterface().sequelize.connectionManager.getConnection();
+        
+        // Check if database exists before dropping
+        const [databases] = await connection.promise().query(`SHOW DATABASES LIKE '${databaseName}'`);
+        console.log(`📊 Found ${databases.length} databases matching: ${databaseName}`);
+        
+        if (databases.length > 0) {
+          console.log(`🗑️ Dropping database: ${databaseName}`);
+          await connection.promise().query(`DROP DATABASE \`${databaseName}\``);
+          console.log(`✅ Successfully dropped database: ${databaseName}`);
+        } else {
+          console.log(`⚠️ Database ${databaseName} not found, skipping drop`);
+        }
+        
+        await sequelize.getQueryInterface().sequelize.connectionManager.releaseConnection(connection);
+      } catch (dbError) {
+        console.error('❌ Error dropping site database:', dbError);
+        console.error('Database name:', databaseName);
+        console.error('Error details:', dbError.message);
+        // Continue with the response even if database drop fails
+      }
+    } else {
+      console.log('⚠️ No database name found for site, skipping database drop');
+    }
 
     res.json({
       success: true,
-      message: 'Site deleted successfully'
+      message: 'Site and its database deleted successfully'
     });
 
   } catch (error) {

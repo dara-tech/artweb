@@ -1,6 +1,6 @@
 -- =====================================================
 -- 05.2 ART WITH TLD DETAILS
--- Generated: 2025-10-06T07:09:48.471Z
+-- Generated: 2025-10-08T09:39:33.695Z
 -- =====================================================
 
 -- =====================================================
@@ -30,7 +30,7 @@ SELECT
     '15+' as typepatients,
     p.DaBirth as DaBirth,
     p.DafirstVisit as DafirstVisit,
-    art.ART as ART,
+    art.ART as art_number,
     art.DaArt as DaArt,
     v.DatVisit as DatVisit,
     p.OffIn as OffIn,
@@ -70,7 +70,7 @@ SELECT
     '≤14' as typepatients,
     p.DaBirth as DaBirth,
     p.DafirstVisit as DafirstVisit,
-    art.ART as ART,
+    art.ART as art_number,
     art.DaArt as DaArt,
     v.DatVisit as DatVisit,
     p.OffIn as OffIn,

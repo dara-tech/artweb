@@ -2,6 +2,7 @@
 -- This matches the old VB.NET implementation exactly
 SELECT
     p.ClinicID as clinicid,
+    COALESCE(art.ART, art2.ART) as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -15,7 +16,7 @@ SELECT
     END as typepatients,
     p.DaBirth as DaBirth,
     p.DafirstVisit as DafirstVisit,
-    NULL as DaArt,
+    COALESCE(art.DaArt, art2.DaArt) as DaArt,
     p.DatVisit as DatVisit,
     p.OffIn as OffIn,
     p.type as patient_type,
@@ -73,4 +74,6 @@ FROM (
     LEFT JOIN tblcimain ci ON ci.ClinicID = lt.ClinicID
     WHERE ci.OffIn <> 1 AND ci.LClinicID = '' AND ci.DafirstVisit BETWEEN :StartDate AND :EndDate
 ) p
+LEFT JOIN tblaart art ON p.ClinicID = art.ClinicID AND p.type = 'Adult'
+LEFT JOIN tblcart art2 ON p.ClinicID = art2.ClinicID AND p.type = 'Child'
 ORDER BY p.DafirstVisit DESC, p.ClinicID;

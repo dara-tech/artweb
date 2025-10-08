@@ -305,7 +305,7 @@ router.get('/hospitals', async (req, res, next) => {
 // Get all sites from registry (enhanced with short names) - NEW ROUTE
 router.get('/sites-registry', async (req, res, next) => {
   try {
-    const sites = await siteDatabaseManager.getAllSites();
+    const sites = await siteDatabaseManager.getAllSitesForManagement();
     
     // Return in the same format as the original API for backward compatibility
     const formattedSites = sites.map(site => ({

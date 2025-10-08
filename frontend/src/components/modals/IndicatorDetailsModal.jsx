@@ -61,10 +61,10 @@ const IndicatorDetailsModal = ({
   const getColumnConfig = (indicatorName) => {
     const baseColumns = [
       { key: 'clinicid', label: 'Clinic ID', type: 'text' },
+      { key: 'art_number', label: 'ART Number', type: 'text' },
       { key: 'sex_display', label: 'Sex', type: 'badge' },
       { key: 'patient_type', label: 'Type', type: 'badge' },
       { key: 'age', label: 'Age', type: 'number' },
-      { key: 'DaBirth', label: 'Birth Date', type: 'date' },
       { key: 'DafirstVisit', label: 'First Visit', type: 'date' }
     ];
 
@@ -98,18 +98,21 @@ const IndicatorDetailsModal = ({
 
     // Add columns based on indicator type
     if (indicatorName?.includes('MMD') || indicatorName?.includes('Eligible MMD')) {
-      columns = [...columns, ...artColumns];
+      // For MMD indicators, exclude the duplicate ART Number from artColumns
+      const artColumnsWithoutDuplicate = artColumns.filter(col => col.key !== 'ART');
+      columns = [...columns, ...artColumnsWithoutDuplicate];
     }
     
     // TLD indicators - exclude ART Duration for indicator 5.2
     if (indicatorName?.includes('TLD')) {
       if (indicatorName?.includes('5.2. New ART started with TLD')) {
-        // For indicator 5.2, use ART columns without ART Duration
-        const artColumnsWithoutDuration = artColumns.filter(col => col.key !== 'Startartstatus');
+        // For indicator 5.2, use ART columns without ART Duration and duplicate ART Number
+        const artColumnsWithoutDuration = artColumns.filter(col => col.key !== 'Startartstatus' && col.key !== 'ART');
         columns = [...columns, ...artColumnsWithoutDuration];
       } else {
-        // For other TLD indicators, use full ART columns
-        columns = [...columns, ...artColumns];
+        // For other TLD indicators, exclude duplicate ART Number
+        const artColumnsWithoutDuplicate = artColumns.filter(col => col.key !== 'ART');
+        columns = [...columns, ...artColumnsWithoutDuplicate];
       }
     }
     
@@ -143,14 +146,15 @@ const IndicatorDetailsModal = ({
 
     if (indicatorName?.includes('Lost and Return')) {
       columns = [...columns, 
-        { key: 'return_type', label: 'Return Type', type: 'text' },
-        { key: 'art_number', label: 'ART Number', type: 'text' }
+        { key: 'return_type', label: 'Return Type', type: 'text' }
       ];
     }
 
     if (indicatorName?.includes('Dead')) {
       columns = [...columns, 
-        { key: 'death_date', label: 'Death Date', type: 'date' }
+        { key: 'death_date', label: 'Death Date', type: 'date' },
+        { key: 'death_place', label: 'Death Place', type: 'text' },
+        { key: 'death_reason', label: 'Death Reason', type: 'text' }
       ];
     }
 

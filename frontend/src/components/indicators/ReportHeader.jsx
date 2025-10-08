@@ -1,39 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import siteApi from '../../services/siteApi';
 
 const ReportHeader = ({ selectedSite, selectedYear, selectedQuarter }) => {
-  // Helper function to get province name from site code
-  const getProvinceName = (siteCode) => {
-    if (!siteCode) return 'Unknown';
+  const [sites, setSites] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load sites on component mount
+  useEffect(() => {
+    loadSites();
+  }, []);
+
+  const loadSites = async () => {
+    try {
+      setLoading(true);
+      const response = await siteApi.getAllSites();
+      const sitesData = response.sites || response.data || response;
+      setSites(sitesData || []);
+    } catch (error) {
+      console.error('Error loading sites:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Helper function to get province name from site data
+  const getProvinceName = (site) => {
+    if (!site) return 'Unknown';
     
-    const provinceCode = siteCode.substring(0, 2);
-    const provinceMap = {
-      '02': 'Battambang',
-      '03': 'Kampong Cham', 
-      '12': 'Kampong Thom',
-      '18': 'Preah Sihanouk',
-      '01': 'Phnom Penh',
-      '04': 'Kampong Chhnang',
-      '05': 'Kampong Speu',
-      '06': 'Kampong Thom',
-      '07': 'Kampot',
-      '08': 'Kandal',
-      '09': 'Koh Kong',
-      '10': 'Kratie',
-      '11': 'Mondulkiri',
-      '13': 'Preah Vihear',
-      '14': 'Pursat',
-      '15': 'Ratanakiri',
-      '16': 'Siem Reap',
-      '17': 'Stung Treng',
-      '19': 'Svay Rieng',
-      '20': 'Takeo',
-      '21': 'Oddar Meanchey',
-      '22': 'Kep',
-      '23': 'Pailin',
-      '24': 'Tbong Khmum'
-    };
+    // If site has province field, use it directly
+    if (site.province) {
+      return site.province;
+    }
     
-    return `${provinceCode}. ${provinceMap[provinceCode] || 'Unknown Province'}`;
+    // Fallback to site code parsing if province not available
+    if (site.code) {
+      const provinceCode = site.code.substring(0, 2);
+      return `${provinceCode}. Unknown Province`;
+    }
+    
+    return 'Unknown Province';
   };
 
   // Helper function to get operational district from site
@@ -50,11 +55,38 @@ const ReportHeader = ({ selectedSite, selectedYear, selectedQuarter }) => {
     return `OD ${districtCode}. ${districtName}`;
   };
 
+  // Helper function to get all provinces when "All Sites" is selected
+  const getAllProvinces = () => {
+    if (!sites || sites.length === 0) return 'No data available';
+    
+    const provinces = [...new Set(sites.map(site => getProvinceName(site)))];
+    return provinces.join(', ');
+  };
+
+  // Helper function to get all operational districts when "All Sites" is selected
+  const getAllOperationalDistricts = () => {
+    if (!sites || sites.length === 0) return 'No data available';
+    
+    const districts = [...new Set(sites.map(site => getOperationalDistrict(site)))];
+    return districts.join(', ');
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-card shadow-sm p-6 mb-6">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-2 text-gray-600">Loading site data...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-card shadow-sm p-6 mb-6">
       {/* Main Title */}
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-foreground mb-2">
+      <div className="text-center mb-1">
+        <h1 className="text-2xl font-bold text-foreground mb-1">
           របាយការណ៍ស្តីពីការព្យាបាលអ្នកជំងឺអេដស៍ Quarterly Report on ART
         </h1>
       </div>
@@ -65,13 +97,13 @@ const ReportHeader = ({ selectedSite, selectedYear, selectedQuarter }) => {
           <tbody>
             <tr className="border-b border-border">
               <td className="px-4 py-3 font-semibold text-foreground border-r border-border w-1/4">
-                ឈ្មោះមន្ទីរពេទ្យបង្អែក (Facility):
+                Facility:
               </td>
               <td className="px-4 py-3 text-foreground border-r border-border w-1/4">
                 {selectedSite ? selectedSite.name : 'All Facilities'}
               </td>
               <td className="px-4 py-3 font-semibold text-foreground border-r border-border w-1/4">
-                ឈ្មោះឯកសារ (File Name):
+                 File Name:
               </td>
               <td className="px-4 py-3 text-foreground w-1/4">
                 {selectedSite ? (selectedSite.fileName || selectedSite.file_name || selectedSite.code) : 'All Facilities'}
@@ -79,27 +111,27 @@ const ReportHeader = ({ selectedSite, selectedYear, selectedQuarter }) => {
             </tr>
             <tr className="border-b border-border">
               <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
-                ឈ្មោះស្រុកប្រតិបត្តិ (Operational District):
+                Operational District:
               </td>
               <td className="px-4 py-3 text-foreground border-r border-border">
                 {selectedSite ? getOperationalDistrict(selectedSite) : 'All Operational Districts'}
               </td>
               <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
-                ខេត្ត-ក្រុង (Province):
+               Province:
               </td>
               <td className="px-4 py-3 text-foreground">
-                {selectedSite ? getProvinceName(selectedSite.code) : 'All Provinces'}
+                {selectedSite ? getProvinceName(selectedSite) : 'All Provinces'}
               </td>
             </tr>
             <tr>
               <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
-                ឆ្នាំ (Year):
+                Year:
               </td>
               <td className="px-4 py-3 text-foreground border-r border-border">
                 {selectedYear}
               </td>
               <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
-                ត្រីមាសទី (Quarter):
+                Quarter:
               </td>
               <td className="px-4 py-3 text-foreground">
                 Quarter {selectedQuarter}

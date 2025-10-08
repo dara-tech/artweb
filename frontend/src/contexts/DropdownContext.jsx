@@ -63,7 +63,7 @@ export const DropdownProvider = ({ children }) => {
       ])
 
       setDropdownData({
-        sites: sites.data || [],
+        sites: (sites.data || []).filter(site => site.status === 1),
         vcctSites: vcctSites.data || [],
         drugs: drugs.data || [],
         clinics: clinics.data || [],

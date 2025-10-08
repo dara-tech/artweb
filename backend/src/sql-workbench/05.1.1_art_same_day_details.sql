@@ -1,6 +1,6 @@
 -- =====================================================
 -- 05.1.1 ART SAME DAY DETAILS
--- Generated: 2025-10-06T07:09:48.470Z
+-- Generated: 2025-10-08T09:39:33.693Z
 -- =====================================================
 
 -- =====================================================
@@ -21,6 +21,7 @@ SET @transfer_in_code = 1;                 -- Transfer in status code
 SELECT
     '05.1.1' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -54,6 +55,7 @@ UNION ALL
 SELECT
     '05.1.1' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'

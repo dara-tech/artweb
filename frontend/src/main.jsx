@@ -6,6 +6,7 @@ import App from './App.jsx'
 import { AuthProvider } from './contexts/AuthContext'
 import { SiteProvider } from './contexts/SiteContext'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { Toaster } from './components/ui/toaster'
 
 // Load premium typography with beautiful Khmer support
 const link = document.createElement('link')
@@ -21,11 +22,11 @@ document.head.appendChild(link2)
 
 const fontLink = document.createElement('link')
 fontLink.rel = 'stylesheet'
-fontLink.href = 'https://fonts.googleapis.com/css2?family=Huuman+Front:wght@100;200;300;400;500;600;700;800;900&family=Noto+Sans+Khmer:wght@100;200;300;400;500;600;700;800;900&display=swap'
+fontLink.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Noto+Sans+Khmer:wght@100;200;300;400;500;600;700;800;900&display=swap'
 document.head.appendChild(fontLink)
 
 // Apply sophisticated font stack with beautiful Khmer and English support
-document.body.style.fontFamily = '"Huuman Front", "Noto Sans Khmer", "Inter", "Segoe UI", sans-serif'
+document.body.style.fontFamily = '"Poppins", "Noto Sans Khmer", "Inter", "Segoe UI", sans-serif'
 document.body.style.letterSpacing = '-0.008em'
 document.body.style.lineHeight = '1.65'
 document.body.style.fontWeight = '400'
@@ -41,6 +42,7 @@ createRoot(document.getElementById('root')).render(
         <AuthProvider>
           <SiteProvider>
             <App />
+            <Toaster />
           </SiteProvider>
         </AuthProvider>
       </ThemeProvider>

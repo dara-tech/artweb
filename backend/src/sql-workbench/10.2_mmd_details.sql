@@ -1,6 +1,6 @@
 -- =====================================================
 -- 10.2 MMD DETAILS
--- Generated: 2025-10-06T07:09:48.476Z
+-- Generated: 2025-10-08T09:39:33.699Z
 -- =====================================================
 
 -- =====================================================
@@ -247,7 +247,7 @@ WITH tblactive AS (
         i.OffIn, 
         a.ART, 
         a.DaArt,
-        v.DatVisit, 
+        v.DatVisit AS DatVisit, 
         v.ARTnum, 
         v.DaApp,
         a.nmonthART,
@@ -305,6 +305,7 @@ SELECT
     DaArt,
     DafirstVisit,
     DaBirth,
+    DatVisit AS datevisit,
     OffIn,
     CASE 
         WHEN OffIn = 0 THEN 'Not Transferred'

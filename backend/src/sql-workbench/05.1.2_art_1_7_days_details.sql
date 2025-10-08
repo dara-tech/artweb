@@ -1,6 +1,6 @@
 -- =====================================================
 -- 05.1.2 ART 1 7 DAYS DETAILS
--- Generated: 2025-10-06T07:09:48.470Z
+-- Generated: 2025-10-08T09:39:33.693Z
 -- =====================================================
 
 -- =====================================================
@@ -18,6 +18,7 @@ SET @EndDate = '2025-06-30';               -- End date (YYYY-MM-DD) - Q2 2025
 SELECT
     '5.1.2' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'
@@ -50,6 +51,7 @@ UNION ALL
 SELECT
     '5.1.2' as step,
     p.ClinicID as clinicid,
+    art.ART as art_number,
     p.Sex as sex,
     CASE 
         WHEN p.Sex = 0 THEN 'Female'

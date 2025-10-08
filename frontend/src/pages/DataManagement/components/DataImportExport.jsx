@@ -1,4 +1,3 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Badge } from "@/components/ui";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState, useEffect } from 'react';
 import { 
@@ -9,6 +8,7 @@ import {
   Eye
 } from 'lucide-react';
 import api from "../../../services/api";
+import toastService from "../../../services/toastService";
 
 // Import the components
 import ImportTab from './ImportTab';
@@ -19,12 +19,21 @@ const DataImportExport = () => {
   const [loading, setLoading] = useState(false);
 
   const showMessage = (type, message) => {
-    // Simple alert for now - you can replace this with a proper notification system
+    // Use toast notifications instead of alerts
     if (type === 'success') {
-      alert(`✅ ${message}`);
+      toastService.success('Success', message);
     } else if (type === 'error') {
-      alert(`❌ ${message}`);
+      toastService.error('Error', message);
+    } else if (type === 'warning') {
+      toastService.warning('Warning', message);
+    } else if (type === 'info') {
+      toastService.info('Info', message);
     }
+  };
+
+  // Helper function to get active sites only
+  const getActiveSites = () => {
+    return sites.filter(site => site.status === 1);
   };
 
   useEffect(() => {
@@ -34,13 +43,17 @@ const DataImportExport = () => {
 
   const fetchSites = async () => {
     try {
+      setLoading(true);
       console.log('🔍 Fetching sites...');
       const response = await api.get('/apiv1/lookups/sites-registry');
       console.log('Response data:', response.data);
       
       if (Array.isArray(response.data)) {
-        console.log('Sites loaded:', response.data.length);
-        setSites(response.data);
+        // Filter out inactive sites (status = 0)
+        const activeSites = response.data.filter(site => site.status === 1);
+        console.log('Sites loaded:', activeSites.length, 'out of', response.data.length);
+        setSites(activeSites);
+        toastService.success('Sites Loaded', `Successfully loaded ${activeSites.length} active sites`);
       } else {
         console.error('API returned unexpected format:', response.data);
         showMessage('error', 'Failed to load sites: Unexpected response format');
@@ -55,8 +68,11 @@ const DataImportExport = () => {
         console.log('Fallback response data:', fallbackResponse.data);
         
         if (fallbackResponse.data.success && Array.isArray(fallbackResponse.data.sites)) {
-          console.log('Sites loaded from fallback:', fallbackResponse.data.sites.length);
-          setSites(fallbackResponse.data.sites);
+          // Filter out inactive sites (status = 0)
+          const activeSites = fallbackResponse.data.sites.filter(site => site.status === 1);
+          console.log('Sites loaded from fallback:', activeSites.length, 'out of', fallbackResponse.data.sites.length);
+          setSites(activeSites);
+          toastService.info('Sites Loaded', `Loaded ${activeSites.length} active sites from fallback endpoint`);
         } else {
           showMessage('error', 'Failed to load sites from both endpoints');
           setSites([]);
@@ -66,6 +82,8 @@ const DataImportExport = () => {
         showMessage('error', 'Failed to load sites. Please check your connection and try again.');
         setSites([]);
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -82,17 +100,28 @@ const DataImportExport = () => {
           <Database className="h-6 w-6 text-muted-foreground" />
           <h1 className="text-2xl font-semibold text-foreground">Data Management</h1>
         </div>
-        <p className="text-muted-foreground">Import SQL files and view all imported data with file names</p>
+        
+        <div className="flex items-center justify-between">
+          <p className="text-muted-foreground">Import SQL files and view all imported data with file names</p>
+          
+        
+        </div>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="import" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="import" className="flex items-center space-x-2">
+          <TabsTrigger 
+            value="import" 
+            className="flex items-center space-x-2"
+          >
             <Upload className="h-4 w-4" />
             <span>Import Data</span>
           </TabsTrigger>
-          <TabsTrigger value="viewer" className="flex items-center space-x-2">
+          <TabsTrigger 
+            value="viewer" 
+            className="flex items-center space-x-2"
+          >
             <Eye className="h-4 w-4" />
             <span>View Data</span>
           </TabsTrigger>
@@ -101,7 +130,7 @@ const DataImportExport = () => {
         <TabsContent value="import" className="mt-6">
           <div className="bg-card rounded-lg border border-border shadow-sm">
             <ImportTab
-              sites={sites}
+              sites={getActiveSites()}
               loading={loading}
               setLoading={setLoading}
               showMessage={showMessage}

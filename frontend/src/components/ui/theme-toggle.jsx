@@ -1,4 +1,4 @@
-import { Moon, Sun } from 'lucide-react'
+import { CgDarkMode } from "react-icons/cg";
 import { Button } from './button'
 import { useTheme } from '../../contexts/ThemeContext'
 
@@ -6,18 +6,14 @@ export function ThemeToggle() {
   const { theme, toggleTheme } = useTheme()
 
   return (
-    <Button
-      variant="ghost"
+    <div
+      variant="outline"
       size="sm"
       onClick={toggleTheme}
       className="hover:bg-accent transition-colors"
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
     >
-      {theme === 'light' ? (
-        <Moon className="h-5 w-5 text-muted-foreground" />
-      ) : (
-        <Sun className="h-5 w-5 text-muted-foreground" />
-      )}
-    </Button>
+      <CgDarkMode className="h-6 w-6 text-muted-foreground" />
+    </div>
   )
 }
