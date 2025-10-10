@@ -13,7 +13,7 @@ WITH tblimain AS (
         DaHIV,
         OffIn 
     FROM tblaimain 
-    WHERE DafirstVisit <= :EndDate
+    WHERE DaART <= :EndDate
     
     UNION ALL 
     
@@ -30,7 +30,7 @@ WITH tblimain AS (
         DaTest AS DaHIV,
         OffIn 
     FROM tblcimain 
-    WHERE DafirstVisit <= :EndDate
+    WHERE DaART <= :EndDate
 ),
 tblactive AS (
     SELECT 
@@ -76,8 +76,8 @@ tblactive AS (
             GROUP BY pt.clinicid
         ) mp ON mp.clinicid = p.clinicid AND mp.dat = p.dat
     ) lvl ON lvl.clinicid = a.ClinicID
-    LEFT JOIN tblimain i ON i.clinicid = a.clinicid
-    WHERE ps.da IS NULL
+    LEFT JOIN tblimain i ON CAST(i.clinicid AS CHAR) = CAST(a.clinicid AS CHAR)
+    WHERE ps.da IS NULL OR ps.da > :EndDate
 )
 
 SELECT
@@ -87,7 +87,7 @@ SELECT
     CASE 
         WHEN Sex = 0 THEN 'Female'
         WHEN Sex = 1 THEN 'Male'
-        WHEN Sex IS NULL THEN 'Unknown (No tblimain data)'
+        WHEN Sex IS NULL THEN 'Unknown (No patient data)'
         ELSE 'Unknown'
     END as sex_display,
     typepatients,
@@ -95,7 +95,7 @@ SELECT
     CASE 
         WHEN typepatients = '15+' THEN 'Adult'
         WHEN typepatients = '≤14' THEN 'Child'
-        WHEN typepatients IS NULL THEN 'Unknown (No tblimain data)'
+        WHEN typepatients IS NULL THEN 'Unknown (No patient data)'
         ELSE 'Unknown'
     END as patient_type,
     ART,

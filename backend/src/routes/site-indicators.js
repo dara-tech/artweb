@@ -50,12 +50,10 @@ router.get('/sites/:siteCode/indicators', authenticateToken, async (req, res) =>
     
     // Check if request is already pending
     if (pendingRequests.has(requestKey)) {
-      console.log(`🔄 Request already pending for site ${siteCode}, waiting...`);
       try {
         const result = await pendingRequests.get(requestKey);
         return res.json(result);
       } catch (error) {
-        console.error('Error with pending request:', error);
         return res.status(500).json({
           success: false,
           error: error.message
@@ -66,7 +64,6 @@ router.get('/sites/:siteCode/indicators', authenticateToken, async (req, res) =>
     // Create a new promise for this request
     const requestPromise = (async () => {
       try {
-        console.log(`🚀 Executing all indicators for site ${siteCode}...`);
         const result = await siteOptimizedIndicators.executeAllSiteIndicators(
           siteCode, 
           params, 
@@ -104,7 +101,6 @@ router.get('/sites/:siteCode/indicators', authenticateToken, async (req, res) =>
       const result = await requestPromise;
       res.json(result);
     } catch (error) {
-      console.error(`Site indicators error for ${siteCode}:`, error);
       res.status(500).json({
         success: false,
         error: error.message,
@@ -112,7 +108,6 @@ router.get('/sites/:siteCode/indicators', authenticateToken, async (req, res) =>
       });
     }
   } catch (error) {
-    console.error(`Site indicators error:`, error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -156,8 +151,6 @@ router.get('/sites/:siteCode/indicators/:indicatorId', authenticateToken, async 
       transfer_in_code: 1,
       tpt_drug_list: "'Isoniazid','3HP','6H'"
     };
-
-    console.log(`Executing ${indicatorId} for site ${siteCode}...`);
     
     const result = await siteOptimizedIndicators.executeSiteIndicator(
       siteCode, 
@@ -177,7 +170,6 @@ router.get('/sites/:siteCode/indicators/:indicatorId', authenticateToken, async 
       timestamp: result.timestamp
     });
   } catch (error) {
-    console.error(`Site indicator ${req.params.indicatorId} error:`, error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -194,8 +186,6 @@ router.get('/sites/:siteCode/indicators/:indicatorId/details', authenticateToken
     
     // Allow higher limits for export requests (when limit > 1000)
     const effectiveLimit = parseInt(limit) > 1000 ? Math.min(parseInt(limit), 100000) : parseInt(limit);
-    
-    console.log('🔍 Site details request params:', { siteCode, indicatorId, search, ageGroup, gender });
     
     if (!startDate || !endDate) {
       return res.status(400).json({
@@ -248,7 +238,6 @@ router.get('/sites/:siteCode/indicators/:indicatorId/details', authenticateToken
       timestamp: result.timestamp
     });
   } catch (error) {
-    console.error(`Site indicator details ${req.params.indicatorId} error:`, error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -289,12 +278,10 @@ router.get('/all-sites/indicators', authenticateToken, async (req, res) => {
     
     // Check if request is already pending
     if (pendingRequests.has(requestKey)) {
-      console.log('🔄 Request already pending for all sites, waiting...');
       try {
         const result = await pendingRequests.get(requestKey);
         return res.json(result);
       } catch (error) {
-        console.error('Error with pending request:', error);
         return res.status(500).json({
           success: false,
           error: error.message
@@ -305,7 +292,6 @@ router.get('/all-sites/indicators', authenticateToken, async (req, res) => {
     // Create a new promise for this request
     const requestPromise = (async () => {
       try {
-        console.log('🚀 Executing all indicators for all sites...');
         const result = await siteOptimizedIndicators.executeAllSitesIndicators(
           params, 
           useCache === 'true'
@@ -341,7 +327,6 @@ router.get('/all-sites/indicators', authenticateToken, async (req, res) => {
       const result = await requestPromise;
       res.json(result);
     } catch (error) {
-      console.error('All sites indicators error:', error);
       res.status(500).json({
         success: false,
         error: error.message,
@@ -349,7 +334,6 @@ router.get('/all-sites/indicators', authenticateToken, async (req, res) => {
       });
     }
   } catch (error) {
-    console.error('All sites indicators error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -379,7 +363,6 @@ router.post('/sites/:siteCode/cache/clear', authenticateToken, async (req, res) 
       site: siteInfo
     });
   } catch (error) {
-    console.error('Clear cache error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -397,7 +380,6 @@ router.post('/cache/clear', authenticateToken, async (req, res) => {
       message: 'All cache cleared'
     });
   } catch (error) {
-    console.error('Clear all cache error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -421,7 +403,6 @@ router.get('/cache/stats', authenticateToken, async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Cache stats error:', error);
     res.status(500).json({
       success: false,
       error: error.message

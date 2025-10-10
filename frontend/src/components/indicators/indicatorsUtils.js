@@ -264,7 +264,7 @@ export const getDisplayIndicatorName = (backendName) => {
 };
 
 // Generate report HTML for printing
-export const generateReportHTML = (indicators, selectedSite, selectedYear, selectedQuarter) => {
+export const generateReportHTML = (indicators, selectedSite, selectedYear, selectedQuarter, sites = []) => {
   // Get the current date and time
   const now = new Date();
   const timestamp = now.toLocaleString();
@@ -273,6 +273,55 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
   // Get site information
   const siteName = selectedSite?.name || 'All Sites';
   const siteCode = selectedSite?.code || 'N/A';
+  
+  // Helper functions for "All Sites" case
+  const getOperationalDistrict = (site) => {
+    if (!site || !site.code) return 'Unknown';
+    const districtCode = site.code.substring(0, 4);
+    const siteName = site.name || '';
+    const nameParts = siteName.split(' ');
+    const districtName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : siteName;
+    return `OD ${districtCode}. ${districtName}`;
+  };
+  
+  const getProvinceName = (site) => {
+    if (!site) return 'Unknown';
+    if (site.province) {
+      return site.province;
+    }
+    if (site.code) {
+      const provinceCode = site.code.substring(0, 2);
+      return `${provinceCode}. Unknown Province`;
+    }
+    return 'Unknown Province';
+  };
+  
+  const getAllFileNames = () => {
+    if (!sites || sites.length === 0) return 'No data available';
+    const fileNames = sites.map(site => site.fileName || site.file_name || site.code || 'Unknown');
+    if (fileNames.length > 5) {
+      return `All ${fileNames.length} facilities (${fileNames.slice(0, 3).join(', ')}...)`;
+    }
+    return fileNames.join(', ');
+  };
+  
+  const getAllProvinces = () => {
+    if (!sites || sites.length === 0) return 'No data available';
+    const provinces = [...new Set(sites.map(site => getProvinceName(site)))];
+    if (provinces.length > 5) {
+      return `All ${provinces.length} provinces (${provinces.slice(0, 3).join(', ')}...)`;
+    }
+    return provinces.join(', ');
+  };
+  
+  const getAllOperationalDistricts = () => {
+    if (!sites || sites.length === 0) return 'No data available';
+    const districts = [...new Set(sites.map(site => getOperationalDistrict(site)))];
+    if (districts.length > 5) {
+      return `All ${districts.length} districts (${districts.slice(0, 3).join(', ')}...)`;
+    }
+    return districts.join(', ');
+  };
   
   // Create HTML content for the PDF
   const htmlContent = `
@@ -557,13 +606,13 @@ export const generateReportHTML = (indicators, selectedSite, selectedYear, selec
                 <td class="label">ឈ្មោះមន្ទីរពេទ្យបង្អែក (Facility):</td>
                 <td class="value">${siteName}</td>
                 <td class="label">ឈ្មោះឯកសារ (File Name):</td>
-                <td class="value">${selectedSite?.fileName || selectedSite?.file_name || siteCode}</td>
+                <td class="value">${selectedSite ? (selectedSite.fileName || selectedSite.file_name || siteCode) : getAllFileNames()}</td>
               </tr>
               <tr>
                 <td class="label">ឈ្មោះស្រុកប្រតិបត្តិ (Operational District):</td>
-                <td class="value">${selectedSite ? getOperationalDistrict(selectedSite) : 'All Operational Districts'}</td>
+                <td class="value">${selectedSite ? getOperationalDistrict(selectedSite) : getAllOperationalDistricts()}</td>
                 <td class="label">ខេត្ត-ក្រុង (Province):</td>
-                <td class="value">${selectedSite ? getProvinceName(selectedSite) : 'All Provinces'}</td>
+                <td class="value">${selectedSite ? getProvinceName(selectedSite) : getAllProvinces()}</td>
               </tr>
               <tr>
                 <td class="label">ឆ្នាំ (Year):</td>

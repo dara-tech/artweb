@@ -50,9 +50,27 @@ const cacheKeys = {
 // Cache helper functions
 const cache = {
   // Get data from cache
-  get: (cacheType, key) => {
+  get: (cacheTypeOrKey, key) => {
     try {
-      return caches[cacheType].get(key);
+      console.log('[Cache] get called with:', cacheTypeOrKey, key);
+      console.log('[Cache] caches object:', typeof caches, caches ? Object.keys(caches) : 'undefined');
+      
+      // Handle both calling patterns: cache.get(cacheType, key) and cache.get(key)
+      if (key !== undefined) {
+        // Called with cacheType and key
+        if (!caches || !caches[cacheTypeOrKey]) {
+          console.error('[Cache] caches object or cache type not found:', cacheTypeOrKey);
+          return null;
+        }
+        return caches[cacheTypeOrKey].get(key);
+      } else {
+        // Called with just key - use default cache (short)
+        if (!caches || !caches.short) {
+          console.error('[Cache] caches object or short cache not found');
+          return null;
+        }
+        return caches.short.get(cacheTypeOrKey);
+      }
     } catch (error) {
       console.error('Cache get error:', error);
       return null;

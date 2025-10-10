@@ -228,18 +228,6 @@ router.get('/', async (req, res, next) => {
     });
     
     const paginatedVisits = limitNum ? allVisits.slice(offset, offset + limitNum) : allVisits;
-    
-    // Debug logging
-    console.log('Sample visit data:', allVisits[0]);
-    console.log('Patient status values found:', allVisits.map(v => ({ clinicId: v.clinicId, patientStatus: v.patientStatus, rawPatientStatus: v.rawPatientStatus })).slice(0, 5));
-    console.log('Status value counts:', {
-      '-1': allVisits.filter(v => v.patientStatus === -1 || v.patientStatus === '-1').length,
-      '0': allVisits.filter(v => v.patientStatus === 0 || v.patientStatus === '0').length,
-      '1': allVisits.filter(v => v.patientStatus === 1 || v.patientStatus === '1').length,
-      '3': allVisits.filter(v => v.patientStatus === 3 || v.patientStatus === '3').length,
-      'null/undefined': allVisits.filter(v => v.patientStatus == null).length
-    });
-    
 
     // Map status values to readable text (matching old system)
     const statusMap = {

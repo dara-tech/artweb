@@ -471,31 +471,21 @@ router.delete('/sites/:siteCode', authenticateToken, async (req, res) => {
     // Drop the site's database if it exists
     if (databaseName) {
       try {
-        console.log(`🗑️ Attempting to drop database: ${databaseName}`);
         const { sequelize } = require('../config/database');
         const connection = await sequelize.getQueryInterface().sequelize.connectionManager.getConnection();
         
         // Check if database exists before dropping
         const [databases] = await connection.promise().query(`SHOW DATABASES LIKE '${databaseName}'`);
-        console.log(`📊 Found ${databases.length} databases matching: ${databaseName}`);
         
         if (databases.length > 0) {
-          console.log(`🗑️ Dropping database: ${databaseName}`);
           await connection.promise().query(`DROP DATABASE \`${databaseName}\``);
-          console.log(`✅ Successfully dropped database: ${databaseName}`);
-        } else {
-          console.log(`⚠️ Database ${databaseName} not found, skipping drop`);
         }
         
         await sequelize.getQueryInterface().sequelize.connectionManager.releaseConnection(connection);
       } catch (dbError) {
-        console.error('❌ Error dropping site database:', dbError);
-        console.error('Database name:', databaseName);
-        console.error('Error details:', dbError.message);
+        console.error('Error dropping site database:', dbError);
         // Continue with the response even if database drop fails
       }
-    } else {
-      console.log('⚠️ No database name found for site, skipping database drop');
     }
 
     res.json({

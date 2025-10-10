@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Frontend Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .data-table th, .data-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .data-table th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Analytics Frontend Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Summary API</h3>
+        <button onclick="testSummary()">Test Summary</button>
+        <div id="summary-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Analytics Data (Q3 2025)</h3>
+        <button onclick="testData()">Test Data</button>
+        <div id="data-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: All Analytics Data</h3>
+        <button onclick="testAllData()">Test All Data</button>
+        <div id="all-data-result"></div>
+    </div>
+
+    <script>
+        async function testSummary() {
+            const resultDiv = document.getElementById('summary-result');
+            resultDiv.innerHTML = '<p>Testing summary API...</p>';
+            
+            try {
+                const response = await fetch('/apiv1/analytics/summary');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Summary API Working!</h4>
+                            <p><strong>Total Records:</strong> ${data.data.totalRecords}</p>
+                            <p><strong>Completed:</strong> ${data.data.completedRecords}</p>
+                            <p><strong>Success Rate:</strong> ${data.data.successRate}%</p>
+                            <p><strong>Last Updated:</strong> ${new Date(data.data.lastUpdated).toLocaleString()}</p>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><h4>❌ Error</h4><p>${data.message}</p></div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><h4>❌ Network Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+        
+        async function testData() {
+            const resultDiv = document.getElementById('data-result');
+            resultDiv.innerHTML = '<p>Testing analytics data API...</p>';
+            
+            try {
+                const response = await fetch('/apiv1/analytics/data?periodType=quarterly&periodYear=2025&periodQuarter=3');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const tableRows = data.data.slice(0, 5).map(record => `
+                        <tr>
+                            <td>${record.indicator_name}</td>
+                            <td>${record.site_code}</td>
+                            <td>Q${record.period_quarter} ${record.period_year}</td>
+                            <td>${record.total}</td>
+                            <td>${record.calculation_status}</td>
+                        </tr>
+                    `).join('');
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Data API Working!</h4>
+                            <p><strong>Count:</strong> ${data.count} records</p>
+                            <p><strong>Sample Data:</strong></p>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Indicator</th>
+                                        <th>Site</th>
+                                        <th>Period</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${tableRows}
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><h4>❌ Error</h4><p>${data.message}</p></div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><h4>❌ Network Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+        
+        async function testAllData() {
+            const resultDiv = document.getElementById('all-data-result');
+            resultDiv.innerHTML = '<p>Testing all analytics data...</p>';
+            
+            try {
+                const response = await fetch('/apiv1/analytics/data?periodType=quarterly&periodYear=2025');
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Group by status
+                    const statusCounts = data.data.reduce((acc, record) => {
+                        acc[record.calculation_status] = (acc[record.calculation_status] || 0) + 1;
+                        return acc;
+                    }, {});
+                    
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ All Data API Working!</h4>
+                            <p><strong>Total Count:</strong> ${data.count} records</p>
+                            <p><strong>Status Breakdown:</strong></p>
+                            <ul>
+                                ${Object.entries(statusCounts).map(([status, count]) => 
+                                    `<li><strong>${status}:</strong> ${count} records</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><h4>❌ Error</h4><p>${data.message}</p></div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><h4>❌ Network Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+    </script>
+</body>
+</html>

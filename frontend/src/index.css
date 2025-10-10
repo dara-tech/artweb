@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
-.py-3, .py-4{
+.py-3{
   padding: 3px 10px !important;
 }
+
+.py-4{
+  padding: 2px 10px !important;
+}
+
 
 
 @layer base {

@@ -168,6 +168,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
           icon: FileBarChart,
           current: location.pathname === '/indicators'
         },
+        // Analytics Admin - only for admin and super_admin
+        ...(isAdmin ? [{
+          name: 'Analytics Admin',
+          href: '/analytics-admin',
+          icon: BarChart3,
+          current: location.pathname === '/analytics-admin'
+        }] : []),
         // Indicators Dashboard - hide for viewers and data managers
         ...(isViewer || isDataManager ? [] : [{
           name: 'Visualization',

@@ -9,7 +9,7 @@ const baseConfig = {
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   dialect: 'mysql',
-  logging: process.env.NODE_ENV === 'development' ? console.log : false,
+  logging: false, // Disabled SQL query logging
       pool: {
         max: 10,           // Reduced to prevent connection overflow
         min: 2,            // Reduced minimum connections
@@ -144,9 +144,7 @@ class SiteDatabaseManager {
     // Test the connection
     try {
       await siteConnection.authenticate();
-      console.log(`✅ Connected to site database: ${siteInfo.name} (${siteCode})`);
     } catch (error) {
-      console.error(`❌ Failed to connect to site database ${siteCode}:`, error);
       throw error;
     }
 
@@ -207,9 +205,8 @@ class SiteDatabaseManager {
     for (const [siteCode, connection] of this.siteConnections) {
       try {
         await connection.close();
-        console.log(`✅ Closed connection for site: ${siteCode}`);
       } catch (error) {
-        console.error(`❌ Error closing connection for site ${siteCode}:`, error);
+        console.error(`Error closing connection for site ${siteCode}:`, error);
       }
     }
     this.siteConnections.clear();
@@ -217,20 +214,16 @@ class SiteDatabaseManager {
     // Close registry connection
     try {
       await this.registryConnection.close();
-      console.log('✅ Closed registry connection');
     } catch (error) {
-      console.error('❌ Error closing registry connection:', error);
+      console.error('Error closing registry connection:', error);
     }
   }
 
   // Test all connections
   async testAllConnections() {
-    console.log('🧪 Testing database connections...');
-    
     try {
       // Test registry connection
       await this.registryConnection.authenticate();
-      console.log('✅ Registry database connection: OK');
       
       // Test site connections
       const sites = await this.getAllSites();
@@ -238,15 +231,12 @@ class SiteDatabaseManager {
         try {
           const connection = await this.getSiteConnection(site.code);
           await connection.authenticate();
-          console.log(`✅ Site ${site.code} (${site.name}) connection: OK`);
         } catch (error) {
-          console.error(`❌ Site ${site.code} (${site.name}) connection: FAILED - ${error.message}`);
+          console.error(`Site ${site.code} (${site.name}) connection: FAILED - ${error.message}`);
         }
       }
-      
-      console.log('🎉 All database connections tested successfully!');
     } catch (error) {
-      console.error('❌ Database connection test failed:', error);
+      console.error('Database connection test failed:', error);
       throw error;
     }
   }
@@ -260,7 +250,7 @@ const testConnections = async () => {
   try {
     await siteDatabaseManager.testAllConnections();
   } catch (error) {
-    console.error('❌ Failed to establish database connections:', error);
+    console.error('Failed to establish database connections:', error);
   }
 };
 

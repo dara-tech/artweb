@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Data Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h1>Analytics Data API Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Default Q3 2025 Data</h3>
+        <button onclick="testQ3Data()">Test Q3 2025</button>
+        <div id="q3-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: All 2025 Data</h3>
+        <button onclick="testAllData()">Test All 2025</button>
+        <div id="all-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Specific Site (2101)</h3>
+        <button onclick="testSiteData()">Test Site 2101</button>
+        <div id="site-result"></div>
+    </div>
+
+    <script>
+        async function testQ3Data() {
+            const resultDiv = document.getElementById('q3-result');
+            resultDiv.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                const response = await fetch('/apiv1/analytics/data?periodType=quarterly&periodYear=2025&periodQuarter=3');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Success!</h4>
+                            <p><strong>Count:</strong> ${data.count} records</p>
+                            <p><strong>First Record:</strong></p>
+                            <pre>${JSON.stringify(data.data[0], null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><h4>❌ Error</h4><p>${data.message}</p></div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><h4>❌ Network Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+        
+        async function testAllData() {
+            const resultDiv = document.getElementById('all-result');
+            resultDiv.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                const response = await fetch('/apiv1/analytics/data?periodType=quarterly&periodYear=2025');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Success!</h4>
+                            <p><strong>Count:</strong> ${data.count} records</p>
+                            <p><strong>Sample Records:</strong></p>
+                            <pre>${JSON.stringify(data.data.slice(0, 3), null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><h4>❌ Error</h4><p>${data.message}</p></div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><h4>❌ Network Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+        
+        async function testSiteData() {
+            const resultDiv = document.getElementById('site-result');
+            resultDiv.innerHTML = '<p>Testing...</p>';
+            
+            try {
+                const response = await fetch('/apiv1/analytics/data?periodType=quarterly&periodYear=2025&siteCode=2101');
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Success!</h4>
+                            <p><strong>Count:</strong> ${data.count} records for site 2101</p>
+                            <p><strong>Sample Records:</strong></p>
+                            <pre>${JSON.stringify(data.data.slice(0, 3), null, 2)}</pre>
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<div class="error"><h4>❌ Error</h4><p>${data.message}</p></div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error"><h4>❌ Network Error</h4><p>${error.message}</p></div>`;
+            }
+        }
+    </script>
+</body>
+</html>

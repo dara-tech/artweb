@@ -8,7 +8,7 @@ const sequelize = new Sequelize({
   username: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   dialect: 'mysql',
-  logging: process.env.NODE_ENV === 'development' ? console.log : false,
+  logging: false, // Disabled SQL query logging
   pool: {
     max: 50,        // Increased from 10 to 50
     min: 5,         // Increased from 0 to 5

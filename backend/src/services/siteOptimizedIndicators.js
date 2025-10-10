@@ -90,13 +90,8 @@ class SiteOptimizedIndicators {
         const query = fs.readFileSync(filePath, 'utf8');
         const indicatorId = filename.replace('.sql', '');
         this.queries.set(indicatorId, query);
-        console.log(`✅ Loaded: ${indicatorId}`);
-      } else {
-        console.warn(`⚠️  File not found: ${filename}`);
       }
     });
-
-    console.log(`📊 Loaded ${this.queries.size} ${type} indicator queries into memory`);
   }
 
   // Generate cache key for site-specific data
@@ -147,6 +142,55 @@ class SiteOptimizedIndicators {
     return processedQuery;
   }
 
+  // Execute single indicator for analytics (no cache)
+  async executeSiteIndicatorForAnalytics(siteCode, indicatorId, params) {
+    const startTime = performance.now();
+    
+    try {
+      // Get query
+      const query = this.queries.get(indicatorId);
+      if (!query) {
+        throw new Error(`Indicator ${indicatorId} not found`);
+      }
+
+      // Process query with parameters
+      const processedQuery = this.processQuery(query, params);
+      
+      // Execute on site database
+      const results = await siteDatabaseManager.executeSiteQuery(siteCode, processedQuery);
+      
+      if (!results || results.length === 0) {
+        return {
+          success: true,
+          data: {
+            Indicator: indicatorId,
+            TOTAL: 0,
+            Male_0_14: 0,
+            Female_0_14: 0,
+            Male_over_14: 0,
+            Female_over_14: 0
+          }
+        };
+      }
+
+      const result = results[0];
+      const endTime = performance.now();
+      const duration = endTime - startTime;
+
+      return {
+        success: true,
+        data: result,
+        duration: duration
+      };
+    } catch (error) {
+      console.error(`Error executing indicator ${indicatorId} for site ${siteCode}:`, error);
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  }
+
   // Execute single indicator for a specific site
   async executeSiteIndicator(siteCode, indicatorId, params, useCache = true) {
     const startTime = performance.now();
@@ -154,11 +198,17 @@ class SiteOptimizedIndicators {
     try {
       // Check cache first
       if (useCache) {
-        const cacheKey = this.generateCacheKey(siteCode, indicatorId, params);
-        const cached = cache.get(cacheKey);
-        if (cached) {
-          console.log(`🎯 Cache hit for ${siteCode}:${indicatorId}`);
-          return cached;
+        try {
+          const cacheKey = this.generateCacheKey(siteCode, indicatorId, params);
+          // Simple cache check without using the cache service
+          if (cache && cache.get) {
+            const cached = cache.get(cacheKey);
+            if (cached) {
+              return cached;
+            }
+          }
+        } catch (error) {
+          console.log('[SiteOptimizedIndicators] Cache error, continuing without cache:', error.message);
         }
       }
 
@@ -207,7 +257,6 @@ class SiteOptimizedIndicators {
 
       return result;
     } catch (error) {
-      console.error(`❌ Error executing ${indicatorId} for site ${siteCode}:`, error);
       throw error;
     }
   }
@@ -215,7 +264,6 @@ class SiteOptimizedIndicators {
   // Execute all indicators for a specific site
   async executeAllSiteIndicators(siteCode, params, useCache = true) {
     const startTime = performance.now();
-    console.log(`🚀 Starting parallel execution of all indicators for site ${siteCode}...`);
 
     // Get only aggregate indicator IDs (exclude detail queries)
     const aggregateIndicatorIds = Array.from(this.queries.keys()).filter(id => !id.includes('_details'));
@@ -239,7 +287,6 @@ class SiteOptimizedIndicators {
           executionTime: result.executionTime
         };
       } catch (error) {
-        console.error(`❌ Error with ${siteCode}:${indicatorId}:`, error.message);
         return {
           indicatorId,
           data: {
@@ -268,7 +315,6 @@ class SiteOptimizedIndicators {
           executionTime: result.executionTime
         };
       } catch (error) {
-        console.error(`❌ Error with ${siteCode}:${indicatorId}:`, error.message);
         return {
           indicatorId,
           data: {
@@ -297,8 +343,6 @@ class SiteOptimizedIndicators {
     const successCount = allResults.filter(r => r.success).length;
     const errorCount = allResults.filter(r => !r.success).length;
 
-    console.log(`✅ Completed all indicators for site ${siteCode} in ${Math.round(executionTime)}ms`);
-
     return {
       siteCode,
       results: allResults,
@@ -313,7 +357,6 @@ class SiteOptimizedIndicators {
   // Execute indicators for all sites in parallel
   async executeAllSitesIndicators(params, useCache = true) {
     const startTime = performance.now();
-    console.log('🚀 Starting parallel execution for all sites...');
 
     try {
       // Get all active sites
@@ -333,7 +376,6 @@ class SiteOptimizedIndicators {
             ...result
           };
         } catch (error) {
-          console.error(`❌ Error processing site ${site.code}:`, error);
           return {
             site: {
               code: site.code,
@@ -357,8 +399,6 @@ class SiteOptimizedIndicators {
       const totalSuccess = siteResults.reduce((sum, site) => sum + site.successCount, 0);
       const totalErrors = siteResults.reduce((sum, site) => sum + site.errorCount, 0);
 
-      console.log(`✅ Completed all sites in ${Math.round(executionTime)}ms`);
-
       return {
         sites: siteResults,
         executionTime: Math.round(executionTime),
@@ -368,14 +408,41 @@ class SiteOptimizedIndicators {
         timestamp: new Date().toISOString()
       };
     } catch (error) {
-      console.error('❌ Error executing all sites indicators:', error);
       throw error;
     }
   }
 
   // Get site-specific indicator details
   async executeSiteIndicatorDetails(siteCode, indicatorId, params, page = 1, limit = 50, search = '', ageGroup = '', gender = '') {
-    const detailIndicatorId = `${indicatorId}_details`;
+    // Map short indicator ID to full detail query name
+    const detailQueryMapping = {
+      '1': '01_active_art_previous_details',
+      '2': '02_active_pre_art_previous_details',
+      '3': '03_newly_enrolled_details',
+      '4': '04_retested_positive_details',
+      '5': '05_newly_initiated_details',
+      '5.1.1': '05.1.1_art_same_day_details',
+      '5.1.2': '05.1.2_art_1_7_days_details',
+      '5.1.3': '05.1.3_art_over_7_days_details',
+      '5.2': '05.2_art_with_tld_details',
+      '6': '06_transfer_in_details',
+      '7': '07_lost_and_return_details',
+      '8.1': '08.1_dead_details',
+      '8.2': '08.2_lost_to_followup_details',
+      '8.3': '08.3_transfer_out_details',
+      '9': '09_active_pre_art_details',
+      '10': '10_active_art_current_details',
+      '10.1': '10.1_eligible_mmd_details',
+      '10.2': '10.2_mmd_details',
+      '10.3': '10.3_tld_details',
+      '10.4': '10.4_tpt_start_details',
+      '10.5': '10.5_tpt_complete_details',
+      '10.6': '10.6_eligible_vl_test_details',
+      '10.7': '10.7_vl_tested_12m_details',
+      '10.8': '10.8_vl_suppression_details'
+    };
+    
+    const detailIndicatorId = detailQueryMapping[indicatorId] || `${indicatorId}_details`;
     const query = this.queries.get(detailIndicatorId);
     
     if (!query) {
@@ -390,18 +457,11 @@ class SiteOptimizedIndicators {
     const countResult = await siteDatabaseManager.executeSiteQuery(siteCode, countQuery);
     const totalRecords = countResult[0].total;
     
-    console.log(`📊 Total records in database: ${totalRecords}`);
-    
     // Execute the query to get all records (without pagination)
     const allResults = await siteDatabaseManager.executeSiteQuery(siteCode, cleanQuery);
     
     // Apply filters to all results
-    console.log(`🔍 About to apply filters with:`, { search, ageGroup, gender });
-    console.log(`🔍 Calling applySiteFilters method...`);
     let filteredResults = this.applySiteFilters(allResults, { search, ageGroup, gender });
-    console.log(`🔍 applySiteFilters returned:`, filteredResults.length, 'records');
-    
-    console.log(`📊 Records after filtering: ${filteredResults.length}`);
     
     // Apply pagination to filtered results
     const offset = (page - 1) * limit;
@@ -432,13 +492,9 @@ class SiteOptimizedIndicators {
   applySiteFilters(data, filters) {
     let filteredData = [...data];
 
-    console.log(`🔍 Starting with ${data.length} records for filtering`);
-    console.log(`🔍 Filters received:`, filters);
-
     // Apply search filter if provided
     if (filters.search && filters.search.trim()) {
       const searchTerm = filters.search.toLowerCase().trim();
-      const beforeCount = filteredData.length;
       
       filteredData = filteredData.filter(record => {
         // Search across common fields
@@ -455,15 +511,10 @@ class SiteOptimizedIndicators {
           field.toString().toLowerCase().includes(searchTerm)
         );
       });
-      
-      console.log(`  Search filter: ${beforeCount} -> ${filteredData.length} records`);
     }
 
     // Apply gender filter if provided
     if (filters.gender) {
-      console.log(`🔍 Filtering by gender: ${filters.gender}`);
-      const beforeCount = filteredData.length;
-      
       filteredData = filteredData.filter(record => {
         // Check both sex field (0/1) and sex_display field
         const isMale = record.sex === 1 || record.sex_display === 'Male' || record.sex_display === 'male';
@@ -476,20 +527,10 @@ class SiteOptimizedIndicators {
         }
         return true;
       });
-      
-      console.log(`  Gender filter: ${beforeCount} -> ${filteredData.length} records`);
     }
 
     // Apply age group filter if provided
     if (filters.ageGroup) {
-      console.log(`🔍 Filtering by age group: ${filters.ageGroup}`);
-      const beforeCount = filteredData.length;
-      
-      // Debug: Show sample records before filtering
-      if (filteredData.length > 0) {
-        console.log(`🔍 Sample record typepatients: ${filteredData[0].typepatients}`);
-      }
-      
       filteredData = filteredData.filter(record => {
         // Use typepatients field to match aggregate query logic
         const typepatients = record.typepatients;
@@ -515,17 +556,10 @@ class SiteOptimizedIndicators {
           (filters.ageGroup === '15+' || filters.ageGroup === '>14') ? 
           (correctAgeGroup === '15+') : true;
         
-        if (filters.ageGroup === '15+') {
-          console.log(`🔍 Record typepatients: ${typepatients}, correctAgeGroup: ${correctAgeGroup}, shouldInclude: ${shouldInclude}`);
-        }
-        
         return shouldInclude;
       });
-      
-      console.log(`  Age group filter: ${beforeCount} -> ${filteredData.length} records`);
     }
 
-    console.log(`🔍 Final filtered data count: ${filteredData.length}`);
     return filteredData;
   }
 
@@ -539,13 +573,11 @@ class SiteOptimizedIndicators {
     }
     
     keysToDelete.forEach(key => cache.del(key));
-    console.log(`🗑️  Cleared ${keysToDelete.length} cache entries for site ${siteCode}`);
   }
 
   // Clear all cache
   clearAllCache() {
     cache.flushAll();
-    console.log('🗑️  Cleared all cache');
   }
 }
 

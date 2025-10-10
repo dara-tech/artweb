@@ -21,8 +21,6 @@ class EnhancedIndicatorsService {
           this.queries.set(indicatorId, query);
         }
       });
-      
-      console.log(`Loaded ${this.queries.size} indicator queries`);
     } catch (error) {
       console.error('Error loading queries:', error);
     }
@@ -30,8 +28,6 @@ class EnhancedIndicatorsService {
 
   async executeWithProgress(indicatorId, params, res) {
     try {
-      console.log(`Executing indicator: ${indicatorId}`);
-      
       if (indicatorId === 'all') {
         return await this.executeAllIndicators(params, res);
       }
@@ -47,10 +43,8 @@ class EnhancedIndicatorsService {
         replacements: params
       });
 
-      console.log(`✅ ${indicatorId} executed successfully`);
       return result;
     } catch (error) {
-      console.error(`❌ Error executing ${indicatorId}:`, error);
       throw error;
     }
   }
@@ -81,7 +75,6 @@ class EnhancedIndicatorsService {
           successCount++;
         }
       } catch (error) {
-        console.error(`Error executing ${indicatorId}:`, error);
         errors.push({
           indicator: indicatorId,
           error: error.message

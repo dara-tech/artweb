@@ -1,7 +1,9 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from 'sonner'
 import { useAuth } from './contexts/AuthContext'
 import { SiteProvider } from './contexts/SiteContext'
+import AnalyticsToast from './components/analytics/AnalyticsToast'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import AdultPatientForm from './pages/patients/InitialForm/Adult/AdultInitialForm'
@@ -18,6 +20,7 @@ import DataManagement from './pages/DataManagement'
 import RoleManagement from './pages/RoleManagement'
 import DataImportExport from './pages/DataManagement/components/DataImportExport'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
+import AnalyticsAdmin from './pages/admin/AnalyticsAdmin'
 import AdvancedLayout from './components/layout/AdvancedLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -50,6 +53,8 @@ function App() {
   return (
     <SiteProvider>
       <AdvancedLayout>
+        <AnalyticsToast />
+        <Toaster position="top-right" richColors />
         <Routes>
           <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
           
@@ -183,8 +188,12 @@ function App() {
           {/* Indicators - Accessible to all authenticated users */}
           <Route path="/indicators" element={<IndicatorsReport />} />
           
-          
-        
+          {/* Analytics Admin - Only for super_admin and admin */}
+          <Route path="/analytics-admin" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin']}>
+              <AnalyticsAdmin />
+            </ProtectedRoute>
+          } />
           
           <Route path="*" element={<Navigate to={getDefaultRoute()} replace />} />
         </Routes>

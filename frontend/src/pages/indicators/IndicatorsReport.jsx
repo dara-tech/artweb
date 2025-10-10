@@ -43,12 +43,22 @@ const IndicatorsReport = () => {
   const [activeTab, setActiveTab] = useState('all');
   
   // Year and Quarter selection
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(() => {
+    const currentYear = new Date().getFullYear();
+    const currentMonth = new Date().getMonth();
+    const currentQuarter = Math.floor(currentMonth / 3) + 1;
+    // If we're in Q1 (months 0-2), show previous year for Q4
+    return currentQuarter === 1 ? currentYear - 1 : currentYear;
+  });
   const [selectedQuarter, setSelectedQuarter] = useState(() => {
     const currentMonth = new Date().getMonth();
     const currentQuarter = Math.floor(currentMonth / 3) + 1;
-    // If we're in Q4 (months 9-11), show Q3 instead since Q4 is not complete
-    return currentQuarter === 4 ? 3 : currentQuarter;
+    // Always show the last completed quarter
+    // If we're in Q1 (months 0-2), show Q4 of previous year
+    // If we're in Q2 (months 3-5), show Q1
+    // If we're in Q3 (months 6-8), show Q2
+    // If we're in Q4 (months 9-11), show Q3
+    return currentQuarter === 1 ? 4 : currentQuarter - 1;
   });
   
   // Site filtering
@@ -98,16 +108,17 @@ const IndicatorsReport = () => {
     const newYear = parseInt(year);
     setSelectedYear(newYear);
     
-    // If current year, make sure quarter is not in the future
+    // Always use the last completed quarter logic
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
     const currentQuarter = Math.floor(currentMonth / 3) + 1;
-    // If we're in Q4, show Q3 instead since Q4 is not complete
-    const availableQuarter = currentQuarter === 4 ? 3 : currentQuarter;
+    const lastCompletedQuarter = currentQuarter === 1 ? 4 : currentQuarter - 1;
     
-    if (newYear === currentYear && selectedQuarter > availableQuarter) {
-      setSelectedQuarter(availableQuarter);
-      const dateRange = getDateRangeForYearQuarter(newYear, availableQuarter);
+    // If selecting current year, use last completed quarter
+    // If selecting previous year, allow any quarter
+    if (newYear === currentYear) {
+      setSelectedQuarter(lastCompletedQuarter);
+      const dateRange = getDateRangeForYearQuarter(newYear, lastCompletedQuarter);
       setDateRange(dateRange);
     } else {
       const dateRange = getDateRangeForYearQuarter(newYear, selectedQuarter);
@@ -145,9 +156,11 @@ const IndicatorsReport = () => {
       }
       
       // API request parameters logged for debugging
+      console.log('🔍 Fetching indicators with params:', params);
       
       // Always get all indicators, filtering will be done on frontend
       const response = await reportingApi.getAllIndicators(params);
+      console.log('📊 Indicators response:', response);
       
       if (response.success) {
         // Process the data based on whether it's site-specific or all sites
@@ -177,18 +190,91 @@ const IndicatorsReport = () => {
           }));
         }
         
-        // Filter indicators to show only 1-10.8 range
+        // Filter indicators to show only 1-10.8 range and sort them properly
         const filteredIndicators = indicatorsData.filter(indicator => {
           if (!indicator.Indicator) return false;
           
-          // Extract the indicator number from the indicator name
-          const match = indicator.Indicator.match(/^(\d+(?:\.\d+)*)/);
-          if (!match) return false;
+          // First try to extract number from the beginning (e.g., "1. Active ART...")
+          let match = indicator.Indicator.match(/^(\d+(?:\.\d+)*)/);
+          if (match) {
+            const indicatorNum = parseFloat(match[1]);
+            return indicatorNum >= 1 && indicatorNum <= 10.8;
+          }
           
-          const indicatorNum = parseFloat(match[1]);
-          return indicatorNum >= 1 && indicatorNum <= 10.8;
+          // If no number prefix, check if it's a known indicator by name
+          const knownIndicators = [
+            'Active ART patients in previous quarter',
+            'Active Pre-ART patients in previous quarter', 
+            'Newly Enrolled',
+            'Re-tested positive',
+            'Newly Initiated',
+            'New ART started: Same day',
+            'New ART started: 1-7 days',
+            'New ART started: >7 days',
+            'New ART started with TLD',
+            'Transfer-in patients',
+            'Lost and Return',
+            'Dead',
+            'Lost to follow up (LTFU)',
+            'Transfer-out',
+            'Active Pre-ART',
+            'Active ART patients in this quarter',
+            'Eligible MMD',
+            'MMD',
+            'TLD',
+            'TPT Start',
+            'TPT Complete',
+            'Eligible for VL test',
+            'VL tested in 12M',
+            'VL suppression'
+          ];
+          
+          return knownIndicators.includes(indicator.Indicator);
+        }).sort((a, b) => {
+          // Sort indicators in the correct order 1-10.8
+          const getIndicatorNumber = (indicator) => {
+            // First try to extract number from the beginning
+            const match = indicator.Indicator.match(/^(\d+(?:\.\d+)*)/);
+            if (match) {
+              return parseFloat(match[1]);
+            }
+            
+            // Map indicator names to their numbers for sorting
+            const nameToNumber = {
+              'Active ART patients in previous quarter': 1,
+              'Active Pre-ART patients in previous quarter': 2,
+              'Newly Enrolled': 3,
+              'Re-tested positive': 4,
+              'Newly Initiated': 5,
+              'New ART started: Same day': 5.1,
+              'New ART started: 1-7 days': 5.1,
+              'New ART started: >7 days': 5.1,
+              'New ART started with TLD': 5.2,
+              'Transfer-in patients': 6,
+              'Lost and Return': 7,
+              'Dead': 8.1,
+              'Lost to follow up (LTFU)': 8.2,
+              'Transfer-out': 8.3,
+              'Active Pre-ART': 9,
+              'Active ART patients in this quarter': 10,
+              'Eligible MMD': 10.1,
+              'MMD': 10.2,
+              'TLD': 10.3,
+              'TPT Start': 10.4,
+              'TPT Complete': 10.5,
+              'Eligible for VL test': 10.6,
+              'VL tested in 12M': 10.7,
+              'VL suppression': 10.8
+            };
+            
+            return nameToNumber[indicator.Indicator] || 999; // Put unknown indicators at the end
+          };
+          
+          return getIndicatorNumber(a) - getIndicatorNumber(b);
         });
         
+        console.log('📈 Setting indicators data:', filteredIndicators.length, 'indicators');
+        console.log('📊 Sorted indicators:', filteredIndicators.map((ind, index) => `${index + 1}. ${ind.Indicator}`));
         setIndicators(filteredIndicators);
         
         // Calculate and update summary statistics
@@ -268,9 +354,10 @@ const IndicatorsReport = () => {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth();
     const currentQuarter = Math.floor(currentMonth / 3) + 1;
-    // If we're in Q4, use Q3 instead since Q4 is not complete
-    const initialQuarter = currentQuarter === 4 ? 3 : currentQuarter;
-    const initialDateRange = getDateRangeForYearQuarter(currentYear, initialQuarter);
+    // Always use the last completed quarter
+    const initialYear = currentQuarter === 1 ? currentYear - 1 : currentYear;
+    const initialQuarter = currentQuarter === 1 ? 4 : currentQuarter - 1;
+    const initialDateRange = getDateRangeForYearQuarter(initialYear, initialQuarter);
     setDateRange(initialDateRange);
   }, []);
 
@@ -362,7 +449,9 @@ const IndicatorsReport = () => {
     setDetailsError(null);
     try {
       // Map indicator names to their corresponding SQL file names
+      // Handle both numbered and non-numbered indicator names
       const indicatorMap = {
+        // Numbered versions (from original data)
         '1. Active ART patients in previous quarter': '01_active_art_previous',
         '2. Active Pre-ART patients in previous quarter': '02_active_pre_art_previous',
         '3. Newly Enrolled': '03_newly_enrolled',
@@ -386,10 +475,39 @@ const IndicatorsReport = () => {
         '10.5. TPT Complete': '10.5_tpt_complete',
         '10.6. Eligible for VL test': '10.6_eligible_vl_test',
         '10.7. VL tested in 12M': '10.7_vl_tested_12m',
-        '10.8. VL suppression': '10.8_vl_suppression'
+        '10.8. VL suppression': '10.8_vl_suppression',
+        
+        // Non-numbered versions (from analytics data)
+        'Active ART patients in previous quarter': '01_active_art_previous',
+        'Active Pre-ART patients in previous quarter': '02_active_pre_art_previous',
+        'Newly Enrolled': '03_newly_enrolled',
+        'Re-tested positive': '04_retested_positive',
+        'Newly Initiated': '05_newly_initiated',
+        'New ART started: Same day': '05.1.1_art_same_day',
+        'New ART started: 1-7 days': '05.1.2_art_1_7_days',
+        'New ART started: >7 days': '05.1.3_art_over_7_days',
+        'New ART started with TLD': '05.2_art_with_tld',
+        'Transfer-in patients': '06_transfer_in',
+        'Lost and Return': '07_lost_and_return',
+        'Dead': '08.1_dead',
+        'Lost to follow up (LTFU)': '08.2_lost_to_followup',
+        'Transfer-out': '08.3_transfer_out',
+        'Active Pre-ART': '09_active_pre_art',
+        'Active ART patients in this quarter': '10_active_art_current',
+        'Eligible MMD': '10.1_eligible_mmd',
+        'MMD': '10.2_mmd',
+        'TLD': '10.3_tld',
+        'TPT Start': '10.4_tpt_start',
+        'TPT Complete': '10.5_tpt_complete',
+        'Eligible for VL test': '10.6_eligible_vl_test',
+        'VL tested in 12M': '10.7_vl_tested_12m',
+        'VL suppression': '10.8_vl_suppression'
       };
 
       const indicatorKey = indicatorMap[indicator.Indicator] || indicator.Indicator;
+      
+      console.log('🔍 Detail modal - Indicator:', indicator.Indicator);
+      console.log('🔍 Detail modal - Mapped key:', indicatorKey);
       
       // For details queries, use the same date range as the aggregate
       // This ensures consistency between aggregate display and detail modal
@@ -416,10 +534,19 @@ const IndicatorsReport = () => {
         filterParams.ageGroup = filters.ageGroup;
       }
       
+      console.log('🔍 Detail modal - Selected site:', selectedSite);
+      console.log('🔍 Detail modal - API call params:', {
+        indicatorKey,
+        filterParams,
+        siteCode: selectedSite?.code
+      });
+
       const response = await reportingApi.getIndicatorDetails(indicatorKey, {
         ...filterParams,
         siteCode: selectedSite?.code
       });
+
+      console.log('🔍 Detail modal - API response:', response);
 
       if (response.success) {
         setIndicatorDetails(response.data || []);
@@ -559,7 +686,7 @@ const IndicatorsReport = () => {
   };
 
   const generateReportHTMLContent = () => {
-    return generateReportHTML(indicators, selectedSite, selectedYear, selectedQuarter);
+    return generateReportHTML(indicators, selectedSite, selectedYear, selectedQuarter, sites);
    };
 
    const previewReport = () => {
@@ -615,7 +742,7 @@ const IndicatorsReport = () => {
           isViewer={isViewer}
         />
 
-         {/* Executive Summary Dashboard */}
+        {/* Executive Summary Dashboard */}
         {/* <ExecutiveSummary summaryStats={summaryStats} /> */}
         <ReportHeader 
           selectedSite={selectedSite}

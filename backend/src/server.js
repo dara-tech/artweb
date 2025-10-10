@@ -28,6 +28,9 @@ const scriptDownloadRoutes = require('./routes/script-download');
 const roleManagementRoutes = require('./routes/role-management');
 const importRoutes = require('./routes/import');
 const dataManagementRoutes = require('./routes/data-management');
+const analyticsRoutes = require('./routes/analytics');
+const adminRoutes = require('./routes/admin');
+const schedulerService = require('./services/scheduler');
 const { errorHandler } = require('./middleware/errorHandler');
 
 const app = express();
@@ -57,6 +60,9 @@ const io = new Server(server, {
     credentials: true
   }
 });
+
+// Make io globally available for analytics logging
+global.io = io;
 const PORT = process.env.PORT || 3001;
 
 // CORS configuration - MUST be before other middleware
@@ -143,6 +149,8 @@ app.use('/apiv1/scripts', scriptDownloadRoutes);
 app.use('/apiv1/roles', roleManagementRoutes);
 app.use('/apiv1/import', importRoutes);
 app.use('/apiv1/data', dataManagementRoutes);
+app.use('/apiv1/analytics', analyticsRoutes);
+app.use('/apiv1/admin', adminRoutes);
 
 // Make io available to routes
 app.set('io', io);
@@ -190,6 +198,9 @@ const startServer = async () => {
       console.log(`📊 Environment: ${process.env.NODE_ENV}`);
       console.log(`🔗 Health check: http://localhost:${PORT}/health`);
       
+      // Start analytics scheduler
+      schedulerService.start();
+      console.log(`📅 Analytics scheduler started`);
     });
   } catch (error) {
     console.error('❌ Failed to start server:', error);

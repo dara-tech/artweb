@@ -114,13 +114,13 @@ const ReportHeader = ({ selectedSite, selectedYear, selectedQuarter }) => {
                 Operational District:
               </td>
               <td className="px-4 py-3 text-foreground border-r border-border">
-                {selectedSite ? getOperationalDistrict(selectedSite) : 'All Operational Districts'}
+                {selectedSite ? getOperationalDistrict(selectedSite) : getAllOperationalDistricts()}
               </td>
               <td className="px-4 py-3 font-semibold text-foreground border-r border-border">
                Province:
               </td>
               <td className="px-4 py-3 text-foreground">
-                {selectedSite ? getProvinceName(selectedSite) : 'All Provinces'}
+                {selectedSite ? getProvinceName(selectedSite) : getAllProvinces()}
               </td>
             </tr>
             <tr>

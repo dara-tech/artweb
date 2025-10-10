@@ -86,13 +86,8 @@ class OptimizedIndicators {
         const query = fs.readFileSync(filePath, 'utf8');
         const indicatorId = filename.replace('.sql', '');
         this.queries.set(indicatorId, query);
-        console.log(`✅ Loaded: ${indicatorId}`);
-      } else {
-        console.warn(`⚠️  File not found: ${filename}`);
       }
     });
-
-    console.log(`📊 Loaded ${this.queries.size} ${type} indicator queries into memory`);
   }
 
 
@@ -106,7 +101,6 @@ class OptimizedIndicators {
       const cacheKey = cacheKeys.indicators(indicatorId, params.startDate, params.endDate, params.previousEndDate);
       const cachedResult = cache.get('medium', cacheKey);
       if (cachedResult) {
-        console.log(`📦 Cache hit for ${indicatorId} (${(performance.now() - startTime).toFixed(2)}ms)`);
         return cachedResult;
       }
     }
@@ -138,9 +132,6 @@ class OptimizedIndicators {
         type: sequelize.QueryTypes.SELECT
       });
 
-      const executionTime = performance.now() - startTime;
-      console.log(`⚡ Executed ${indicatorId} in ${executionTime.toFixed(2)}ms`);
-
       // Cache the result
       if (useCache) {
         const cacheKey = cacheKeys.indicators(indicatorId, params.startDate, params.endDate, params.previousEndDate);
@@ -149,7 +140,6 @@ class OptimizedIndicators {
 
       return result;
     } catch (error) {
-      console.error(`❌ Error executing ${indicatorId}:`, error.message);
       throw error;
     }
   }
@@ -168,7 +158,6 @@ class OptimizedIndicators {
         })}`;
         const cached = cache.get('medium', cacheKey);
         if (cached) {
-          console.log(`📦 Cache hit for ${indicatorId} details (${(performance.now() - startTime).toFixed(2)}ms)`);
           return this.processDetailsWithPagination(cached, params);
         }
       }
@@ -266,9 +255,6 @@ class OptimizedIndicators {
       const cleanQuery = query.trim().replace(/;+$/, '');
       const paginatedQuery = `${cleanQuery} LIMIT ${limit} OFFSET ${offset}`;
       
-      console.log(`🔍 Executing paginated query: LIMIT ${limit} OFFSET ${offset}`);
-      console.log(`🔍 Query length: ${paginatedQuery.length} characters`);
-      
       // Execute the paginated query to get detailed records
       const result = await sequelize.query(paginatedQuery, {
         replacements: {
@@ -325,20 +311,6 @@ class OptimizedIndicators {
         return record;
       });
 
-      // Debug: Log sample records to understand data structure
-      if (transformedResult.length > 0) {
-        console.log(`🔍 Sample record structure:`, {
-          sex: transformedResult[0].sex,
-          sex_display: transformedResult[0].sex_display,
-          typepatients: transformedResult[0].typepatients,
-          age: transformedResult[0].age,
-          clinicid: transformedResult[0].clinicid
-        });
-      }
-
-      console.log(`📊 Total records in database: ${totalCount}`);
-      console.log(`📊 Records fetched: ${transformedResult.length}`);
-      
       // Apply filtering to the fetched records
       let filteredResult = this.applyFilters(transformedResult, params);
       
@@ -349,15 +321,6 @@ class OptimizedIndicators {
       const hasPrev = page > 1;
       
       const executionTime = performance.now() - startTime;
-      
-      console.log(`✅ Indicator ${indicatorId} details executed successfully:`, {
-        totalRecords: totalCount,
-        fetchedRecords: transformedResult.length,
-        filteredRecords: filteredCount,
-        page: page,
-        limit: limit,
-        executionTime: `${executionTime.toFixed(2)}ms`
-      });
       
       return {
         data: filteredResult,
@@ -373,8 +336,6 @@ class OptimizedIndicators {
         executionTime
       };
     } catch (error) {
-      console.error(`❌ Error executing ${indicatorId} details:`, error.message);
-      console.error(`❌ Error stack:`, error.stack);
       throw error;
     }
   }
@@ -383,11 +344,8 @@ class OptimizedIndicators {
   applyFilters(data, params) {
     let filteredData = [...data];
 
-    console.log(`🔍 Starting with ${data.length} records for filtering`);
-
     // Apply gender filter if provided
     if (params.gender) {
-      console.log(`🔍 Filtering by gender: ${params.gender}`);
       const beforeCount = filteredData.length;
       
       filteredData = filteredData.filter(record => {
@@ -402,13 +360,10 @@ class OptimizedIndicators {
         }
         return true;
       });
-      
-      console.log(`  Gender filter: ${beforeCount} -> ${filteredData.length} records`);
     }
 
     // Apply age group filter if provided
     if (params.ageGroup) {
-      console.log(`🔍 Filtering by age group: ${params.ageGroup}`);
       const beforeCount = filteredData.length;
       
       filteredData = filteredData.filter(record => {
@@ -438,11 +393,8 @@ class OptimizedIndicators {
         }
         return true;
       });
-      
-      console.log(`  Age group filter: ${beforeCount} -> ${filteredData.length} records`);
     }
 
-    console.log(`🔍 Final filtered data count: ${filteredData.length}`);
     return filteredData;
   }
 
@@ -480,8 +432,6 @@ class OptimizedIndicators {
     // Get the page of data
     const paginatedData = filteredData.slice(offset, offset + limit);
 
-    console.log(`📊 Pagination: Total=${totalCount}, Filtered=${filteredCount}, Page=${page}, Limit=${limit}, Showing=${paginatedData.length}`);
-
     return {
       data: paginatedData,
       pagination: {
@@ -499,7 +449,6 @@ class OptimizedIndicators {
   // Execute all indicators in parallel with caching and batching
   async executeAllIndicators(params, useCache = true) {
     const startTime = performance.now();
-    console.log('🚀 Starting parallel execution of all indicators...');
 
     // Get only aggregate indicator IDs (exclude detail queries)
     const aggregateIndicatorIds = Array.from(this.queries.keys()).filter(id => !id.includes('_details'));
@@ -522,7 +471,6 @@ class OptimizedIndicators {
           success: true
         };
       } catch (error) {
-        console.error(`❌ Error with ${indicatorId}:`, error.message);
         return {
           indicatorId,
           data: {
@@ -549,7 +497,6 @@ class OptimizedIndicators {
           success: true
         };
       } catch (error) {
-        console.error(`❌ Error with ${indicatorId}:`, error.message);
         return {
           indicatorId,
           data: {
@@ -571,32 +518,8 @@ class OptimizedIndicators {
     const results = await Promise.all(allPromises);
 
     const executionTime = performance.now() - startTime;
-    console.log(`🎯 All indicators completed in ${executionTime.toFixed(2)}ms`);
-
-    // Log detailed results for comparison
-    console.log('\n🔍 BACKEND INDICATOR RESULTS ANALYSIS');
-    console.log('======================================');
-    console.log('📊 Total indicators processed:', results.length);
-    console.log('✅ Successful indicators:', results.filter(r => r.success).length);
-    console.log('❌ Failed indicators:', results.filter(r => !r.success).length);
-    
-    // Log each indicator result
-    console.log('\n🔍 DETAILED BACKEND INDICATOR BREAKDOWN:');
-    results.forEach((result, index) => {
-      console.log(`\n📊 Backend Indicator ${index + 1}:`, {
-        indicatorId: result.indicatorId,
-        success: result.success,
-        data: result.data,
-        error: result.success ? 'none' : 'failed'
-      });
-    });
 
     const finalResults = results.map(r => r.data);
-    
-    console.log('\n🎯 FINAL BACKEND RESULTS SUMMARY:');
-    console.log('==================================');
-    console.log('📊 Final results array length:', finalResults.length);
-    console.log('📋 Sample result (first indicator):', finalResults[0]);
     
     return {
       results: finalResults,

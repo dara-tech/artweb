@@ -40,7 +40,7 @@ if (!API_BASE_URL.endsWith('/')) {
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000, // 30 second timeout
+  timeout: 120000, // 2 minute timeout for complex indicator queries
   headers: {
     'Content-Type': 'application/json',
     'Cache-Control': 'no-cache, no-store, must-revalidate',

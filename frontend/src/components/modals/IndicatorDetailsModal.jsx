@@ -69,9 +69,8 @@ const IndicatorDetailsModal = ({
     ];
 
     const artColumns = [
-      { key: 'ART', label: 'ART Number', type: 'text' },
       { key: 'DaArt', label: 'ART Start', type: 'date' },
-      { key: 'Startartstatus', label: 'ART Duration', type: 'badge' }
+      // { key: 'Startartstatus', label: 'ART Duration', type: 'badge' }
     ];
 
     const vlColumns = [
@@ -98,21 +97,19 @@ const IndicatorDetailsModal = ({
 
     // Add columns based on indicator type
     if (indicatorName?.includes('MMD') || indicatorName?.includes('Eligible MMD')) {
-      // For MMD indicators, exclude the duplicate ART Number from artColumns
-      const artColumnsWithoutDuplicate = artColumns.filter(col => col.key !== 'ART');
-      columns = [...columns, ...artColumnsWithoutDuplicate];
+      // For MMD indicators, add ART columns (no duplicate ART Number since it's removed from artColumns)
+      columns = [...columns, ...artColumns];
     }
     
     // TLD indicators - exclude ART Duration for indicator 5.2
     if (indicatorName?.includes('TLD')) {
       if (indicatorName?.includes('5.2. New ART started with TLD')) {
-        // For indicator 5.2, use ART columns without ART Duration and duplicate ART Number
-        const artColumnsWithoutDuration = artColumns.filter(col => col.key !== 'Startartstatus' && col.key !== 'ART');
+        // For indicator 5.2, use ART columns without ART Duration
+        const artColumnsWithoutDuration = artColumns.filter(col => col.key !== 'Startartstatus');
         columns = [...columns, ...artColumnsWithoutDuration];
       } else {
-        // For other TLD indicators, exclude duplicate ART Number
-        const artColumnsWithoutDuplicate = artColumns.filter(col => col.key !== 'ART');
-        columns = [...columns, ...artColumnsWithoutDuplicate];
+        // For other TLD indicators, use full ART columns
+        columns = [...columns, ...artColumns];
       }
     }
     
