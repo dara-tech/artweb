@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Button, Input, Badge, Card, CardContent, CardHeader, CardTitle, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Checkbox, Skeleton } from "@/components/ui";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Button, Input, Badge, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Select, SelectContent, SelectItem, SelectTrigger, SelectValue, Skeleton } from "@/components/ui";
 import { 
   Search, 
   ChevronLeft, 
@@ -13,8 +13,8 @@ import {
   SortDesc,
 } from 'lucide-react';
 import { formatDateForTable } from '@/utils/dateFormatter';
-import { getCorrectPatientType, getDemographicBreakdown } from '@/utils/ageCalculator';
-import { reportingApi } from '@/services/reportingApi';
+import { getCorrectPatientType } from '@/utils/ageCalculator';
+import { toast } from 'sonner';
 
 const IndicatorDetailsModal = ({
   isOpen,
@@ -27,7 +27,6 @@ const IndicatorDetailsModal = ({
   searchTerm = '',
   onSearchChange,
   onSearch,
-  onClearSearch,
   onPageChange,
   currentFilters = {},
   error = null,
@@ -83,14 +82,6 @@ const IndicatorDetailsModal = ({
       { key: 'Tptdrugname', label: 'TPT Drug', type: 'text' },
       { key: 'dateStart', label: 'TPT Start', type: 'date' },
       { key: 'tptstatus', label: 'TPT Status', type: 'badge' }
-    ];
-
-    const specializedColumns = [
-      { key: 'return_type', label: 'Return Type', type: 'text' },
-      { key: 'art_number', label: 'ART Number', type: 'text' },
-      { key: 'death_date', label: 'Death Date', type: 'date' },
-      { key: 'MMDStatus', label: 'MMD Status', type: 'badge' },
-      { key: 'TLDStatus', label: 'TLD Status', type: 'badge' }
     ];
 
     let columns = [...baseColumns];
@@ -214,13 +205,18 @@ const IndicatorDetailsModal = ({
   const exportAllRecords = async () => {
     if (!selectedIndicator) return;
     
-    // Show loading state
-    const button = document.querySelector('[data-export-button]');
-    const originalContent = button?.innerHTML;
-    if (button) {
-      button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Preparing export...';
-      button.disabled = true;
-    }
+      // Show loading state
+      const button = document.querySelector('[data-export-button]');
+      const originalContent = button?.innerHTML;
+      if (button) {
+        button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Preparing export...';
+        button.disabled = true;
+      }
+      
+      // Show initial toast
+      const exportToast = toast.loading('Preparing export...', {
+        description: `Exporting ${selectedIndicator.Indicator} data`
+      });
     
     try {
       const getApiUrl = () => {
@@ -263,11 +259,42 @@ const IndicatorDetailsModal = ({
         '10.5. TPT Complete': '10.5_tpt_complete',
         '10.6. Eligible for VL test': '10.6_eligible_vl_test',
         '10.7. VL tested in 12M': '10.7_vl_tested_12m',
-        '10.8. VL suppression': '10.8_vl_suppression'
+        '10.8. VL suppression': '10.8_vl_suppression',
+        // Handle analytics data names (without numbers)
+        'Active ART patients in previous quarter': '01_active_art_previous',
+        'Active Pre-ART patients in previous quarter': '02_active_pre_art_previous',
+        'Newly Enrolled': '03_newly_enrolled',
+        'Re-tested positive': '04_retested_positive',
+        'Newly Initiated': '05_newly_initiated',
+        'New ART started: Same day': '05.1.1_art_same_day',
+        'New ART started: 1-7 days': '05.1.2_art_1_7_days',
+        'New ART started: >7 days': '05.1.3_art_over_7_days',
+        'New ART started with TLD': '05.2_art_with_tld',
+        'Transfer-in patients': '06_transfer_in',
+        'Lost and Return': '07_lost_and_return',
+        'Dead': '08.1_dead',
+        'Lost to follow up (LTFU)': '08.2_lost_to_followup',
+        'Transfer-out': '08.3_transfer_out',
+        'Active Pre-ART': '09_active_pre_art',
+        'Active ART patients in this quarter': '10_active_art_current',
+        'Eligible MMD': '10.1_eligible_mmd',
+        'MMD': '10.2_mmd',
+        'TLD': '10.3_tld',
+        'TPT Start': '10.4_tpt_start',
+        'TPT Complete': '10.5_tpt_complete',
+        'Eligible for VL test': '10.6_eligible_vl_test',
+        'VL tested in 12M': '10.7_vl_tested_12m',
+        'VL suppression': '10.8_vl_suppression'
       };
 
       // Use the same indicator key as the UI (without _details suffix)
       const indicatorKey = indicatorMap[selectedIndicator.Indicator] || selectedIndicator.Indicator;
+      
+      // Check if this is analytics data that needs special handling
+      if (isSampleData && sampleDataInfo) {
+        // For analytics data, we might need to use a different approach
+        // For now, we'll try the regular endpoints but with analytics-specific parameters
+      }
       
       // Use the same date range as the UI to ensure consistency
       const currentDateRange = dateRange || {
@@ -275,8 +302,6 @@ const IndicatorDetailsModal = ({
         endDate: '2025-03-31',
         previousEndDate: '2024-12-31'
       };
-      
-      console.log('📅 Using date range from UI:', currentDateRange);
       
       // Build filter parameters for ALL records
       const baseParams = {
@@ -292,9 +317,6 @@ const IndicatorDetailsModal = ({
       if (currentFilters.ageGroup) {
         baseParams.ageGroup = currentFilters.ageGroup;
       }
-      
-      console.log('📊 Exporting ALL records for:', selectedIndicator.Indicator);
-      console.log('📊 Filter parameters:', baseParams);
       
       // Fetch ALL records using optimized chunked approach
       let allRecords = [];
@@ -317,29 +339,76 @@ const IndicatorDetailsModal = ({
             useCache: 'false' // Disable cache to get fresh data
           };
           
-          console.log(`📊 Fetching page ${page} with limit ${limit}...`);
-          
-      // Always use site-specific API since "All Sites" is disabled
-      if (!selectedSite) {
-        throw new Error('No site selected. Please select a site to export data.');
+      // Try multiple API endpoints in order of preference
+      const apiEndpoints = [];
+      
+      // If this is analytics data, try analytics endpoints first
+      if (isSampleData && sampleDataInfo) {
+        
+        // Analytics endpoint for pre-calculated data
+        apiEndpoints.push({
+          url: `${API_BASE_URL}/apiv1/analytics/indicator/${indicatorKey}/${selectedSite?.code || 'all'}?${new URLSearchParams({
+            periodType: 'quarterly',
+            periodYear: '2025',
+            periodQuarter: '3'
+          })}`,
+          name: 'Analytics API (pre-calculated)'
+        });
       }
       
-      const apiUrl = `${API_BASE_URL}/apiv1/site-indicators/sites/${selectedSite.code}/indicators/${indicatorKey}/details?${new URLSearchParams(filterParams)}`;
-      console.log(`📊 Using site-specific API for site: ${selectedSite.code}`);
+      if (selectedSite) {
+        // Primary: Site-specific endpoint
+        apiEndpoints.push({
+          url: `${API_BASE_URL}/apiv1/site-indicators/sites/${selectedSite.code}/indicators/${indicatorKey}/details?${new URLSearchParams(filterParams)}`,
+          name: `Site-specific API for site: ${selectedSite.code}`
+        });
+      }
+      
+      // Fallback: General indicators endpoint
+      apiEndpoints.push({
+        url: `${API_BASE_URL}/apiv1/indicators/${indicatorKey}/details?${new URLSearchParams(filterParams)}`,
+        name: 'General indicators API'
+      });
+      
+      // Fallback: Optimized indicators endpoint
+      apiEndpoints.push({
+        url: `${API_BASE_URL}/apiv1/optimized-indicators/${indicatorKey}/details?${new URLSearchParams(filterParams)}`,
+        name: 'Optimized indicators API'
+      });
+      
           
-          const response = await fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
+          // Try each endpoint until one succeeds
+          let response = null;
+          let data = null;
+          let lastError = null;
+          
+          for (let i = 0; i < apiEndpoints.length; i++) {
+            const endpoint = apiEndpoints[i];
+            
+            try {
+              response = await fetch(endpoint.url, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+                }
+              });
+              
+              if (response.ok) {
+                data = await response.json();
+                break; // Success, exit the loop
+              } else {
+                const errorText = await response.text();
+                lastError = `Endpoint ${i + 1} failed: ${response.status} - ${errorText}`;
+              }
+            } catch (error) {
+              lastError = `Endpoint ${i + 1} error: ${error.message}`;
             }
-          });
-          
-          if (!response.ok) {
-            throw new Error(`Failed to fetch records: ${response.status}`);
           }
           
-          const data = await response.json();
+          if (!data) {
+            throw new Error(`All endpoints failed. Last error: ${lastError}`);
+          }
           
           if (!data.success) {
             throw new Error('API returned error: ' + (data.error || data.message));
@@ -350,14 +419,12 @@ const IndicatorDetailsModal = ({
           // Track total count from first response
           if (page === 1) {
             totalCount = data.pagination?.totalCount || 0;
-            console.log('📊 Total records available:', totalCount.toLocaleString());
           }
           
           // Handle empty pages
           if (pageRecords.length === 0) {
             consecutiveEmptyPages++;
             if (consecutiveEmptyPages >= 3) {
-              console.log('⚠️ Multiple empty pages, stopping fetch');
               break;
             }
           } else {
@@ -365,14 +432,24 @@ const IndicatorDetailsModal = ({
             allRecords = [...allRecords, ...pageRecords];
           }
           
-          console.log(`✅ Page ${page}: ${pageRecords.length} records (Total: ${allRecords.length.toLocaleString()})`);
-          
           // Update progress with better calculation
           if (button && totalCount > 0) {
             const progress = Math.min(100, Math.round((allRecords.length / totalCount) * 100));
             button.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>${progress}% (${allRecords.length.toLocaleString()}/${totalCount.toLocaleString()})`;
+            
+            // Update toast progress
+            toast.loading(`Fetching data... ${progress}%`, {
+              id: exportToast,
+              description: `${allRecords.length.toLocaleString()}/${totalCount.toLocaleString()} records fetched`
+            });
           } else if (button) {
             button.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>${allRecords.length.toLocaleString()} records`;
+            
+            // Update toast progress
+            toast.loading(`Fetching data...`, {
+              id: exportToast,
+              description: `${allRecords.length.toLocaleString()} records fetched`
+            });
           }
           
           // Check if there are more pages
@@ -382,12 +459,10 @@ const IndicatorDetailsModal = ({
           // Dynamic limit adjustment for very large datasets
           if (page > 20 && limit > 2000) {
             limit = 2000; // Reduce chunk size for very large datasets
-            console.log('📉 Reduced chunk size to 2000 for large dataset');
           }
           
           // Safety limit for truly large datasets
           if (page > 200) {
-            console.warn('⚠️ Reached safety limit of 200 pages');
             break;
           }
           
@@ -397,18 +472,31 @@ const IndicatorDetailsModal = ({
           }
         }
         
-        console.log('✅ Successfully fetched ALL records:', allRecords.length);
+        } catch (fetchError) {
         
-      } catch (fetchError) {
-        console.error('❌ Failed to fetch records:', fetchError);
-        throw new Error('Failed to fetch all records: ' + fetchError.message);
+        // If this is analytics data and API calls failed, try to export current displayed data
+        if (isSampleData && sampleDataInfo && processedRecords.length > 0) {
+          allRecords = processedRecords; // Use the currently displayed records
+          totalCount = processedRecords.length;
+        } else {
+          throw new Error('Failed to fetch all records: ' + fetchError.message);
+        }
       }
       
-      console.log('✅ Fetched ALL records:', allRecords.length);
+      // Check if we have any records to export
+      if (allRecords.length === 0) {
+        throw new Error('No records found to export. Please check your filters and try again.');
+      }
       
       if (button) {
         button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Generating CSV...';
       }
+      
+      // Update toast to CSV generation
+      toast.loading('Generating CSV...', {
+        id: exportToast,
+        description: `Processing ${allRecords.length.toLocaleString()} records`
+      });
       
       // Process records for export (same as display processing)
       const processedRecords = allRecords.map(record => ({
@@ -463,18 +551,35 @@ const IndicatorDetailsModal = ({
       link.click();
       document.body.removeChild(link);
       
-      console.log('✅ CSV Export completed:', {
-        fileName,
-        totalRecords: processedRecords.length,
-        fileSize: `${(blob.size / 1024).toFixed(2)} KB`
+      // Show success message
+      toast.success('Export Complete!', {
+        id: exportToast,
+        description: `📊 ${selectedIndicator.Indicator}\n📋 ${processedRecords.length.toLocaleString()} records exported\n📁 ${fileName}`,
+        duration: 5000,
       });
       
-      // Show success message
-      alert(`✅ Export Complete!\n\n📊 Indicator: ${selectedIndicator.Indicator}\n📋 Total Records: ${processedRecords.length.toLocaleString()}\n📁 File: ${fileName}\n\nClean data export with only patient records (no summary data).`);
-      
     } catch (error) {
-      console.error('Export failed:', error);
-      alert(`❌ Export Failed: ${error.message}\n\nPlease try again or contact support if the issue persists.`);
+      
+      let errorTitle = 'Export Failed';
+      let errorDescription = error.message;
+      
+      if (error.message.includes('All endpoints failed')) {
+        errorTitle = 'Export Failed - Server Error';
+        errorDescription = `Unable to connect to server. Please check if the backend is running and try again.`;
+      } else if (error.message.includes('No records found')) {
+        errorTitle = 'Export Failed - No Data';
+        errorDescription = `No records found to export. Check your filters and date range.`;
+      }
+      
+      toast.error(errorTitle, {
+        id: exportToast,
+        description: errorDescription,
+        duration: 8000,
+        action: {
+          label: 'Retry',
+          onClick: () => exportAllRecords()
+        }
+      });
     } finally {
       // Restore button state
       if (button) {

@@ -155,12 +155,8 @@ const IndicatorsReport = () => {
         params.siteCode = selectedSite.code;
       }
       
-      // API request parameters logged for debugging
-      console.log('🔍 Fetching indicators with params:', params);
-      
       // Always get all indicators, filtering will be done on frontend
       const response = await reportingApi.getAllIndicators(params);
-      console.log('📊 Indicators response:', response);
       
       if (response.success) {
         // Process the data based on whether it's site-specific or all sites
@@ -273,8 +269,6 @@ const IndicatorsReport = () => {
           return getIndicatorNumber(a) - getIndicatorNumber(b);
         });
         
-        console.log('📈 Setting indicators data:', filteredIndicators.length, 'indicators');
-        console.log('📊 Sorted indicators:', filteredIndicators.map((ind, index) => `${index + 1}. ${ind.Indicator}`));
         setIndicators(filteredIndicators);
         
         // Calculate and update summary statistics
@@ -506,9 +500,6 @@ const IndicatorsReport = () => {
 
       const indicatorKey = indicatorMap[indicator.Indicator] || indicator.Indicator;
       
-      console.log('🔍 Detail modal - Indicator:', indicator.Indicator);
-      console.log('🔍 Detail modal - Mapped key:', indicatorKey);
-      
       // For details queries, use the same date range as the aggregate
       // This ensures consistency between aggregate display and detail modal
       const detailsDateRange = {
@@ -533,20 +524,11 @@ const IndicatorsReport = () => {
       if (filters.ageGroup) {
         filterParams.ageGroup = filters.ageGroup;
       }
-      
-      console.log('🔍 Detail modal - Selected site:', selectedSite);
-      console.log('🔍 Detail modal - API call params:', {
-        indicatorKey,
-        filterParams,
-        siteCode: selectedSite?.code
-      });
 
       const response = await reportingApi.getIndicatorDetails(indicatorKey, {
         ...filterParams,
         siteCode: selectedSite?.code
       });
-
-      console.log('🔍 Detail modal - API response:', response);
 
       if (response.success) {
         setIndicatorDetails(response.data || []);
