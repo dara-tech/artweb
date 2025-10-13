@@ -36,13 +36,11 @@ router.get('/user-logs', authenticateToken, async (req, res) => {
     // Get users with pagination
     const { count, rows: users } = await User.findAndCountAll({
       where: userWhereConditions,
-      attributes: ['id', 'username', 'fullName', 'role', 'lastLogin', 'createdAt'],
+      attributes: ['id', 'username', 'fullName', 'role', 'status', 'lastLogin', 'lastActivity', 'loginCount', 'lastIP', 'userAgent', 'createdAt'],
       order: [['lastLogin', 'DESC']],
       limit: parseInt(limit),
       offset: parseInt(offset)
     });
-
-    console.log('Backend - Raw users from DB:', users.slice(0, 2)); // Debug: Check raw DB data
 
     // Filter users based on action
     let filteredUsers = users;
@@ -65,12 +63,12 @@ router.get('/user-logs', authenticateToken, async (req, res) => {
       },
       action: user.lastLogin ? 'login' : 'never_logged_in',
       timestamp: user.lastLogin || user.createdAt,
-      ipAddress: '-', // Not available from User table
-      userAgent: null // Not available from User table
+      ipAddress: user.lastIP || '-',
+      userAgent: user.userAgent || null,
+      loginCount: user.loginCount || 0,
+      lastActivity: user.lastActivity,
+      status: user.status
     }));
-
-    console.log('Backend - Sample user data:', users[0]); // Debug: Check raw user data
-    console.log('Backend - Sample log data:', logs[0]); // Debug: Check transformed log data
 
     res.json({
       success: true,

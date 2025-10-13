@@ -74,11 +74,22 @@ router.post('/login', [
     const responseTime = Date.now() - startTime;
     console.log(`Login successful for user ${username} - Response time: ${responseTime}ms`);
     
-    // Update last login timestamp
+    // Update login tracking fields
     try {
-      await user.update({ lastLogin: new Date() });
+      const now = new Date();
+      const clientIP = req.ip || req.connection.remoteAddress || req.socket.remoteAddress || 
+                      (req.connection.socket ? req.connection.socket.remoteAddress : null) || 'unknown';
+      const userAgent = req.get('User-Agent') || 'unknown';
+      
+      await user.update({ 
+        lastLogin: now,
+        lastActivity: now,
+        loginCount: (user.loginCount || 0) + 1,
+        lastIP: clientIP,
+        userAgent: userAgent
+      });
     } catch (updateError) {
-      console.error('Error updating last login:', updateError);
+      console.error('Error updating login tracking:', updateError);
       // Don't fail the login if update fails
     }
     

@@ -66,6 +66,34 @@ const User = sequelize.define('User', {
     allowNull: true,
     defaultValue: null,
     comment: 'Last login timestamp'
+  },
+  lastActivity: {
+    type: DataTypes.DATE,
+    field: 'lastActivity',
+    allowNull: true,
+    defaultValue: null,
+    comment: 'Last activity timestamp'
+  },
+  loginCount: {
+    type: DataTypes.INTEGER,
+    field: 'loginCount',
+    allowNull: false,
+    defaultValue: 0,
+    comment: 'Total login count'
+  },
+  lastIP: {
+    type: DataTypes.STRING(45),
+    field: 'lastIP',
+    allowNull: true,
+    defaultValue: null,
+    comment: 'Last login IP address'
+  },
+  userAgent: {
+    type: DataTypes.TEXT,
+    field: 'userAgent',
+    allowNull: true,
+    defaultValue: null,
+    comment: 'Last user agent string'
   }
 }, {
   tableName: 'tbluser',
