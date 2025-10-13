@@ -2,6 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import analyticsApi from '../../services/analyticsApi';
 
+// Helper function to check if current user is a viewer
+const isViewerUser = () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+    
+    // Decode JWT token (simple base64 decode of payload)
+    const payload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(payload));
+    
+    // Check if user role is 'viewer'
+    return decodedPayload.role === 'viewer';
+  } catch (error) {
+    // If there's any error decoding, allow toasts to show
+    return false;
+  }
+};
+
 const AnalyticsToast = () => {
   const [summary, setSummary] = useState(null);
   const [lastCheck, setLastCheck] = useState(null);
@@ -13,6 +31,9 @@ const AnalyticsToast = () => {
       if (data.success) {
         setSummary(data.data);
         setLastCheck(Date.now());
+        
+        // Don't show toasts for viewer users
+        if (isViewerUser()) return;
         
         const successRate = parseFloat(data.data.successRate) || 0;
         const totalRecords = data.data.totalRecords || 0;
@@ -46,6 +67,9 @@ const AnalyticsToast = () => {
           });
         }
       } else {
+        // Don't show error toasts for viewers
+        if (isViewerUser()) return;
+        
         toast.error("Analytics Error", {
           description: data.message || "Service connection failed",
         //   action: { label: "Retry", onClick: () => fetchSummary() },
@@ -53,6 +77,9 @@ const AnalyticsToast = () => {
         });
       }
     } catch (err) {
+      // Don't show error toasts for viewers
+      if (isViewerUser()) return;
+      
       toast.error("Connection Failed", {
         description: `Cannot connect: ${err.message}`,
         // action: { label: "Retry", onClick: () => fetchSummary() },
@@ -102,6 +129,9 @@ const AnalyticsToast = () => {
 //   };
 
   const showAnalyticsStatus = () => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return;
+    
     if (!summary) {
       toast.info("Checking status...", {
         action: { label: "Check", onClick: () => fetchSummary() }

@@ -387,6 +387,110 @@ router.put('/sites/:siteCode/status', authenticateToken, async (req, res) => {
   }
 });
 
+// Update site name
+router.put('/sites/:siteCode/name', authenticateToken, async (req, res) => {
+  try {
+    const { siteCode } = req.params;
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: 'Site name is required'
+      });
+    }
+
+    // Check if site exists
+    const existingSite = await siteDatabaseManager.getSiteInfo(siteCode);
+    if (!existingSite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Site not found'
+      });
+    }
+
+    // Update site name
+    const registryConnection = siteDatabaseManager.getRegistryConnection();
+    await registryConnection.query(`
+      UPDATE sites 
+      SET name = :name, updated_at = CURRENT_TIMESTAMP
+      WHERE code = :siteCode
+    `, {
+      replacements: { name, siteCode },
+      type: registryConnection.QueryTypes.UPDATE
+    });
+
+    res.json({
+      success: true,
+      message: `Site name updated for site ${siteCode}`,
+      site: {
+        code: siteCode,
+        name: name
+      }
+    });
+
+  } catch (error) {
+    console.error('Update site name error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update site name',
+      error: error.message
+    });
+  }
+});
+
+// Update site province
+router.put('/sites/:siteCode/province', authenticateToken, async (req, res) => {
+  try {
+    const { siteCode } = req.params;
+    const { province } = req.body;
+
+    if (!province) {
+      return res.status(400).json({
+        success: false,
+        message: 'Province is required'
+      });
+    }
+
+    // Check if site exists
+    const existingSite = await siteDatabaseManager.getSiteInfo(siteCode);
+    if (!existingSite) {
+      return res.status(404).json({
+        success: false,
+        message: 'Site not found'
+      });
+    }
+
+    // Update site province
+    const registryConnection = siteDatabaseManager.getRegistryConnection();
+    await registryConnection.query(`
+      UPDATE sites 
+      SET province = :province, updated_at = CURRENT_TIMESTAMP
+      WHERE code = :siteCode
+    `, {
+      replacements: { province, siteCode },
+      type: registryConnection.QueryTypes.UPDATE
+    });
+
+    res.json({
+      success: true,
+      message: `Province updated for site ${siteCode}`,
+      site: {
+        code: siteCode,
+        province: province
+      }
+    });
+
+  } catch (error) {
+    console.error('Update province error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update province',
+      error: error.message
+    });
+  }
+});
+
 // Update site file name
 router.put('/sites/:siteCode/file-name', authenticateToken, async (req, res) => {
   try {

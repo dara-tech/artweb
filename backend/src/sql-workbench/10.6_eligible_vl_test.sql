@@ -1,6 +1,6 @@
 -- =====================================================
 -- 10.6 ELIGIBLE VL TEST
--- Generated: 2025-10-08T09:39:33.700Z
+-- Generated: 2025-10-13T11:53:28.629Z
 -- =====================================================
 
 -- =====================================================
@@ -29,7 +29,7 @@ WITH tblimain AS (
         DaHIV,
         OffIn 
     FROM tblaimain 
-    WHERE DafirstVisit <= @EndDate
+    WHERE DaART <= @EndDate
     
     UNION ALL 
     
@@ -46,7 +46,7 @@ WITH tblimain AS (
         DaTest AS DaHIV,
         OffIn 
     FROM tblcimain 
-    WHERE DafirstVisit <= @EndDate
+    WHERE DaART <= @EndDate
 ),
 tblactive AS (
     SELECT 
@@ -86,8 +86,8 @@ tblactive AS (
             GROUP BY pt.clinicid
         ) mp ON mp.clinicid = p.clinicid AND mp.dat = p.dat
     ) lvl ON lvl.clinicid = a.ClinicID
-    LEFT JOIN tblimain i ON i.clinicid = a.clinicid
-    WHERE ps.da IS NULL
+    LEFT JOIN tblimain i ON CAST(i.clinicid AS CHAR) = CAST(a.clinicid AS CHAR)
+    WHERE ps.da IS NULL OR ps.da > @EndDate
 )
 
 SELECT 

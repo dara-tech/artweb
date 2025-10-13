@@ -7,6 +7,8 @@ const ChildPatient = require('./ChildPatient');
 const InfantPatient = require('./InfantPatient');
 const PatientVisit = require('./PatientVisit');
 const PatientTest = require('./PatientTest');
+const PatientTestCXR = require('./PatientTestCXR');
+const PatientTestAbdominal = require('./PatientTestAbdominal');
 const PatientStatus = require('./PatientStatus');
 const Drug = require('./Drug');
 const Clinic = require('./Clinic');
@@ -16,9 +18,9 @@ const Nationality = require('./Nationality');
 const TargetGroup = require('./TargetGroup');
 const Allergy = require('./Allergy');
 const Reason = require('./Reason');
-const Log = require('./Log');
 const ChildVisit = require('./ChildVisit');
 const InfantVisit = require('./InfantVisit');
+const Log = require('./Log');
 
 // Define associations
 const defineAssociations = () => {
@@ -28,14 +30,21 @@ const defineAssociations = () => {
 
   // Patient associations
   Patient.hasMany(PatientVisit, { foreignKey: 'clinicId', as: 'visits' });
-  Patient.hasMany(PatientTest, { foreignKey: 'clinicId', as: 'tests' });
+  Patient.hasMany(PatientTest, { foreignKey: 'ClinicID', as: 'tests' });
   Patient.hasMany(PatientStatus, { foreignKey: 'clinicId', as: 'statuses' });
   Patient.hasOne(ChildPatient, { foreignKey: 'clinicId', as: 'childDetails' });
   Patient.hasOne(InfantPatient, { foreignKey: 'clinicId', as: 'infantDetails' });
 
+  // Patient Test associations
+  PatientTest.hasMany(PatientTestCXR, { foreignKey: 'TestID', as: 'cxrResults' });
+  PatientTest.hasMany(PatientTestAbdominal, { foreignKey: 'TestID', as: 'abdominalResults' });
+
   PatientVisit.belongsTo(Patient, { foreignKey: 'clinicId', as: 'patient' });
-  PatientTest.belongsTo(Patient, { foreignKey: 'clinicId', as: 'patient' });
+  PatientTest.belongsTo(Patient, { foreignKey: 'ClinicID', as: 'patient' });
   PatientStatus.belongsTo(Patient, { foreignKey: 'clinicId', as: 'patient' });
+  
+  PatientTestCXR.belongsTo(PatientTest, { foreignKey: 'TestID', as: 'patientTest' });
+  PatientTestAbdominal.belongsTo(PatientTest, { foreignKey: 'TestID', as: 'patientTest' });
 
   // Child Patient associations
   ChildPatient.belongsTo(Patient, { foreignKey: 'clinicId', as: 'patient' });
@@ -57,6 +66,8 @@ module.exports = {
   InfantPatient,
   PatientVisit,
   PatientTest,
+  PatientTestCXR,
+  PatientTestAbdominal,
   PatientStatus,
   Drug,
   Clinic,
@@ -66,7 +77,7 @@ module.exports = {
   TargetGroup,
   Allergy,
   Reason,
-  Log,
   ChildVisit,
-  InfantVisit
+  InfantVisit,
+  Log
 };

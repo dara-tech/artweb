@@ -4,6 +4,24 @@ import { Terminal } from 'lucide-react';
 import { toast } from 'sonner';
 import io from 'socket.io-client';
 
+// Helper function to check if current user is a viewer
+const isViewerUser = () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+    
+    // Decode JWT token (simple base64 decode of payload)
+    const payload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(payload));
+    
+    // Check if user role is 'viewer'
+    return decodedPayload.role === 'viewer';
+  } catch (error) {
+    // If there's any error decoding, allow toasts to show
+    return false;
+  }
+};
+
 const RealTimeLogViewer = () => {
   const [logs, setLogs] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
@@ -68,7 +86,10 @@ const RealTimeLogViewer = () => {
             data: data.results
           }]);
           setIsRunning(false);
-          toast.success('Analytics completed!');
+          // Don't show toasts for viewer users
+          if (!isViewerUser()) {
+            toast.success('Analytics completed!');
+          }
         });
 
         newSocket.on('analytics-error', (data) => {
@@ -80,7 +101,10 @@ const RealTimeLogViewer = () => {
             data: { error: data.error }
           }]);
           setIsRunning(false);
-          toast.error('Analytics failed!');
+          // Don't show toasts for viewer users
+          if (!isViewerUser()) {
+            toast.error('Analytics failed!');
+          }
         });
 
         setSocket(newSocket);
@@ -131,7 +155,10 @@ const RealTimeLogViewer = () => {
 
   const clearLogs = () => {
     setLogs([]);
-    toast.success('Logs cleared');
+    // Don't show toasts for viewer users
+    if (!isViewerUser()) {
+      toast.success('Logs cleared');
+    }
   };
 
   const copyLogs = () => {
@@ -140,7 +167,10 @@ const RealTimeLogViewer = () => {
     ).join('\n');
     
     navigator.clipboard.writeText(logText).then(() => {
-      toast.success('Logs copied to clipboard');
+      // Don't show toasts for viewer users
+      if (!isViewerUser()) {
+        toast.success('Logs copied to clipboard');
+      }
     });
   };
 

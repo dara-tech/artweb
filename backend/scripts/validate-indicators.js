@@ -48,7 +48,7 @@ const INDICATOR_MAP = {
   '4': '04_retested_positive',
   '5': '05_newly_initiated',
   '5.1.1': '05.1.1_art_same_day',
-  '5.1.2': '05.1.2_preart_1_7_days',
+  '5.1.2': '05.1.2_art_1_7_days',
   '5.1.3': '05.1.3_art_over_7_days',
   '5.2': '05.2_art_with_tld',
   '6': '06_transfer_in',

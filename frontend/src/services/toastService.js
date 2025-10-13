@@ -1,8 +1,29 @@
 import { toast } from '@/hooks/use-toast'
 
+// Helper function to check if current user is a viewer
+const isViewerUser = () => {
+  try {
+    const token = localStorage.getItem('token')
+    if (!token) return false
+    
+    // Decode JWT token (simple base64 decode of payload)
+    const payload = token.split('.')[1]
+    const decodedPayload = JSON.parse(atob(payload))
+    
+    // Check if user role is 'viewer'
+    return decodedPayload.role === 'viewer'
+  } catch (error) {
+    // If there's any error decoding, allow toasts to show
+    return false
+  }
+}
+
 export const toastService = {
   // Success toast
   success: (title, description = '') => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return
+    
     return toast({
       title,
       description,
@@ -13,6 +34,9 @@ export const toastService = {
 
   // Error toast
   error: (title, description = '') => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return
+    
     return toast({
       title,
       description,
@@ -23,6 +47,9 @@ export const toastService = {
 
   // Warning toast
   warning: (title, description = '') => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return
+    
     return toast({
       title,
       description,
@@ -33,6 +60,9 @@ export const toastService = {
 
   // Info toast
   info: (title, description = '') => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return
+    
     return toast({
       title,
       description,
@@ -43,6 +73,9 @@ export const toastService = {
 
   // Default toast
   default: (title, description = '') => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return
+    
     return toast({
       title,
       description,
@@ -53,6 +86,9 @@ export const toastService = {
 
   // Custom toast with action
   withAction: (title, description = '', action) => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return
+    
     return toast({
       title,
       description,
@@ -63,6 +99,9 @@ export const toastService = {
 
   // Loading toast (for long operations)
   loading: (title, description = '') => {
+    // Don't show toasts for viewer users
+    if (isViewerUser()) return
+    
     return toast({
       title,
       description,

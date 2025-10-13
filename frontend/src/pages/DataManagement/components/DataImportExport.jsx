@@ -93,7 +93,7 @@ const DataImportExport = () => {
   console.log('DataImportExport component rendered');
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div >
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center space-x-3 mb-2">

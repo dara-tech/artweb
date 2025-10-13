@@ -7,9 +7,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { AlertCircle, Edit, Plus, Shield, Users, UserCheck, UserX, Trash2, Key, ToggleLeft, ToggleRight, Settings } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AlertCircle, Edit, Plus, Shield, Users, UserCheck, UserX, Trash2, Key, ToggleLeft, ToggleRight, Settings, Activity } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import roleApi from '../services/roleApi';
+import UserLogs from '../components/UserLogs';
 
 const RoleManagement = () => {
   const { user: loggedInUser } = useAuth();
@@ -27,6 +29,7 @@ const RoleManagement = () => {
     newPassword: '',
     confirmPassword: ''
   });
+
 
   // Form states
   const [formData, setFormData] = useState({
@@ -77,6 +80,7 @@ const RoleManagement = () => {
       setLoading(false);
     }
   };
+
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
@@ -357,7 +361,22 @@ const RoleManagement = () => {
           </Card>
         )}
 
-        {/* Users Table */}
+        {/* Tabs */}
+        <Tabs defaultValue="users" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="users">
+              <Users className="h-4 w-4 mr-2" />
+              Users & Roles
+            </TabsTrigger>
+            <TabsTrigger value="logs">
+              <Activity className="h-4 w-4 mr-2" />
+              User Logs
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Users Tab */}
+          <TabsContent value="users" className="space-y-4">
+            {/* Users Table */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -452,6 +471,13 @@ const RoleManagement = () => {
             </div>
           </CardContent>
         </Card>
+          </TabsContent>
+
+          {/* User Logs Tab */}
+          <TabsContent value="logs" className="space-y-4">
+            <UserLogs users={users} />
+          </TabsContent>
+        </Tabs>
 
         {/* Edit User Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -595,4 +621,5 @@ const RoleManagement = () => {
   );
 };
 
+// Role Management Component
 export default RoleManagement;

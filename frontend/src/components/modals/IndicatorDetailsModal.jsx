@@ -16,6 +16,24 @@ import { formatDateForTable } from '@/utils/dateFormatter';
 import { getCorrectPatientType } from '@/utils/ageCalculator';
 import { toast } from 'sonner';
 
+// Helper function to check if current user is a viewer
+const isViewerUser = () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+    
+    // Decode JWT token (simple base64 decode of payload)
+    const payload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(payload));
+    
+    // Check if user role is 'viewer'
+    return decodedPayload.role === 'viewer';
+  } catch (error) {
+    // If there's any error decoding, allow toasts to show
+    return false;
+  }
+};
+
 const IndicatorDetailsModal = ({
   isOpen,
   onClose,
@@ -213,10 +231,10 @@ const IndicatorDetailsModal = ({
         button.disabled = true;
       }
       
-      // Show initial toast
-      const exportToast = toast.loading('Preparing export...', {
+      // Show initial toast (only for non-viewers)
+      const exportToast = !isViewerUser() ? toast.loading('Preparing export...', {
         description: `Exporting ${selectedIndicator.Indicator} data`
-      });
+      }) : null;
     
     try {
       const getApiUrl = () => {
@@ -437,19 +455,23 @@ const IndicatorDetailsModal = ({
             const progress = Math.min(100, Math.round((allRecords.length / totalCount) * 100));
             button.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>${progress}% (${allRecords.length.toLocaleString()}/${totalCount.toLocaleString()})`;
             
-            // Update toast progress
-            toast.loading(`Fetching data... ${progress}%`, {
-              id: exportToast,
-              description: `${allRecords.length.toLocaleString()}/${totalCount.toLocaleString()} records fetched`
-            });
+            // Update toast progress (only for non-viewers)
+            if (!isViewerUser() && exportToast) {
+              toast.loading(`Fetching data... ${progress}%`, {
+                id: exportToast,
+                description: `${allRecords.length.toLocaleString()}/${totalCount.toLocaleString()} records fetched`
+              });
+            }
           } else if (button) {
             button.innerHTML = `<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>${allRecords.length.toLocaleString()} records`;
             
-            // Update toast progress
-            toast.loading(`Fetching data...`, {
-              id: exportToast,
-              description: `${allRecords.length.toLocaleString()} records fetched`
-            });
+            // Update toast progress (only for non-viewers)
+            if (!isViewerUser() && exportToast) {
+              toast.loading(`Fetching data...`, {
+                id: exportToast,
+                description: `${allRecords.length.toLocaleString()} records fetched`
+              });
+            }
           }
           
           // Check if there are more pages
@@ -492,11 +514,13 @@ const IndicatorDetailsModal = ({
         button.innerHTML = '<div class="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-1"></div>Generating CSV...';
       }
       
-      // Update toast to CSV generation
-      toast.loading('Generating CSV...', {
-        id: exportToast,
-        description: `Processing ${allRecords.length.toLocaleString()} records`
-      });
+      // Update toast to CSV generation (only for non-viewers)
+      if (!isViewerUser() && exportToast) {
+        toast.loading('Generating CSV...', {
+          id: exportToast,
+          description: `Processing ${allRecords.length.toLocaleString()} records`
+        });
+      }
       
       // Process records for export (same as display processing)
       const processedRecords = allRecords.map(record => ({
@@ -551,12 +575,14 @@ const IndicatorDetailsModal = ({
       link.click();
       document.body.removeChild(link);
       
-      // Show success message
-      toast.success('Export Complete!', {
-        id: exportToast,
-        description: `📊 ${selectedIndicator.Indicator}\n📋 ${processedRecords.length.toLocaleString()} records exported\n📁 ${fileName}`,
-        duration: 5000,
-      });
+      // Show success message (only for non-viewers)
+      if (!isViewerUser() && exportToast) {
+        toast.success('Export Complete!', {
+          id: exportToast,
+          description: `📊 ${selectedIndicator.Indicator}\n📋 ${processedRecords.length.toLocaleString()} records exported\n📁 ${fileName}`,
+          duration: 5000,
+        });
+      }
       
     } catch (error) {
       
@@ -571,15 +597,18 @@ const IndicatorDetailsModal = ({
         errorDescription = `No records found to export. Check your filters and date range.`;
       }
       
-      toast.error(errorTitle, {
-        id: exportToast,
-        description: errorDescription,
-        duration: 8000,
-        action: {
-          label: 'Retry',
-          onClick: () => exportAllRecords()
-        }
-      });
+      // Show error message (only for non-viewers)
+      if (!isViewerUser() && exportToast) {
+        toast.error(errorTitle, {
+          id: exportToast,
+          description: errorDescription,
+          duration: 8000,
+          action: {
+            label: 'Retry',
+            onClick: () => exportAllRecords()
+          }
+        });
+      }
     } finally {
       // Restore button state
       if (button) {

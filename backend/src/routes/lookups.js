@@ -315,6 +315,8 @@ router.get('/sites-registry', async (req, res, next) => {
       shortName: site.short_name,
       searchTerms: site.search_terms,
       fileName: site.file_name,
+      province: site.province,
+      type: site.type,
       status: site.status,
       database_name: site.database_name
     }));

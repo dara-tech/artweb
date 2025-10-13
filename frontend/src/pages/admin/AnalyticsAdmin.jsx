@@ -221,7 +221,7 @@ const AnalyticsAdmin = () => {
 
       const data = await analyticsApi.getAllAnalyticsData(processedFilters);
       
-      console.log('🔍 Analytics Admin - API response:', data);
+
       
       if (data.success) {
         setAnalyticsData(data.data);
@@ -271,44 +271,38 @@ const AnalyticsAdmin = () => {
     window.URL.revokeObjectURL(url);
   };
 
-  // Clear cache function
+  // Clear cache function (now includes auto-increment reset)
   const clearCache = async () => {
-    if (window.confirm('Are you sure you want to clear all cached analytics data? This action cannot be undone.')) {
+    if (window.confirm('Are you sure you want to clear all cached analytics data and reset auto-increment IDs? This action cannot be undone.')) {
       try {
-        const response = await analyticsApi.clearCache();
+        // Clear cache first
+        const clearResponse = await analyticsApi.clearCache();
         
-        if (response.success) {
-          alert('Cache cleared successfully!');
-          // Refresh the data
-          fetchAnalyticsData();
-          fetchSummary();
+        if (clearResponse.success) {
+          // Then reset auto-increment IDs
+          const resetResponse = await analyticsApi.resetAutoIncrement();
+          
+          if (resetResponse.success) {
+            alert('Cache cleared and auto-increment IDs reset successfully!');
+            // Refresh the data
+            fetchAnalyticsData();
+            fetchSummary();
+          } else {
+            alert('Cache cleared but failed to reset auto-increment IDs');
+            // Still refresh data since cache was cleared
+            fetchAnalyticsData();
+            fetchSummary();
+          }
         } else {
           alert('Failed to clear cache');
         }
       } catch (error) {
-        console.error('Error clearing cache:', error);
-        alert('Error clearing cache');
+        console.error('Error clearing cache and resetting IDs:', error);
+        alert('Error clearing cache and resetting IDs');
       }
     }
   };
 
-  // Reset auto-increment function
-  const resetAutoIncrement = async () => {
-    if (window.confirm('Are you sure you want to reset all auto-increment counters to 1? This will make new records start from ID = 1.')) {
-      try {
-        const response = await analyticsApi.resetAutoIncrement();
-        
-        if (response.success) {
-          alert('Auto-increment counters reset successfully!');
-        } else {
-          alert(`Failed to reset auto-increment: ${response.message || 'Unknown error'}`);
-        }
-      } catch (error) {
-        console.error('Error resetting auto-increment:', error);
-        alert('Error resetting auto-increment counters');
-      }
-    }
-  };
 
   // Fetch sites for dropdown
   const fetchSites = async () => {
@@ -559,13 +553,9 @@ const AnalyticsAdmin = () => {
                     <RefreshCw className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
                     Apply
                   </Button>
-                  <Button onClick={clearCache} variant="outline" size="sm" className="text-red-600">
+                  <Button onClick={clearCache} variant="outline" size="sm" className="text-red-600" title="Clear cache and reset auto-increment IDs">
                     <Trash2 className="h-4 w-4 mr-1" />
-                    Clear
-                  </Button>
-                  <Button onClick={resetAutoIncrement} variant="outline" size="sm" className="text-orange-600">
-                    <RefreshCw className="h-4 w-4 mr-1" />
-                    Reset IDs
+                    Clear & Reset
                   </Button>
                   {/* <Button onClick={exportAnalyticsData} variant="outline" size="sm">
                     <Download className="h-4 w-4 mr-1" />

@@ -30,6 +30,9 @@ const importRoutes = require('./routes/import');
 const dataManagementRoutes = require('./routes/data-management');
 const analyticsRoutes = require('./routes/analytics');
 const adminRoutes = require('./routes/admin');
+const labTestRoutes = require('./routes/lab-tests');
+const patientTestRoutes = require('./routes/patientTests');
+const { router: userLogsRoutes } = require('./routes/user-logs');
 const schedulerService = require('./services/scheduler');
 const { errorHandler } = require('./middleware/errorHandler');
 
@@ -45,12 +48,26 @@ const io = new Server(server, {
       'http://127.0.0.1:5173',
       'http://127.0.0.1:5174',
       'http://127.0.0.1:3000',
-      'http://192.168.1.120:5173',  // Your actual current IP
-      'http://192.168.1.120:5174',  // Your actual current IP with port 5174
+      // Production domains
+      'http://report.nchads.gov.kh',
+      'https://report.nchads.gov.kh',
+      'http://report.nchads.gov.kh:3001',
+      'https://report.nchads.gov.kh:3001',
+      'http://report.nchads.gov.kh:5173',
+      'https://report.nchads.gov.kh:5173',
+      // Development IPs
+      'http://192.168.0.119:5173',  // Your current IP
+      'http://192.168.0.119:5174',  // Your current IP with port 5174
+      'http://192.168.0.119:3000',  // Your current IP with port 3000
+      'http://192.168.0.119:3001',  // Your current IP with backend port
+      'http://192.168.1.120:5173',  // Previous IP
+      'http://192.168.1.120:5174',  // Previous IP with port 5174
       'http://192.168.0.120:5173',
       'http://192.168.0.120:5174',
       /^http:\/\/192\.168\.\d+\.\d+:5173$/,
       /^http:\/\/192\.168\.\d+\.\d+:5174$/,
+      /^http:\/\/192\.168\.\d+\.\d+:3000$/,
+      /^http:\/\/192\.168\.\d+\.\d+:3001$/,
       /^http:\/\/10\.\d+\.\d+\.\d+:5173$/,
       /^http:\/\/10\.\d+\.\d+\.\d+:5174$/,
       /^http:\/\/172\.\d+\.\d+\.\d+:5173$/,
@@ -71,7 +88,17 @@ app.use(cors({
   origin: [
     process.env.FRONTEND_URL || 'http://localhost:5173',
     'http://localhost:5174',  // Current local port
-    'http://192.168.1.120:5173',  // Your actual current IP
+    // Production domains
+    'http://report.nchads.gov.kh',
+    'https://report.nchads.gov.kh',
+    'http://report.nchads.gov.kh:3001',
+    'https://report.nchads.gov.kh:3001',
+    'http://report.nchads.gov.kh:5173',
+    'https://report.nchads.gov.kh:5173',
+    // Development IPs
+    'http://192.168.1.120:5173',
+    'http://192.168.0.119:5173',
+    'http://192.168.1.151:5174',  // Your actual current IP
     'http://192.168.1.120:5174',  // Your actual current IP with port 5174
     'http://192.168.0.120:5173',  // Previous IP
     'http://192.168.0.120:5174',  // Previous IP with port 5174
@@ -151,6 +178,9 @@ app.use('/apiv1/import', importRoutes);
 app.use('/apiv1/data', dataManagementRoutes);
 app.use('/apiv1/analytics', analyticsRoutes);
 app.use('/apiv1/admin', adminRoutes);
+app.use('/apiv1/lab-tests', labTestRoutes);
+app.use('/apiv1/patient-tests', patientTestRoutes);
+app.use('/apiv1', userLogsRoutes);
 
 // Make io available to routes
 app.set('io', io);

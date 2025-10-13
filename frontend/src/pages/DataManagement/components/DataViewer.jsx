@@ -24,6 +24,10 @@ const DataViewer = () => {
   const [updatingStatus, setUpdatingStatus] = useState(null);
   const [editingFileName, setEditingFileName] = useState(null);
   const [editingValue, setEditingValue] = useState('');
+  const [editingSiteName, setEditingSiteName] = useState(null);
+  const [editingSiteNameValue, setEditingSiteNameValue] = useState('');
+  const [editingProvince, setEditingProvince] = useState(null);
+  const [editingProvinceValue, setEditingProvinceValue] = useState('');
 
   console.log('DataViewer component rendered');
 
@@ -159,6 +163,94 @@ const DataViewer = () => {
     }
   };
 
+  const startEditingSiteName = (siteCode, currentSiteName) => {
+    setEditingSiteName(siteCode);
+    setEditingSiteNameValue(currentSiteName || '');
+  };
+
+  const cancelEditingSiteName = () => {
+    setEditingSiteName(null);
+    setEditingSiteNameValue('');
+  };
+
+  const saveSiteName = async (siteCode) => {
+    try {
+      console.log(`Updating site name for site ${siteCode} to: ${editingSiteNameValue.trim()}`);
+      
+      const response = await api.put(`/apiv1/site-operations/sites/${siteCode}/name`, {
+        name: editingSiteNameValue.trim()
+      });
+      
+      console.log('Site name update response:', response.data);
+      
+      if (response.data.success) {
+        // Update the local state immediately
+        setSites(prevSites => 
+          prevSites.map(site => 
+            site.code === siteCode 
+              ? { ...site, name: editingSiteNameValue.trim() }
+              : site
+          )
+        );
+        
+        showMessage('success', `Site name updated for site ${siteCode}`);
+        setEditingSiteName(null);
+        setEditingSiteNameValue('');
+        console.log(`Site name updated successfully for site ${siteCode}`);
+      } else {
+        console.error('Site name update failed:', response.data.message);
+        showMessage('error', response.data.message || 'Failed to update site name');
+      }
+    } catch (err) {
+      console.error('Error updating site name:', err);
+      showMessage('error', 'Failed to update site name. Please try again.');
+    }
+  };
+
+  const startEditingProvince = (siteCode, currentProvince) => {
+    setEditingProvince(siteCode);
+    setEditingProvinceValue(currentProvince || '');
+  };
+
+  const cancelEditingProvince = () => {
+    setEditingProvince(null);
+    setEditingProvinceValue('');
+  };
+
+  const saveProvince = async (siteCode) => {
+    try {
+      console.log(`Updating province for site ${siteCode} to: ${editingProvinceValue.trim()}`);
+      
+      const response = await api.put(`/apiv1/site-operations/sites/${siteCode}/province`, {
+        province: editingProvinceValue.trim()
+      });
+      
+      console.log('Province update response:', response.data);
+      
+      if (response.data.success) {
+        // Update the local state immediately
+        setSites(prevSites => 
+          prevSites.map(site => 
+            site.code === siteCode 
+              ? { ...site, province: editingProvinceValue.trim() }
+              : site
+          )
+        );
+        
+        showMessage('success', `Province updated for site ${siteCode}`);
+        setEditingProvince(null);
+        setEditingProvinceValue('');
+        console.log(`Province updated successfully for site ${siteCode}`);
+      } else {
+        console.error('Province update failed:', response.data.message);
+        showMessage('error', response.data.message || 'Failed to update province');
+      }
+    } catch (err) {
+      console.error('Error updating province:', err);
+      showMessage('error', 'Failed to update province. Please try again.');
+    }
+  };
+
   const deleteSite = async (siteCode) => {
     if (!window.confirm(`Are you sure you want to delete site "${siteCode}"? This action cannot be undone.`)) {
       return;
@@ -271,6 +363,7 @@ const DataViewer = () => {
                   <tr>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Site Code</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Site Name</th>
+                    <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Province</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">File Name</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Search Terms</th>
                     <th className="px-4 py-3 text-left text-sm font-medium text-foreground">Active Status</th>
@@ -287,7 +380,106 @@ const DataViewer = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="text-sm text-foreground">{site.name}</span>
+                        {editingSiteName === site.code ? (
+                          <div className="flex items-center space-x-2 flex-1">
+                            <input
+                              type="text"
+                              value={editingSiteNameValue}
+                              onChange={(e) => setEditingSiteNameValue(e.target.value)}
+                              className="flex-1 px-2 py-1 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Enter site name"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  saveSiteName(site.code);
+                                } else if (e.key === 'Escape') {
+                                  cancelEditingSiteName();
+                                }
+                              }}
+                            />
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => saveSiteName(site.code)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Save className="h-3 w-3 text-green-600" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={cancelEditingSiteName}
+                              className="h-6 w-6 p-0"
+                            >
+                              <X className="h-3 w-3 text-red-600" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2 flex-1">
+                            <span className="text-sm text-foreground truncate max-w-xs" title={site.name}>
+                              {site.name}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => startEditingSiteName(site.code, site.name)}
+                              className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <Edit className="h-3 w-3 text-blue-600" />
+                            </Button>
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        {editingProvince === site.code ? (
+                          <div className="flex items-center space-x-2 flex-1">
+                            <input
+                              type="text"
+                              value={editingProvinceValue}
+                              onChange={(e) => setEditingProvinceValue(e.target.value)}
+                              className="flex-1 px-2 py-1 text-sm border border-border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Enter province"
+                              autoFocus
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                  saveProvince(site.code);
+                                } else if (e.key === 'Escape') {
+                                  cancelEditingProvince();
+                                }
+                              }}
+                            />
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => saveProvince(site.code)}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Save className="h-3 w-3 text-green-600" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={cancelEditingProvince}
+                              className="h-6 w-6 p-0"
+                            >
+                              <X className="h-3 w-3 text-red-600" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center space-x-2 flex-1">
+                            <span className="text-sm text-foreground truncate max-w-xs" title={site.province || 'No province'}>
+                              {site.province || 'No province'}
+                            </span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => startEditingProvince(site.code, site.province)}
+                              className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                            >
+                              <Edit className="h-3 w-3 text-blue-600" />
+                            </Button>
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center space-x-2">

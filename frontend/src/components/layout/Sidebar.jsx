@@ -17,7 +17,9 @@ import {
   Upload,
   BarChart3,
   FileBarChart,
-  Shield
+  Shield,
+  TestTube,
+  Activity
 } from "lucide-react"
 import { useAuth } from '../../contexts/AuthContext'
 
@@ -138,6 +140,20 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobileOpen, setIsMobileOpen })
           href: '/import-data',
           icon: Upload,
           current: location.pathname.startsWith('/import-data'),
+          category: 'data'
+        },
+        {
+          name: 'Lab Test Results',
+          href: '/lab-tests',
+          icon: TestTube,
+          current: location.pathname.startsWith('/lab-tests'),
+          category: 'data'
+        },
+        {
+          name: 'Patient Tests',
+          href: '/patient-tests',
+          icon: Activity,
+          current: location.pathname.startsWith('/patient-tests'),
           category: 'data'
         }
       )

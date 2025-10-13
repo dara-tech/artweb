@@ -30,6 +30,85 @@ const ReportConfiguration = ({
   const [currentDecade, setCurrentDecade] = useState(Math.floor(parseInt(selectedYear) / 10) * 10);
   const pickerRef = useRef(null);
 
+  // Smart year navigation functions
+  const navigateToPreviousYear = () => {
+    const currentYear = parseInt(selectedYear);
+    const previousYear = currentYear - 1;
+    
+    // Check if previous year is available
+    if (availableYears.includes(previousYear)) {
+      onYearChange(previousYear.toString());
+    } else {
+      // Find the closest available previous year
+      const availablePreviousYears = availableYears.filter(year => year < currentYear);
+      if (availablePreviousYears.length > 0) {
+        const closestYear = Math.max(...availablePreviousYears);
+        onYearChange(closestYear.toString());
+      }
+    }
+  };
+
+  const navigateToNextYear = () => {
+    const currentYear = parseInt(selectedYear);
+    const nextYear = currentYear + 1;
+    
+    // Check if next year is available
+    if (availableYears.includes(nextYear)) {
+      onYearChange(nextYear.toString());
+    } else {
+      // Find the closest available next year
+      const availableNextYears = availableYears.filter(year => year > currentYear);
+      if (availableNextYears.length > 0) {
+        const closestYear = Math.min(...availableNextYears);
+        onYearChange(closestYear.toString());
+      }
+    }
+  };
+
+  const navigateToPreviousDecade = () => {
+    const newDecade = currentDecade - 10;
+    setCurrentDecade(newDecade);
+    
+    // If current year is not in the new decade, find the closest available year
+    const currentYear = parseInt(selectedYear);
+    if (currentYear < newDecade || currentYear > newDecade + 9) {
+      const decadeYears = generateDecadeYears(newDecade);
+      const availableDecadeYears = decadeYears.filter(year => availableYears.includes(year));
+      if (availableDecadeYears.length > 0) {
+        // Find the year closest to current year in the new decade
+        const closestYear = availableDecadeYears.reduce((closest, year) => 
+          Math.abs(year - currentYear) < Math.abs(closest - currentYear) ? year : closest
+        );
+        onYearChange(closestYear.toString());
+      }
+    }
+  };
+
+  const navigateToNextDecade = () => {
+    const newDecade = currentDecade + 10;
+    setCurrentDecade(newDecade);
+    
+    // If current year is not in the new decade, find the closest available year
+    const currentYear = parseInt(selectedYear);
+    if (currentYear < newDecade || currentYear > newDecade + 9) {
+      const decadeYears = generateDecadeYears(newDecade);
+      const availableDecadeYears = decadeYears.filter(year => availableYears.includes(year));
+      if (availableDecadeYears.length > 0) {
+        // Find the year closest to current year in the new decade
+        const closestYear = availableDecadeYears.reduce((closest, year) => 
+          Math.abs(year - currentYear) < Math.abs(closest - currentYear) ? year : closest
+        );
+        onYearChange(closestYear.toString());
+      }
+    }
+  };
+
+  // Check if navigation buttons should be disabled
+  const canNavigatePreviousYear = availableYears.some(year => year < parseInt(selectedYear));
+  const canNavigateNextYear = availableYears.some(year => year > parseInt(selectedYear));
+  const canNavigatePreviousDecade = availableYears.some(year => year < currentDecade);
+  const canNavigateNextDecade = availableYears.some(year => year > currentDecade + 9);
+
   // Generate years for current decade
   const generateDecadeYears = (decade) => {
     const years = [];
@@ -60,6 +139,58 @@ const ReportConfiguration = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isPeriodPickerOpen]);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (!isPeriodPickerOpen) return;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          if (event.shiftKey) {
+            navigateToPreviousDecade();
+          } else {
+            navigateToPreviousYear();
+          }
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          if (event.shiftKey) {
+            navigateToNextDecade();
+          } else {
+            navigateToNextYear();
+          }
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          navigateToPreviousDecade();
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          navigateToNextDecade();
+          break;
+        case 'Escape':
+          event.preventDefault();
+          setIsPeriodPickerOpen(false);
+          setShowYearGrid(false);
+          break;
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          setShowYearGrid(!showYearGrid);
+          break;
+      }
+    };
+
+    if (isPeriodPickerOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isPeriodPickerOpen, showYearGrid, selectedYear, availableYears]);
 
   return (
 
@@ -104,12 +235,24 @@ const ReportConfiguration = ({
                     <div className="flex items-center justify-between mb-6">
                       <Button
                         type="button"
-                        onClick={() => setCurrentDecade(currentDecade - 10)}
+                        onClick={navigateToPreviousYear}
                         variant="ghost"
                         size="sm"
-                        className="p-2 rounded-lg hover:bg-primary transition-colors"
+                        disabled={!canNavigatePreviousYear}
+                        className={`p-2 rounded-lg transition-colors ${
+                          canNavigatePreviousYear 
+                            ? 'hover:bg-primary text-primary' 
+                            : 'text-gray-300 cursor-not-allowed'
+                        }`}
+                        title={canNavigatePreviousYear ? "Previous year (Shift+Click for decade)" : "No previous year available"}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          if (canNavigatePreviousDecade) {
+                            navigateToPreviousDecade();
+                          }
+                        }}
                       >
-                        <ChevronLeft className="w-4 h-4 text-primary" />
+                        <ChevronLeft className="w-4 h-4" />
                       </Button>
                       
                       <Button
@@ -117,18 +260,31 @@ const ReportConfiguration = ({
                         onClick={() => setShowYearGrid(!showYearGrid)}
                         variant="ghost"
                         className="px-4 py-2 text-base font-semibold hover:text-blue-500 rounded-lg transition-colors cursor-pointer"
+                        title="Click to show year grid"
                       >
                         {selectedYear}
                       </Button>
                       
                       <Button
                         type="button"
-                        onClick={() => setCurrentDecade(currentDecade + 10)}
+                        onClick={navigateToNextYear}
                         variant="ghost"
                         size="sm"
-                        className="p-2 rounded-lg hover:bg-primary transition-colors text-primary"
+                        disabled={!canNavigateNextYear}
+                        className={`p-2 rounded-lg transition-colors ${
+                          canNavigateNextYear 
+                            ? 'hover:bg-primary text-primary' 
+                            : 'text-gray-300 cursor-not-allowed'
+                        }`}
+                        title={canNavigateNextYear ? "Next year (Shift+Click for decade)" : "No next year available"}
+                        onContextMenu={(e) => {
+                          e.preventDefault();
+                          if (canNavigateNextDecade) {
+                            navigateToNextDecade();
+                          }
+                        }}
                       >
-                        <ChevronRight className="w-4 h-4 text-primary" />
+                        <ChevronRight className="w-4 h-4" />
                       </Button>
                     </div>
 

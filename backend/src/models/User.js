@@ -59,6 +59,13 @@ const User = sequelize.define('User', {
     allowNull: true,
     defaultValue: null,
     comment: 'JSON array of site codes this user can access'
+  },
+  lastLogin: {
+    type: DataTypes.DATE,
+    field: 'lastLogin',
+    allowNull: true,
+    defaultValue: null,
+    comment: 'Last login timestamp'
   }
 }, {
   tableName: 'tbluser',

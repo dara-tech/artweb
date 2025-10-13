@@ -9,7 +9,7 @@ const getApiUrl = () => {
   }
 }
 
-const API_BASE_URL = getApiUrl();
+const API_BASE_URL = import.meta.env.VITE_API_URL || getApiUrl();
 
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');

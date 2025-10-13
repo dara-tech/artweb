@@ -1,7 +1,7 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
-const { User } = require('../models');
+const { User, Log } = require('../models');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
@@ -73,6 +73,14 @@ router.post('/login', [
 
     const responseTime = Date.now() - startTime;
     console.log(`Login successful for user ${username} - Response time: ${responseTime}ms`);
+    
+    // Update last login timestamp
+    try {
+      await user.update({ lastLogin: new Date() });
+    } catch (updateError) {
+      console.error('Error updating last login:', updateError);
+      // Don't fail the login if update fails
+    }
     
     res.json({
       message: 'Login successful',

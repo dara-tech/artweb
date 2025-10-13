@@ -21,6 +21,8 @@ import RoleManagement from './pages/RoleManagement'
 import DataImportExport from './pages/DataManagement/components/DataImportExport'
 import IndicatorsReport from './pages/indicators/IndicatorsReport'
 import AnalyticsAdmin from './pages/admin/AnalyticsAdmin'
+import LabTestResultsPage from './pages/LabTestResults'
+import PatientTestsPage from './pages/PatientTests'
 import AdvancedLayout from './components/layout/AdvancedLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -182,6 +184,20 @@ function App() {
           <Route path="/import-data" element={
             <ProtectedRoute allowedRoles={['admin', 'super_admin', 'data_manager']}>
               <DataImportExport />
+            </ProtectedRoute>
+          } />
+          
+          {/* Lab Test Results - Accessible to all authenticated users except viewers */}
+          <Route path="/lab-tests" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin', 'data_manager', 'doctor', 'nurse', 'data_entry', 'site_manager']}>
+              <LabTestResultsPage />
+            </ProtectedRoute>
+          } />
+          
+          {/* Patient Tests - Accessible to all authenticated users except viewers */}
+          <Route path="/patient-tests" element={
+            <ProtectedRoute allowedRoles={['admin', 'super_admin', 'data_manager', 'doctor', 'nurse', 'data_entry', 'site_manager']}>
+              <PatientTestsPage />
             </ProtectedRoute>
           } />
           

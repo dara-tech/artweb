@@ -15,6 +15,24 @@ import { toast } from 'sonner';
 import analyticsApi from '../../services/analyticsApi';
 import RealTimeLogViewer from './RealTimeLogViewer';
 
+// Helper function to check if current user is a viewer
+const isViewerUser = () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+    
+    // Decode JWT token (simple base64 decode of payload)
+    const payload = token.split('.')[1];
+    const decodedPayload = JSON.parse(atob(payload));
+    
+    // Check if user role is 'viewer'
+    return decodedPayload.role === 'viewer';
+  } catch (error) {
+    // If there's any error decoding, allow toasts to show
+    return false;
+  }
+};
+
 const YearlyAnalytics = () => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [isRunning, setIsRunning] = useState(false);
@@ -33,17 +51,26 @@ const YearlyAnalytics = () => {
       const data = await analyticsApi.runYearlyAnalytics(selectedYear);
 
       if (data.success) {
-        toast.success(`Yearly analytics completed for ${selectedYear}`);
+        // Don't show toasts for viewer users
+        if (!isViewerUser()) {
+          toast.success(`Yearly analytics completed for ${selectedYear}`);
+        }
       } else {
-        toast.error('Analytics failed', {
-          description: data.error || 'Failed to run yearly analytics'
-        });
+        // Don't show toasts for viewer users
+        if (!isViewerUser()) {
+          toast.error('Analytics failed', {
+            description: data.error || 'Failed to run yearly analytics'
+          });
+        }
       }
     } catch (error) {
       console.error('Yearly analytics error:', error);
-      toast.error('Analytics error', {
-        description: `Failed to connect to analytics service: ${error.message}`
-      });
+      // Don't show toasts for viewer users
+      if (!isViewerUser()) {
+        toast.error('Analytics error', {
+          description: `Failed to connect to analytics service: ${error.message}`
+        });
+      }
     } finally {
       setIsRunning(false);
     }
@@ -57,17 +84,26 @@ const YearlyAnalytics = () => {
 
       if (data.success) {
         setEngineEnabled(enable);
-        toast.success(data.message);
+        // Don't show toasts for viewer users
+        if (!isViewerUser()) {
+          toast.success(data.message);
+        }
       } else {
-        toast.error('Failed to toggle engine', {
-          description: data.error
-        });
+        // Don't show toasts for viewer users
+        if (!isViewerUser()) {
+          toast.error('Failed to toggle engine', {
+            description: data.error
+          });
+        }
       }
     } catch (error) {
       console.error('Engine toggle error:', error);
-      toast.error('Engine toggle failed', {
-        description: `Failed to connect to analytics service: ${error.message}`
-      });
+      // Don't show toasts for viewer users
+      if (!isViewerUser()) {
+        toast.error('Engine toggle failed', {
+          description: `Failed to connect to analytics service: ${error.message}`
+        });
+      }
     }
   };
 

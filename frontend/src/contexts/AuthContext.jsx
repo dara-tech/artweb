@@ -16,10 +16,10 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      // Use the same API URL detection logic as the API service
+      // Use environment variable first, then fallback to hostname-based logic
       const getApiUrl = () => {
         const hostname = window.location.hostname
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        if (hostname === 'localhost' || hostname === '0.0.0.0') {
           return 'http://localhost:3001'
         } else {
           // For network access, use the same hostname but port 3001
@@ -27,7 +27,11 @@ export const AuthProvider = ({ children }) => {
         }
       }
       
+      // Prioritize environment variable over hostname logic
       const API_BASE_URL = import.meta.env.VITE_API_URL || getApiUrl()
+      
+      console.log('API_BASE_URL:', API_BASE_URL)
+      console.log('VITE_API_URL env:', import.meta.env.VITE_API_URL)
       
       // Add timeout to prevent hanging requests
       const controller = new AbortController()
