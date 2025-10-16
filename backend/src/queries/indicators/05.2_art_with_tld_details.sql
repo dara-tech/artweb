@@ -35,6 +35,8 @@ JOIN (
     GROUP BY Vid
 ) rg ON v.Vid = rg.Vid
 WHERE art.DaArt BETWEEN :StartDate AND :EndDate
+    AND (p.OffIn IS NULL OR p.OffIn <> :transfer_in_code)
+    AND (p.TypeofReturn IS NULL OR p.TypeofReturn = -1)
     AND rg.regimen = :tld_regimen_formula
 
 UNION ALL
@@ -75,5 +77,6 @@ JOIN (
     GROUP BY Vid
 ) rg ON v.Vid = rg.Vid
 WHERE art.DaArt BETWEEN :StartDate AND :EndDate
+    AND (p.OffIn IS NULL OR p.OffIn <> :transfer_in_code)
     AND rg.regimen = :tld_regimen_formula
 ORDER BY DaArt DESC, ClinicID;

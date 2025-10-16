@@ -1,6 +1,6 @@
 -- =====================================================
 -- 05.2 ART WITH TLD DETAILS
--- Generated: 2025-10-13T11:53:28.616Z
+-- Generated: 2025-10-16T17:34:57.208Z
 -- =====================================================
 
 -- =====================================================
@@ -11,6 +11,9 @@
 -- Date parameters (Quarterly period)
 SET @StartDate = '2025-04-01';             -- Start date (YYYY-MM-DD)
 SET @EndDate = '2025-06-30';               -- End date (YYYY-MM-DD) - Q2 2025
+
+-- Status codes
+SET @transfer_in_code = 1;                 -- Transfer in status code
 
 -- Clinical parameters
 SET @tld_regimen_formula = '3TC + DTG + TDF'; -- TLD regimen formula
@@ -54,6 +57,8 @@ JOIN (
     GROUP BY Vid
 ) rg ON v.Vid = rg.Vid
 WHERE art.DaArt BETWEEN @StartDate AND @EndDate
+    AND (p.OffIn IS NULL OR p.OffIn <> @transfer_in_code)
+    AND (p.TypeofReturn IS NULL OR p.TypeofReturn = -1)
     AND rg.regimen = @tld_regimen_formula
 
 UNION ALL
@@ -94,6 +99,7 @@ JOIN (
     GROUP BY Vid
 ) rg ON v.Vid = rg.Vid
 WHERE art.DaArt BETWEEN @StartDate AND @EndDate
+    AND (p.OffIn IS NULL OR p.OffIn <> @transfer_in_code)
     AND rg.regimen = @tld_regimen_formula
 ORDER BY DaArt DESC, ClinicID;
 
